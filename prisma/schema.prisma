@@ -1,0 +1,128 @@
+// Este é o seu arquivo de schema Prisma.
+// Saiba mais sobre ele na documentação: https://pris.ly/d/prisma-schema
+
+// Comando para aplicar as migrações no banco de dados:
+// npx prisma migrate dev --name "nome_do_update"
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum TipoUsuario {
+  Caixa
+  Garcom
+  Admin
+}
+
+enum StatusPedido {
+  Pendente
+  Cancelado
+  Finalizado
+}
+
+
+model Usuario {
+  id           Int      @id @default(autoincrement())
+  nome_usuario String
+  tipo_usuario TipoUsuario
+  senha        String
+  
+  // Relacionamento: Um usuário pode ter vários pedidos.
+  pedidos      Pedido[]
+}
+
+model Mesa {
+  id      Int      @id @default(autoincrement())
+  numero  String   @unique
+  
+  // Relacionamento: Uma mesa pode estar em vários pedidos.
+  pedidos Pedido[]
+}
+
+model Cliente {
+  id       Int      @id @default(autoincrement())
+  nome     String
+  telefone String?  // Opcional e como String para suportar vários formatos.
+  
+  // Relacionamento: Um cliente pode ter vários pedidos.
+  pedidos  Pedido[]
+}
+
+model Categoria {
+  id       Int       @id @default(autoincrement())
+  nome     String    @unique
+  
+  // Relacionamento: Uma categoria pode ter vários produtos.
+  produtos Produto[]
+}
+
+model Produto {
+  id          Int     @id @default(autoincrement())
+  nome        String
+  valor       Decimal @db.Decimal(10, 2)
+  descricao   String?
+  disponivel  Boolean @default(true)
+  adicional   Boolean @default(false) // Indica se o produto é um adicional.
+  
+  // Chave estrangeira para Categoria.
+  categoriaId Int
+  
+  // Relacionamentos
+  categoria   Categoria @relation(fields: [categoriaId], references: [id])
+  itens       Item[]
+
+  // Garante que não haja produtos com o mesmo nome na mesma categoria.
+  @@unique([nome, categoriaId])
+}
+
+model Pedido {
+  id          Int       @id @default(autoincrement())
+  status      StatusPedido
+  observacao  String?
+  criado_em   DateTime  @default(now())
+  
+  // Chaves estrangeiras.
+  mesaId      Int?
+  clienteId   Int?
+  usuarioId   Int
+  
+  // Relacionamentos
+  mesa        Mesa?     @relation(fields: [mesaId], references: [id])
+  cliente     Cliente?  @relation(fields: [clienteId], references: [id])
+  usuario     Usuario   @relation(fields: [usuarioId], references: [id])
+  itens       Item[]
+}
+
+model Item {
+  id             Int     @id @default(autoincrement())
+  valor_unitario Decimal @db.Decimal(10, 2)
+  quantidade     Int
+  
+  // Chave estrangeira para Pedido.
+  pedidoId       Int
+  
+  // Chave estrangeira para Produto.
+  produtoId      Int
+  
+  // --- RELACIONAMENTO UNÁRIO (AUTO-RELACIONAMENTO) ---
+  // Um item adicional pertence a um item principal.
+  // Esta é a chave estrangeira para o próprio modelo Item.
+  pertenceAId    Int?
+  
+  // Relação para o item principal.
+  // O nome "ItemAdicionais" define o nome da relação no banco de dados.
+  itemPrincipal  Item?   @relation("ItemAdicionais", fields: [pertenceAId], references: [id], onDelete: Cascade)
+  
+  // Um item principal pode ter uma lista de itens adicionais.
+  adicionais     Item[]  @relation("ItemAdicionais")
+  // --- FIM DO RELACIONAMENTO UNÁRIO ---
+  
+  // Relacionamentos com outras tabelas.
+  pedido         Pedido  @relation(fields: [pedidoId], references: [id])
+  produto        Produto @relation(fields: [produtoId], references: [id])
+}

@@ -10,7 +10,7 @@ import {
 import { ListFilter, User, Plus } from "lucide-react";
 import Image from "next/image";
 
-import image from "../../../../public/undraw_idea_hz8b 2.svg";
+import buttonBorder from "../../../../public/undraw_idea_hz8b 2.svg";
 
 export default function CentralPedidos() {
   return (
@@ -42,7 +42,7 @@ export default function CentralPedidos() {
         </div>
         <div className="relative w-fit">
           <Image
-            src={image}
+            src={buttonBorder}
             alt=""
             className="h-32 w-[200px] select-none"
             draggable={false}
@@ -57,7 +57,7 @@ export default function CentralPedidos() {
         Pedidos Abertos
       </h2>
       <div className="flex flex-wrap gap-4 my-4">
-        
+
       </div>
     </div>
   );

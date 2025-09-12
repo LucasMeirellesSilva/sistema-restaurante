@@ -13,27 +13,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum TipoUsuario {
-  Caixa
-  Garcom
-  Admin
-}
+model Tipo {
+  id          Int      @id @default(autoincrement())
+  descricao   String
 
-enum StatusPedido {
-  Pendente
-  Cancelado
-  Finalizado
+  usuarios    Usuario[]
 }
-
 
 model Usuario {
-  id           Int      @id @default(autoincrement())
-  nome_usuario String
-  tipo_usuario TipoUsuario
-  senha        String
+  id            Int           @id @default(autoincrement())
+  nome          String        @unique
+  senha         String
   
-  // Relacionamento: Um usuário pode ter vários pedidos.
-  pedidos      Pedido[]
+  tipo_id       Int
+
+  // Relacionamento: Um usuário pode ter vários pedidos. Um usuário deve ter um tipo.
+  pedidos       Pedido[]
+  tipo          Tipo @relation(fields: [tipo_id], references: [id])
 }
 
 model Mesa {
@@ -47,7 +43,7 @@ model Mesa {
 model Cliente {
   id       Int      @id @default(autoincrement())
   nome     String
-  telefone String?  // Opcional e como String para suportar vários formatos.
+  telefone String?
   
   // Relacionamento: Um cliente pode ter vários pedidos.
   pedidos  Pedido[]
@@ -62,67 +58,79 @@ model Categoria {
 }
 
 model Produto {
-  id          Int     @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   nome        String
-  valor       Decimal @db.Decimal(10, 2)
+  valor       Decimal   @db.Decimal(10, 2)
   descricao   String?
-  disponivel  Boolean @default(true)
-  adicional   Boolean @default(false) // Indica se o produto é um adicional.
+  disponivel  Boolean   @default(true)
+  adicional   Boolean   @default(false) // Indica se o produto é um adicional.
   
-  // Chave estrangeira para Categoria.
-  categoriaId Int
+  categoria_id Int
   
-  // Relacionamentos
-  categoria   Categoria @relation(fields: [categoriaId], references: [id])
+  // Relacionamento: Um produto deve pertencer a uma categoria. Um produto está em vários Itens.
+  categoria   Categoria @relation(fields: [categoria_id], references: [id])
   itens       Item[]
 
   // Garante que não haja produtos com o mesmo nome na mesma categoria.
-  @@unique([nome, categoriaId])
+  @@unique([nome, categoria_id])
+}
+
+model Status {
+  id          Int         @id @default(autoincrement())
+  descricao   String
+
+  pedidos     Pedido[]
 }
 
 model Pedido {
-  id          Int       @id @default(autoincrement())
-  status      StatusPedido
-  observacao  String?
-  criado_em   DateTime  @default(now())
+  id            Int       @id @default(autoincrement())
+  observacao    String?
+  criado_em     DateTime  @default(now())
   
   // Chaves estrangeiras.
-  mesaId      Int?
-  clienteId   Int?
-  usuarioId   Int
+  mesa_id       Int?
+  cliente_id    Int?
+  status_id     Int       @default(1)
+  usuario_id    Int
   
   // Relacionamentos
-  mesa        Mesa?     @relation(fields: [mesaId], references: [id])
-  cliente     Cliente?  @relation(fields: [clienteId], references: [id])
-  usuario     Usuario   @relation(fields: [usuarioId], references: [id])
+  mesa        Mesa?     @relation(fields: [mesa_id], references: [id])
+  cliente     Cliente?  @relation(fields: [cliente_id], references: [id])
+  status      Status    @relation(fields: [status_id], references: [id])
+  usuario     Usuario   @relation(fields: [usuario_id], references: [id])
   itens       Item[]
+
+  @@index([status_id])
+  @@index([criado_em])
+  @@index([mesa_id])
+  @@index([cliente_id])
+  @@index([usuario_id])
 }
 
 model Item {
-  id             Int     @id @default(autoincrement())
-  valor_unitario Decimal @db.Decimal(10, 2)
-  quantidade     Int
+  id              Int     @id @default(autoincrement())
+  valor_unitario  Decimal @db.Decimal(10, 2)
+  quantidade      Int
   
-  // Chave estrangeira para Pedido.
-  pedidoId       Int
-  
-  // Chave estrangeira para Produto.
-  produtoId      Int
+  pedido_id       Int
+  produto_id      Int
   
   // --- RELACIONAMENTO UNÁRIO (AUTO-RELACIONAMENTO) ---
   // Um item adicional pertence a um item principal.
   // Esta é a chave estrangeira para o próprio modelo Item.
-  pertenceAId    Int?
+  pertence_a_id   Int?
   
-  // Relação para o item principal.
-  // O nome "ItemAdicionais" define o nome da relação no banco de dados.
-  itemPrincipal  Item?   @relation("ItemAdicionais", fields: [pertenceAId], references: [id], onDelete: Cascade)
+  // Relação para o item principal. Considerando a remoção de ItemPrincipal
+  item_principal  Item?   @relation("Item_adicionais", fields: [pertence_a_id], references: [id], onDelete: Cascade)
   
   // Um item principal pode ter uma lista de itens adicionais.
-  adicionais     Item[]  @relation("ItemAdicionais")
+  adicionais      Item[]  @relation("Item_adicionais")
   // --- FIM DO RELACIONAMENTO UNÁRIO ---
   
   // Relacionamentos com outras tabelas.
-  pedido         Pedido  @relation(fields: [pedidoId], references: [id])
-  produto        Produto @relation(fields: [produtoId], references: [id])
+  pedido          Pedido  @relation(fields: [pedido_id], references: [id], onDelete: Cascade)
+  produto         Produto @relation(fields: [produto_id], references: [id])
+  
+  @@index([pedido_id])
+  @@index([pertence_a_id])
 }

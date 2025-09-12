@@ -53,7 +53,7 @@ const links: SidebarLink[] = [
 
 const logoutLink = {
     label: "Sair",
-    href: "/sair",
+    href: "/api/logout",
     icon: LogOut,
   }
 

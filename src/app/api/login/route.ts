@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
   if (!user) {
     return NextResponse.json(
-      { error: "Usuário não encontrado" },
+      { message: "Usuário não encontrado" },
       { status: 404 }
     );
   }
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   const isValid = await bcrypt.compare(password, user.senha);
 
   if (!isValid) {
-    return NextResponse.json({ error: "Senha inválida" }, { status: 401 });
+    return NextResponse.json({ message: "Senha inválida" }, { status: 401 });
   }
 
   const token = jwt.sign({ id: user?.id, nome: user?.nome }, SECRET, {
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     role: user.tipo.descricao,
   });
 
-  response.cookies.set("token", token, {
+  response.cookies.set("auth", token, {
     httpOnly: true,
     path: "/",
     maxAge: 60 * 60 * 12,

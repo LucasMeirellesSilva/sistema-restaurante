@@ -1,4 +1,13 @@
-import './globals.css';
+import { ReactQueryProvider } from "@/lib/reactQueryProvider";
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+})
+
+import "./globals.css";
 
 export default function RootLayout({
   children,
@@ -6,8 +15,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br" >
-      <body className="antialiased h-screen">{children}</body>
+    <html lang="pt-br" className={inter.variable}>
+      <body className="antialiased h-screen">
+        <ReactQueryProvider>
+          {children}
+        </ReactQueryProvider>
+      </body>
     </html>
   );
 }

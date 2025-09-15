@@ -8,9 +8,13 @@ import {
   Settings,
   LogOut,
   ShieldUser,
+  CircleUser,
 } from "lucide-react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/Sidebar";
 import React, { useState } from "react";
+
+// Lib
+import getUserRole from "@/lib/getUserRole";
 
 type SidebarLink = {
   label: string;
@@ -52,10 +56,10 @@ const links: SidebarLink[] = [
 ];
 
 const logoutLink = {
-    label: "Sair",
-    href: "/api/logout",
-    icon: LogOut,
-  }
+  label: "Sair",
+  href: "/api/logout",
+  icon: LogOut,
+};
 
 export default function PrivateLayout({
   children,
@@ -63,6 +67,7 @@ export default function PrivateLayout({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const { data: userRole } = getUserRole();
 
   return (
     <div className="flex">
@@ -74,14 +79,20 @@ export default function PrivateLayout({
             ))}
           </div>
           <div>
-            <SidebarLink key={"logout"} link={logoutLink}/>
+            <SidebarLink key={"logout"} link={logoutLink} />
             <div className="flex items-center justify-start gap-2 group/sidebar py-2">
-              <ShieldUser width={24} height={24} strokeWidth={1.5}/>
+              {userRole === "Admin" ? (
+                <ShieldUser width={24} height={24} strokeWidth={1.5} />
+              ) : (
+                <CircleUser width={24} height={24} strokeWidth={1.5} />
+              )}
             </div>
           </div>
         </SidebarBody>
       </Sidebar>
-      <main className="flex-1 bg-neutral-50 px-12 pt-2 rounded-tl-3xl border-l-1">{children}</main>
+      <main className="flex-1 bg-neutral-50 px-12 pt-2 rounded-tl-3xl border-l-1">
+        {children}
+      </main>
     </div>
   );
 }

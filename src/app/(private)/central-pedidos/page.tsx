@@ -1,3 +1,4 @@
+// Components
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Pedido from "@/components/ui/pedido";
@@ -11,6 +12,7 @@ import { ListFilter, User, Plus } from "lucide-react";
 import Image from "next/image";
 
 export default function CentralPedidos() {
+  
   return (
     <div className="flex flex-col items-center w-2/3 mx-auto">
       <h1 className="text-center font-semibold text-xl tracking-tight">
@@ -40,7 +42,7 @@ export default function CentralPedidos() {
         </div>
         <div className="relative w-fit">
           <Image
-            src="/bttnBorder.svg"
+            src="/images/bttnBorder.svg"
             alt=""
             width={200}
             height={128}
@@ -57,7 +59,7 @@ export default function CentralPedidos() {
         Pedidos em Aberto
       </h2>
       <div className="flex flex-wrap gap-4 my-4">
-
+        
       </div>
     </div>
   );

@@ -10,12 +10,12 @@ import Link from "next/link";
 
 // import { Decimal } from "@prisma/client/runtime/library";
 
-type PedidoType = {
+export type PedidoType = {
   id: number
-  criadoEm: Date
+  criado_em: Date
   cliente: string
   autor: string
-  valorTotal: string
+  valor_total: string
 }
 
 type PedidoProps = {
@@ -30,7 +30,7 @@ const patrick = Patrick_Hand({
 });
 
 export default function Pedido({ className, pedido }: PedidoProps) {
-  const data = new Date(pedido.criadoEm);
+  const data = new Date(pedido.criado_em);
 
 // Formatar a data no fuso horário brasileiro (Brasília, UTC-3)
   const horaFormatada = data.toLocaleString("pt-BR", {
@@ -52,7 +52,7 @@ export default function Pedido({ className, pedido }: PedidoProps) {
         <p className="text-end">{ horaFormatada }</p>
         <p className="text-center">Pedido { pedido.id }</p>
         <div className="flex justify-between">
-          <p className="text-start text-sm">{ pedido.valorTotal }</p>
+          <p className="text-start text-sm">{ pedido.valor_total }</p>
           <p className="text-start text-sm mr-5">{ pedido.autor }</p>
         </div>
         <div className="absolute bottom-0 right-0 bg-orange-400 w-6 h-5"></div>

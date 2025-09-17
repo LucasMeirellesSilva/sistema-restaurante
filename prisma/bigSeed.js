@@ -21,23 +21,23 @@ async function main() {
 
   const senhaHash = await bcrypt.hash("senha123", 10);
 
-  await prisma.usuario.createMany({
-    data: [
-      { nome: "Caixa", senha: senhaHash, tipo_id: tipoCaixa.id },
-      { nome: "Garçom", senha: senhaHash, tipo_id: tipoGarcom.id },
-    ],
-    skipDuplicates: true,
-  });
+  // await prisma.usuario.createMany({
+  //   data: [
+  //     { nome: "Caixa", senha: senhaHash, tipo_id: tipoCaixa.id },
+  //     { nome: "Garçom", senha: senhaHash, tipo_id: tipoGarcom.id },
+  //   ],
+  //   skipDuplicates: true,
+  // });
 
   // -----------------------
   // Categorias e Produtos
   // -----------------------
-  const categoriasData = [
-    { nome: "Categoria 1" },
-    { nome: "Categoria 2" },
-    { nome: "Categoria 3" },
-  ];
-  await prisma.categoria.createMany({ data: categoriasData, skipDuplicates: true });
+  // const categoriasData = [
+  //   { nome: "Categoria 1" },
+  //   { nome: "Categoria 2" },
+  //   { nome: "Categoria 3" },
+  // ];
+  // await prisma.categoria.createMany({ data: categoriasData, skipDuplicates: true });
   const categorias = await prisma.categoria.findMany();
 
   const produtosData = [];
@@ -76,13 +76,13 @@ async function main() {
   // -----------------------
   // 3️⃣ Pedidos e Itens
   // -----------------------
-  const totalPedidos = 10000; // 10k pedidos x 10 itens = 100k itens
-  const itensPorPedido = 10;
+  const totalPedidos = 10; // 10k pedidos x 10 itens = 100k itens
+  const itensPorPedido = 5;
 
   console.log("📝 Criando pedidos e itens...");
 
-  const batchPedidos = 500; // batch de pedidos
-  const batchItens = 5000;  // batch de itens
+  const batchPedidos = 1; // batch de pedidos
+  const batchItens = 1;  // batch de itens
 
   let pedidosData = [];
   let itensData = [];

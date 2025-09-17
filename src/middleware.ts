@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse, type MiddlewareConfig } from "next/server";
 
-const publicRoutes = [{ path: "/", whenAuthenticated: "redirect" }] as const;
+const publicRoutes = [{ path: "/", whenAuthenticated: "redirect" }, { path: "/recuperar-acesso", whenAuthenticated: "redirect" }] as const;
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE = "/";
 
@@ -43,7 +43,8 @@ export const config: MiddlewareConfig = {
         - /api/*
         - /_next/*
         - /favicon.ico
+        - /api/login
     */
-    "/((?!api|_next|favicon.ico|login).*)",
+    "/((?!_next|favicon.ico|api/login).*)",
   ],
 };

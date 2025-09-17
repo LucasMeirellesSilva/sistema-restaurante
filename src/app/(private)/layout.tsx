@@ -14,7 +14,7 @@ import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/Sidebar";
 import React, { useState } from "react";
 
 // Lib
-import getUserRole from "@/lib/getUserRole";
+import useUserRole from "@/lib/useUserRole";
 
 type SidebarLink = {
   label: string;
@@ -67,7 +67,7 @@ export default function PrivateLayout({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-  const { data: userRole } = getUserRole();
+  const { data: userRole } = useUserRole();
 
   return (
     <div className="flex">

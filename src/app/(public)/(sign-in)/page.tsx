@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 // Next
 import { useRouter } from 'next/navigation';
@@ -19,6 +19,8 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const images = ["/images/gerenciar.svg", "/images/otimizar.svg","/images/prosperar.svg"]
 
+const tables = 10;
+
 export default function SignIn() {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -26,7 +28,9 @@ export default function SignIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [imageIdx, setImageIdx] = useState(0)
+  const [imageIdx, setImageIdx] = useState(0);
+  const userRef = useRef<HTMLInputElement>(null);
+  const passRef = useRef<HTMLInputElement>(null);
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -36,11 +40,22 @@ export default function SignIn() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (error === "user" && userRef.current) {
+      userRef.current.focus();
+      setUsername("");
+    }
+    if (error === "password" && passRef.current) {
+      passRef.current.focus();
+      setPassword("");
+    }
+  }, [error]);
+
   type LoginVariables = { username: string; password: string };
 
   const loginMutation = useMutation({
     mutationFn: async ({ username, password }: LoginVariables) => {
-      const res = await fetch("http://localhost:3000/api/login", {
+      const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -80,6 +95,7 @@ export default function SignIn() {
             className="absolute top-1/2 -translate-y-1/2"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 50 }}
             transition={{ duration: 1 }}
             >
               <Image src={images[imageIdx]} alt="Imagem de ilustração do login" width={600} height={600} className="h-fit select-none" draggable="false" priority />
@@ -106,23 +122,30 @@ export default function SignIn() {
           <div>
             <Label htmlFor="username" className="text-md"> Usuário </Label>
             <div className="relative">
-              <Input type="text" id="username" className="indent-5 w-64" onChange={(e) => setUsername(e.target.value)}/>
+              <Input type="text" id="username" className="indent-5 w-64" onChange={(e) => setUsername(e.target.value)} ref={userRef}/>
               <User className="absolute left-2 top-1/2 -translate-y-1/2 text-neutral-500"/>
             </div>
           </div>
 
           <Label htmlFor="password" className="text-md font-medium">
             Senha
-            <Input type="password" id="password" placeholder="****" className="w-64" onChange={(e) => setPassword(e.target.value)}/>
+            <Input type="password" id="password" placeholder="****" className="w-64" onChange={(e) => setPassword(e.target.value)} ref={passRef}/>
           </Label>
 
-          {error && error === "user" && <p className="text-red-600">Usuário não encontrado.</p>}
-          {error && error === "password" && <p className="text-red-600">Senha inválida.</p>}
-          {error && error === "failedToFetch" && <p className="text-red-600">Erro na conexão com o servidor, tente reiniciar a aplicação.</p>}
+          <motion.div
+          key={error}
+          initial={{ x: -40 }}
+          animate={{ x: [0, -3, 3, -3, 3, 0] }}
+          transition={{ duration: 0.6}}
+          >
+            {error && error === "user" && <p className="text-red-600 animate-shake-once">Usuário não encontrado.</p>}
+            {error && error === "password" && <p className="text-red-600">Senha inválida.</p>}
+            {error && error === "failedToFetch" && <p className="text-red-600">Erro na conexão com o servidor, tente reiniciar a aplicação.</p>}
+          </motion.div>
+
 
           <Button type="submit" className="bg-neutral-700 cursor-pointer">
-            Entrar
-            <LogIn />
+            {loginMutation.isPending ? <div className="w-6 h-6 border-4 border-[#EA580C] border-t-transparent rounded-full animate-spin"></div> : <div className="flex gap-2 items-center">Entrar <LogIn /></div> }
           </Button>
         </form>
       </div>

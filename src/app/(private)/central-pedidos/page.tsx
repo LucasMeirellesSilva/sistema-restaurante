@@ -1,3 +1,7 @@
+'use client'
+
+import { useState, useEffect } from "react";
+
 // Components
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,7 +15,13 @@ import {
 import { ListFilter, User, Plus } from "lucide-react";
 import Image from "next/image";
 
+import { usePedidosPendentes } from "@/lib/usePedidosPendentes";
+import { PedidoType } from "@/components/ui/pedido";
+
 export default function CentralPedidos() {
+  const [orderBy, setOrderBy] = useState("Horário");
+
+  const { data: pedidos, isLoading } = usePedidosPendentes();
   
   return (
     <div className="flex flex-col items-center w-2/3 mx-auto">
@@ -22,11 +32,11 @@ export default function CentralPedidos() {
         <DropdownMenu>
           <DropdownMenuTrigger className="text-sm flex items-center gap-1 whitespace-nowrap select-none cursor-pointer">
             <ListFilter width={24} height={24} className="text-neutral-800" />
-            Ordenar por: Horário
+            Ordenar por: {orderBy}
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>Horário</DropdownMenuItem>
-            <DropdownMenuItem>Autor</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setOrderBy("Horário")} > Horário </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setOrderBy("Autor")} > Autor </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         <div className="relative">
@@ -49,8 +59,8 @@ export default function CentralPedidos() {
             className="select-none"
             draggable={false}
           />
-          <Button className="absolute py-5 bg-orange-600 hover:bg-orange-600 cursor-pointer hover:shadow-lg inset-0 my-auto mx-auto w-fit">
-            <Plus size={32}/>
+          <Button className="absolute py-5 bg-orange-600 hover:bg-orange-600 cursor-pointer hover:shadow-lg hover:scale-105 inset-0 my-auto mx-auto w-fit">
+            <Plus size={32} className="scale-120" />
             Criar Pedido
           </Button>
         </div>
@@ -59,7 +69,9 @@ export default function CentralPedidos() {
         Pedidos em Aberto
       </h2>
       <div className="flex flex-wrap gap-4 my-4">
-        
+        {!isLoading && pedidos?.map((p: PedidoType) => (
+          <Pedido key={p.id} pedido={p} />
+        ))}
       </div>
     </div>
   );

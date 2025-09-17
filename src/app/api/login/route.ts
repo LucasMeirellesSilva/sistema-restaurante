@@ -1,21 +1,19 @@
 import jwt from "jsonwebtoken";
-import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import getUsuarioPorNome from "@/repository/usuario/getUsuarioPorNomeService";
 
 const SECRET: string = process.env.JWT_SECRET as string;
 
-export async function POST(req: NextRequest) {
-  const { username, password } = await req.json();
+export type LoginRequest = {
+  username: string,
+  password: string
+}
 
-  const user = await prisma.usuario.findUnique({
-    where: { nome: username },
-    include: {
-      tipo: {
-        select: { descricao: true },
-      },
-    },
-  });
+export async function POST(req: NextRequest) {
+  const { username, password }: LoginRequest  = await req.json();
+
+  const user = await getUsuarioPorNome(username);
 
   if (!user) {
     return NextResponse.json(
@@ -30,7 +28,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Senha inválida" }, { status: 401 });
   }
 
-  const token = jwt.sign({ id: user?.id, nome: user?.nome }, SECRET, {
+  const token = jwt.sign({ id: user?.id, nome: user?.nome, role: user?.tipo.descricao }, SECRET, {
     expiresIn: "12h",
   });
 

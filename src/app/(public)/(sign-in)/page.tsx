@@ -19,8 +19,6 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const images = ["/images/gerenciar.svg", "/images/otimizar.svg","/images/prosperar.svg"]
 
-const tables = 10;
-
 export default function SignIn() {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -125,6 +123,14 @@ export default function SignIn() {
               <Input type="text" id="username" className="indent-5 w-64" onChange={(e) => setUsername(e.target.value)} ref={userRef}/>
               <User className="absolute left-2 top-1/2 -translate-y-1/2 text-neutral-500"/>
             </div>
+            <motion.div
+            key={error}
+            initial={{ x: -40 }}
+            animate={{ x: [0, -3, 3, -3, 3, 0] }}
+            transition={{ duration: 0.6}}
+            >
+              {error && error === "user" && <p className="text-red-600 animate-shake-once">Usuário não encontrado.</p>}
+            </motion.div>
           </div>
 
           <Label htmlFor="password" className="text-md font-medium">
@@ -138,7 +144,6 @@ export default function SignIn() {
           animate={{ x: [0, -3, 3, -3, 3, 0] }}
           transition={{ duration: 0.6}}
           >
-            {error && error === "user" && <p className="text-red-600 animate-shake-once">Usuário não encontrado.</p>}
             {error && error === "password" && <p className="text-red-600">Senha inválida.</p>}
             {error && error === "failedToFetch" && <p className="text-red-600">Erro na conexão com o servidor, tente reiniciar a aplicação.</p>}
           </motion.div>

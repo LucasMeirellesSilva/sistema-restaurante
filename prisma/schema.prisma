@@ -33,8 +33,9 @@ model Usuario {
 }
 
 model Mesa {
-  id      Int      @id @default(autoincrement())
-  numero  String   @unique
+  id          Int       @id @default(autoincrement())
+  numero      String    @unique
+  disponivel  Boolean   @default(true)
   
   // Relacionamento: Uma mesa pode estar em vários pedidos.
   pedidos Pedido[]
@@ -75,12 +76,31 @@ model Produto {
   @@unique([nome, categoria_id])
 }
 
+model FormaPagamento {
+  id            Int       @id @default(autoincrement())
+  descricao     String
+
+  pagamentos    Pagamento[]
+}
+
+model Pagamento {
+  id            Int       @id @default(autoincrement())
+  valor         Decimal   @db.Decimal(10, 2)
+
+  forma_pagamento_id  Int
+  pedido_id           Int
+
+  forma_pagamento     FormaPagamento @relation(fields: [forma_pagamento_id], references: [id])
+  pedido              Pedido @relation(fields: [pedido_id], references: [id])
+}
+
 model Status {
   id          Int         @id @default(autoincrement())
   descricao   String
 
   pedidos     Pedido[]
 }
+
 
 model Pedido {
   id            Int       @id @default(autoincrement())
@@ -94,11 +114,12 @@ model Pedido {
   usuario_id    Int
   
   // Relacionamentos
-  mesa        Mesa?     @relation(fields: [mesa_id], references: [id])
-  cliente     Cliente?  @relation(fields: [cliente_id], references: [id])
-  status      Status    @relation(fields: [status_id], references: [id])
-  usuario     Usuario   @relation(fields: [usuario_id], references: [id])
+  mesa        Mesa?       @relation(fields: [mesa_id], references: [id])
+  cliente     Cliente?    @relation(fields: [cliente_id], references: [id])
+  status      Status      @relation(fields: [status_id], references: [id])
+  usuario     Usuario     @relation(fields: [usuario_id], references: [id])
   itens       Item[]
+  pagamentos  Pagamento[]
 
   @@index([status_id])
   @@index([criado_em])

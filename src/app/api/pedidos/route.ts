@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
-import getPedidosComValorTotal from "@/repository/pedido/getPedidosComValorTotalService";
+import getPedidosComValorTotal from "@/repository/pedido/getPedidosService";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);

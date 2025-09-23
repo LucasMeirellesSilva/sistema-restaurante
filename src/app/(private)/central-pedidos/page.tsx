@@ -22,6 +22,7 @@ export default function CentralPedidos() {
   const [orderBy, setOrderBy] = useState("Horário");
 
   const { data: pedidos, isLoading } = usePedidosPendentes();
+  console.log(pedidos)
   
   return (
     <div className="flex flex-col items-center w-2/3 mx-auto">

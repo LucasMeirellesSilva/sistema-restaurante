@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
-import getPedidosPendentesComValorTotal from "@/repository/pedido/getPedidosPendentesComValorTotalService";
+import getPedidosPendentesComValorTotal from "@/repository/pedido/getPedidosPendentesService";
 
 export async function GET(req: NextRequest) {
 
@@ -8,9 +8,7 @@ export async function GET(req: NextRequest) {
 
   if (!isValid) return res;
 
-  const pedidosComValorTotal = getPedidosPendentesComValorTotal();
+  const pedidosComValorTotal = await getPedidosPendentesComValorTotal();
 
-  const response = NextResponse.json(pedidosComValorTotal);
-
-  return response;
+  return NextResponse.json(pedidosComValorTotal);
 }

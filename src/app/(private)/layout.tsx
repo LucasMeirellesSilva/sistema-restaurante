@@ -13,6 +13,8 @@ import {
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/Sidebar";
 import React, { useState } from "react";
 
+import { usePathname } from "next/navigation";
+
 // Lib
 import useUserRole from "@/lib/useUserRole";
 
@@ -68,6 +70,7 @@ export default function PrivateLayout({
 }) {
   const [open, setOpen] = useState(false);
   const { data: userRole } = useUserRole();
+  const pathname = usePathname();
 
   return (
     <div className="flex">
@@ -75,7 +78,7 @@ export default function PrivateLayout({
         <SidebarBody className="h-screen justify-between gap-10 items-baseline font-medium">
           <div>
             {links.map((link, idx) => (
-              <SidebarLink key={idx} link={link} />
+              <SidebarLink key={idx} link={link} className={pathname === link.href ? "bg-neutral-300" : ""}/>
             ))}
           </div>
           <div>

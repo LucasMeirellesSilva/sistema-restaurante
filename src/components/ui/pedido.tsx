@@ -8,20 +8,12 @@ import {
 } from "./context-menu";
 import Link from "next/link";
 
-// import { Decimal } from "@prisma/client/runtime/library";
-
-export type PedidoType = {
-  id: number
-  criado_em: Date
-  cliente: string
-  autor: string
-  valor_total: string
-}
+import { pedidoModelType } from "@/schemas/pedidoSchema";
 
 type PedidoProps = {
   className?: string
-  pedido: PedidoType
-}
+  pedido: pedidoModelType
+};
 
 const patrick = Patrick_Hand({
   weight: "400",
@@ -30,39 +22,30 @@ const patrick = Patrick_Hand({
 });
 
 export default function Pedido({ className, pedido }: PedidoProps) {
-  const data = new Date(pedido.criado_em);
-
-// Formatar a data no fuso horário brasileiro (Brasília, UTC-3)
-  const horaFormatada = data.toLocaleString("pt-BR", {
-    timeZone: "America/Sao_Paulo",  // Fuso horário brasileiro
-    hour12: false,
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
   return (
     <ContextMenu>
       <ContextMenuTrigger
         className={cn(
-          "relative flex flex-col justify-between w-[150px] h-[120px] bg-yellow-400 rounded-[4px] shadow-lg cut-br px-2 box-border",
+          "relative flex flex-col justify-between w-[150px] h-[120px] bg-yellow-400 rounded-[4px]  cut-br px-2 box-border",
           patrick.className,
           className
         )}
       >
-        <p className="text-end">{ horaFormatada }</p>
+        <p className="text-end">{ pedido.criadoEm }</p>
         <p className="text-center">Pedido { pedido.id }</p>
         <div className="flex justify-between">
-          <p className="text-start text-sm">{ pedido.valor_total }</p>
+          <p className="text-start text-sm">{ pedido.valorTotal }</p>
           <p className="text-start text-sm mr-5">{ pedido.autor }</p>
         </div>
         <div className="absolute bottom-0 right-0 bg-orange-400 w-6 h-5"></div>
       </ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem>
-          <Link href={"#"}>Abrir</Link>
+        <ContextMenuItem className="cursor-pointer">
+          <Link href={"#"}> Abrir </Link>
         </ContextMenuItem>
-        <ContextMenuItem>Editar</ContextMenuItem>
-        <ContextMenuItem>Cancelar</ContextMenuItem>
+        <ContextMenuItem className="cursor-pointer"> Editar</ContextMenuItem>
+        <ContextMenuItem className="cursor-pointer"> Cancelar </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   );

@@ -2,7 +2,8 @@ import { z, ZodError } from 'zod';
 
 export const itemFormSchema = z.object({
     produtoId: z.number(),
-    quantidade: z.number()
+    quantidade: z.number(),
+    pertenceId: z.number().optional()
 })
 
 export type ItemFormType = z.infer<typeof itemFormSchema>

@@ -8,11 +8,11 @@ import {
 } from "./context-menu";
 import Link from "next/link";
 
-import { pedidoModelType } from "@/schemas/pedidoSchema";
+import { PedidoModelType } from "@/schemas/pedidoSchema";
 
 type PedidoProps = {
   className?: string
-  pedido: pedidoModelType
+  pedido: PedidoModelType
 };
 
 const patrick = Patrick_Hand({

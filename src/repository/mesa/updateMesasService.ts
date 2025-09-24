@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-export default async function createMesas(quantidade: number) {
+export default async function updateMesas(quantidade: number) {
   try {
     const result = await prisma.mesa.updateMany({
       where: { id: { gt: quantidade } },

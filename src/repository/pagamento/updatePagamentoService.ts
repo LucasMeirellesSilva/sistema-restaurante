@@ -7,7 +7,7 @@ type PagamentoUpdate = Partial<PagamentoFormType>
 
 export default async function updatePagamento(id: number, { formaPagamentoId, pedidoId, valor }: PagamentoUpdate) {
   try {
-    const pagamento = await prisma.pagamento.update({
+    const result = await prisma.pagamento.update({
       where: { id: id },
       data: {
         forma_pagamento_id: formaPagamentoId,
@@ -16,7 +16,7 @@ export default async function updatePagamento(id: number, { formaPagamentoId, pe
       }
     });
 
-    return { pagamento };
+    return { result };
   } catch (err) {
       if (err instanceof PrismaClientKnownRequestError) {
         if (err.code === "P2003") {

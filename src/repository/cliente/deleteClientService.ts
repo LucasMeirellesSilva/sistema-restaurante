@@ -2,9 +2,9 @@ import { prisma } from "@/lib/prisma";
 
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export default async function deletePagamento(id: number) {
+export default async function deleteCliente(id: number) {
   try {
-    const result = await prisma.pagamento.delete({
+    const result = await prisma.cliente.delete({
       where: { id: id }
     });
 
@@ -12,7 +12,7 @@ export default async function deletePagamento(id: number) {
   } catch (err) {
       if (err instanceof PrismaClientKnownRequestError) {
         if (err.code === "P2025") {
-          throw new Error("Erro: Pagamento não encontrado.");
+          throw new Error("Erro: Cliente não encontrado.");
         }
       }
     }

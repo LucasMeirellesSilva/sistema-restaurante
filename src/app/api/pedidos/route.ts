@@ -20,10 +20,10 @@ export async function GET(req: NextRequest) {
     return res;
   }
   
-  const { pedidosComValorTotal, totalPages, total } = await getPedidosComValorTotal({ limit, skip });
+  const { pedidosFormatados, totalPages, total } = await getPedidosComValorTotal({ limit, skip });
 
   const response = NextResponse.json({
-    items: pedidosComValorTotal,
+    items: pedidosFormatados,
     page,
     totalPages,
     total,

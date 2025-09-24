@@ -15,14 +15,13 @@ import {
 import { ListFilter, User, Plus } from "lucide-react";
 import Image from "next/image";
 
-import { usePedidosPendentes } from "@/lib/usePedidosPendentes";
-import { PedidoType } from "@/components/ui/pedido";
+import { usePedidosPendentes } from "@/lib/hooks/usePedidosPendentes";
+import { PedidoModelType } from "@/schemas/pedidoSchema";
 
 export default function CentralPedidos() {
   const [orderBy, setOrderBy] = useState("Horário");
 
   const { data: pedidos, isLoading } = usePedidosPendentes();
-  console.log(pedidos)
   
   return (
     <div className="flex flex-col items-center w-2/3 mx-auto">
@@ -70,7 +69,7 @@ export default function CentralPedidos() {
         Pedidos em Aberto
       </h2>
       <div className="flex flex-wrap gap-4 my-4">
-        {!isLoading && pedidos?.map((p: PedidoType) => (
+        {!isLoading && pedidos?.map((p: PedidoModelType) => (
           <Pedido key={p.id} pedido={p} />
         ))}
       </div>

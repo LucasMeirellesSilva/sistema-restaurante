@@ -16,7 +16,7 @@ import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 
 // Lib
-import useUserRole from "@/lib/useUserRole";
+import useUserRole from "@/lib/hooks/useUserRole";
 
 type SidebarLink = {
   label: string;

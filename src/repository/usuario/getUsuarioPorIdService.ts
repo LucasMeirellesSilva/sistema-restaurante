@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 export default async function getUsuarioPorId(id: number) {
-  const user = await prisma.usuario.findUnique({
+  const result = await prisma.usuario.findUnique({
     where: { id: id },
     select: {
       tipo: {
@@ -12,5 +12,5 @@ export default async function getUsuarioPorId(id: number) {
     },
   });
 
-  return user;
+  return result;
 }

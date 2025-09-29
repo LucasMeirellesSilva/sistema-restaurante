@@ -15,12 +15,13 @@ export default async function createProduto({ categoriaId, nome, valor, adiciona
       },
     });
 
-    return { produto };
+    return produto;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
       if (err.code === "P2025") {
         throw new Error("Erro: Categoria não encontrada.");
       }
     }
+    throw err;
   }
 }

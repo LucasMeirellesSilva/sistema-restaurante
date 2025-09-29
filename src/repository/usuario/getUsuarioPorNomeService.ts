@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 export default async function getUsuarioPorNome(username: string) {
-  const user = await prisma.usuario.findUnique({
+  const result = await prisma.usuario.findUnique({
     where: { nome: username },
     include: {
       tipo: {
@@ -10,5 +10,5 @@ export default async function getUsuarioPorNome(username: string) {
     },
   });
 
-  return user;
+  return result;
 }

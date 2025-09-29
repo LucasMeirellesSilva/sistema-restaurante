@@ -27,16 +27,16 @@ export default function Pedido({ className, pedido }: PedidoProps) {
     <ContextMenu>
       <ContextMenuTrigger
         className={cn(
-          "relative flex flex-col justify-between w-[150px] h-[120px] bg-yellow-400 rounded-[4px]  cut-br px-2 box-border",
+          "relative flex flex-col justify-between w-[150px] h-[120px] bg-yellow-400 rounded-[4px] cut-br px-2 box-border",
           patrick.className,
           className
         )}
       >
-        <p className="text-end">{ pedido.criadoEm }</p>
-        <p className="text-center">Pedido { pedido.id }</p>
+        <p className="text-end"> { pedido.criadoEm }</p>
+        <p className="text-center"> Pedido { pedido.id }</p>
         <div className="flex justify-between">
-          <p className="text-start text-sm">{ pedido.valorTotal }</p>
-          <p className="text-start text-sm mr-5">{ pedido.autor }</p>
+          <p className="text-start text-sm"> { pedido.valorTotal }</p>
+          <p className="text-start text-sm mr-5"> { pedido.autor }</p>
         </div>
         <div className="absolute bottom-0 right-0 bg-orange-400 w-6 h-5"></div>
       </ContextMenuTrigger>
@@ -44,7 +44,7 @@ export default function Pedido({ className, pedido }: PedidoProps) {
         <ContextMenuItem className="cursor-pointer">
           <Link href={"#"}> Abrir </Link>
         </ContextMenuItem>
-        <ContextMenuItem className="cursor-pointer"> Editar</ContextMenuItem>
+        <ContextMenuItem className="cursor-pointer"> Editar </ContextMenuItem>
         <ContextMenuItem className="cursor-pointer"> Cancelar </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

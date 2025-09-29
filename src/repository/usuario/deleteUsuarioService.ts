@@ -8,12 +8,13 @@ export default async function deleteUsuario(id: number) {
       where: { id: id }
     });
 
-    return { usuario };
+    return usuario;
   } catch (err) {
-      if (err instanceof PrismaClientKnownRequestError) {
-        if (err.code === "P2025") {
-          throw new Error("Erro: Usuário não encontrado.");
-        }
+    if (err instanceof PrismaClientKnownRequestError) {
+      if (err.code === "P2025") {
+        throw new Error("Erro: Usuário não encontrado.");
       }
     }
+    throw err;
+  }
 }

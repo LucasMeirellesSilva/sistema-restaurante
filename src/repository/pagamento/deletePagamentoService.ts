@@ -8,12 +8,13 @@ export default async function deletePagamento(id: number) {
       where: { id: id }
     });
 
-    return { result };
+    return result;
   } catch (err) {
-      if (err instanceof PrismaClientKnownRequestError) {
-        if (err.code === "P2025") {
-          throw new Error("Erro: Pagamento não encontrado.");
-        }
+    if (err instanceof PrismaClientKnownRequestError) {
+      if (err.code === "P2025") {
+        throw new Error("Erro: Pagamento não encontrado.");
       }
     }
+    throw err;
+  }
 }

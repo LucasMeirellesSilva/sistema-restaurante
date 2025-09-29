@@ -1,30 +1,23 @@
-import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 import { ItemFormType } from "@/schemas/itemSchema";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Decimal, PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export default async function createItem(pedidoId: number, { produtoId, quantidade, pertenceId }: ItemFormType) {
+export type ItemCreate = ItemFormType & { pedidoId: number, valorUnitario: Decimal }
+
+export default async function createItem(tx: Prisma.TransactionClient, { pedidoId, produtoId, quantidade, pertenceId, valorUnitario }: ItemCreate) {
   try {
-    const produto = await prisma.produto.findUnique({
-      where: { id: produtoId },
-      select: {
-        valor: true
-      }
-    });
-
-    if(!produto) throw new Error("Erro: Produto não encontrado")
-
-    const result = await prisma.item.create({
+    const result = await tx.item.create({
       data: {
         produto_id: produtoId,
         pedido_id: pedidoId,
-        valor_unitario: produto.valor,
+        valor_unitario: valorUnitario,
         quantidade: quantidade,
         pertence_a_id: pertenceId
       },
     });
     
-    return { result };
+    return result;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
       if (err.code === "P2003") {
@@ -32,5 +25,6 @@ export default async function createItem(pedidoId: number, { produtoId, quantida
         throw new Error(`Erro: Relacionamento inválido em ${campos?.join(", ")}`);
       }
     }
+    throw err;
   }
 }

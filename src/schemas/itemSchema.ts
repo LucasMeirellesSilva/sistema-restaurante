@@ -19,9 +19,9 @@ export function validateItemForm(item: unknown): ItemFormType | ZodError {
 export const itemModelSchema = z.object({
     id: z.number(),
     valorUnitario: z.string(),
-    quantidade: z.string(),
+    quantidade: z.number(),
     produto: z.string(),
-    pertenceId: z.number()
+    pertenceId: z.number().nullable()
 });
 
 export type ItemModelType = z.infer<typeof itemModelSchema>

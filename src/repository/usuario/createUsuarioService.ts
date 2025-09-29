@@ -16,7 +16,7 @@ export default async function createUsuario({ tipoId, nome, senha, }: UsuarioFor
       },
     });
 
-    return { usuario };
+    return usuario;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
       if (err.code === "P2002") {
@@ -27,5 +27,6 @@ export default async function createUsuario({ tipoId, nome, senha, }: UsuarioFor
         throw new Error("Erro: Tipo de usuário não encontrado.");
       }
     }
+    throw err;
   }
 }

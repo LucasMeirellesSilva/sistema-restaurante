@@ -8,12 +8,13 @@ export default async function deleteProduto(id: number) {
       where: { id: id }
     });
 
-    return { produto };
+    return produto;
   } catch (err) {
-      if (err instanceof PrismaClientKnownRequestError) {
-        if (err.code === "P2025") {
-          throw new Error("Erro: Produto não encontrado.");
-        }
+    if (err instanceof PrismaClientKnownRequestError) {
+      if (err.code === "P2025") {
+        throw new Error("Erro: Produto não encontrado.");
       }
     }
+    throw err;
+  }
 }

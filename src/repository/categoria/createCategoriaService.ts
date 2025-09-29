@@ -11,7 +11,7 @@ export default async function createCategoria({ nome }: CategoriaFormType) {
       },
     });
     
-    return { result };
+    return result;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
       if (err.code === "P2002") {

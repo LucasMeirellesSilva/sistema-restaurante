@@ -13,8 +13,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Estabelecimento {
+  id                    Int     @id @default(autoincrement())
+  nome                  String
+  cnpj                  String  @unique
+  numero_mesas          Int
+  pergunta_seguranca    String
+  resposta_seguranca    String
+}
+
 model Tipo {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   descricao   String
 
   usuarios    Usuario[]
@@ -134,7 +143,7 @@ model Item {
   quantidade      Int
   
   pedido_id       Int
-  produto_id      Int
+  produto_id      Int?
   
   // --- RELACIONAMENTO UNÁRIO (AUTO-RELACIONAMENTO) ---
   // Um item adicional pertence a um item principal.
@@ -150,7 +159,7 @@ model Item {
   
   // Relacionamentos com outras tabelas.
   pedido          Pedido  @relation(fields: [pedido_id], references: [id], onDelete: Cascade)
-  produto         Produto @relation(fields: [produto_id], references: [id])
+  produto         Produto? @relation(fields: [produto_id], references: [id], onDelete: SetNull)
   
   @@index([pedido_id])
   @@index([pertence_a_id])

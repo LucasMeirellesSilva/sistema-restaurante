@@ -10,12 +10,13 @@ export default async function createMesas(mesas: MesaModelType[]) {
       skipDuplicates: true
     });
     
-    return { result };
+    return result;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
       if (err.code === "P2002") {
         throw new Error("Erro: Número de mesa em uso.");
       }
+    throw err;
     }
   }
 }

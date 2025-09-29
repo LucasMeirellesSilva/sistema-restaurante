@@ -11,7 +11,7 @@ export type LoginRequest = {
 }
 
 export async function POST(req: NextRequest) {
-  const { username, password }: LoginRequest  = await req.json();
+  const { username, password }: LoginRequest = await req.json();
 
   const user = await getUsuarioPorNome(username);
 
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     path: "/",
     maxAge: 60 * 60 * 12,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
   });
 
   return response;

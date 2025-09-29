@@ -3,7 +3,6 @@ import { z, ZodError } from 'zod';
 import { itemModelSchema, itemFormSchema } from './itemSchema';
 
 export const pedidoFormSchema = z.object({
-    autorId: z.number(),
     clienteId: z.number().optional(),
     mesaId: z.number().optional(),
     observacao: z.string().max(100).optional(),

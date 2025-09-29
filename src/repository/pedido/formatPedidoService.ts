@@ -1,4 +1,6 @@
 import { Prisma } from "@prisma/client";
+import { PedidoModelType, pedidoModelSchema } from "@/schemas/pedidoSchema";
+import { ItemModelType } from "@/schemas/itemSchema";
 
 type PedidoComItens = Prisma.PedidoGetPayload<{
   include: {
@@ -19,6 +21,16 @@ type PedidoComItens = Prisma.PedidoGetPayload<{
     cliente: {
       select: {
         nome: true;
+      };
+    };
+    mesa: {
+      select: {
+        numero: true;
+      };
+    };
+    status: {
+      select: {
+        descricao: true;
       };
     };
   };
@@ -61,24 +73,32 @@ export default function formatPedidoService(pedidos: PedidoComItens[]) {
       minute: "2-digit",
     });
 
-    pedido.itens.map((item) => {
-      const itemFormatado = {
-        id: item.id,
-        valorUnitario: item.valor_unitario,
-        quantidade: item.quantidade,
-        produto: item.produto.nome,
-        pertenceId: item.pertence_a_id,
-      };
-      return itemFormatado;
-    });
+    const itensFormatados: ItemModelType[] = pedido.itens.map((item) => ({
+      id: item.id,
+      valorUnitario: new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }).format(Number(item.valor_unitario)),
+      quantidade: item.quantidade,
+      produto: item.produto.nome,
+      pertenceId: item.pertence_a_id,
+    }));
 
-    return {
-      ...pedido,
+    const pedidoFormatado: PedidoModelType = {
+      id: pedido.id,
       autor: pedido.usuario.nome,
-      cliente: pedido.cliente?.nome,
+      cliente: pedido.cliente?.nome ?? null,
+      mesa: pedido.mesa?.numero ?? null,
+      observacao: pedido.observacao,
+      status: pedido.status.descricao,
+      itens: itensFormatados,
       valorTotal: valorTotalFormatado,
       criadoEm: horaFormatada,
     };
+
+    const pedidoValidado = pedidoModelSchema.parse(pedidoFormatado);
+
+    return pedidoValidado;
   });
 
   return pedidosFormatados;

@@ -8,7 +8,7 @@ export default async function deleteCategoria(id: number) {
       where: { id: id }
     });
 
-    return { result };
+    return result;
   } catch (err) {
       if (err instanceof PrismaClientKnownRequestError) {
         if (err.code === "P2025") {

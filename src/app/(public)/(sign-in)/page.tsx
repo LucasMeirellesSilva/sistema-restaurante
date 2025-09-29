@@ -57,11 +57,14 @@ export default function SignIn() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
+        credentials: "include",
       });
 
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.message || "Erro no login");
+
+      window.location.href = "/central-pedidos";
 
       return { role: data.role };
     },

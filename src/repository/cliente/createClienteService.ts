@@ -12,10 +12,11 @@ export default async function createCliente({ nome, telefone }: ClienteFormType)
       },
     });
     
-    return { result };
+    return result;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
       throw new Error("Erro: Ocorreu um erro ao adicionar o cliente.");
     }
+    throw err;
   }
 }

@@ -15,7 +15,7 @@ export default async function createPagamento({ formaPagamentoId, pedidoId, valo
       },
     });
     
-    return { result };
+    return result;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
       if (err.code === "P2003") {
@@ -23,5 +23,6 @@ export default async function createPagamento({ formaPagamentoId, pedidoId, valo
         throw new Error(`Erro: Relacionamento inválido em ${campos?.join(", ")}`);
       }
     }
+    throw err;
   }
 }

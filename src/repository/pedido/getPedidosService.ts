@@ -32,6 +32,16 @@ export default async function getPedidos({ limit, skip }: pedidosProps) {
             nome: true,
           },
         },
+        mesa: {
+          select: {
+            numero: true,
+          },
+        },
+        status: {
+          select: {
+            descricao: true,
+          },
+        },
       },
     }),
     prisma.pedido.count(),

@@ -6,6 +6,7 @@ const SECRET: string = process.env.JWT_SECRET as string;
 
 export default async function verifyToken(req: NextRequest) {
   const cookie = await cookies();
+
   const token = cookie.get("auth")?.value;
 
   if (!token) {
@@ -24,6 +25,7 @@ export default async function verifyToken(req: NextRequest) {
       nome: string;
       role: string;
     };
+
     return { isValid: true, decoded };
   } catch {
     const res = NextResponse.redirect(new URL("/", req.url));

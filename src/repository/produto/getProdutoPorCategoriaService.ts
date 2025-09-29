@@ -5,5 +5,5 @@ export default async function getProdutosPorCategoria(categoriaId: number) {
     where: { categoria_id: categoriaId }
   });
 
-  return { produtos };
+  return produtos;
 }

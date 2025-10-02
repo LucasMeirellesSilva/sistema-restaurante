@@ -8,36 +8,30 @@ async function main() {
   console.log("🌱 Seed iniciado...");
 
   // -----------------------
-  // Tipos e Usuários
+  // Usuários
   // -----------------------
-  const tiposData = [
-    { descricao: "Caixa" },
-    { descricao: "Garçom" },
-  ];
-  await prisma.tipo.createMany({ data: tiposData, skipDuplicates: true });
-
   const tipoCaixa = await prisma.tipo.findFirst({ where: { descricao: "Caixa" } });
   const tipoGarcom = await prisma.tipo.findFirst({ where: { descricao: "Garçom" } });
 
   const senhaHash = await bcrypt.hash("senha123", 10);
 
-  // await prisma.usuario.createMany({
-  //   data: [
-  //     { nome: "Caixa", senha: senhaHash, tipo_id: tipoCaixa.id },
-  //     { nome: "Garçom", senha: senhaHash, tipo_id: tipoGarcom.id },
-  //   ],
-  //   skipDuplicates: true,
-  // });
+  await prisma.usuario.createMany({
+    data: [
+      { nome: "Pessoa 1", senha: senhaHash, tipo_id: tipoCaixa.id },
+      { nome: "Pessoa 2", senha: senhaHash, tipo_id: tipoGarcom.id },
+    ],
+    skipDuplicates: true,
+  });
 
   // -----------------------
   // Categorias e Produtos
   // -----------------------
-  // const categoriasData = [
-  //   { nome: "Categoria 1" },
-  //   { nome: "Categoria 2" },
-  //   { nome: "Categoria 3" },
-  // ];
-  // await prisma.categoria.createMany({ data: categoriasData, skipDuplicates: true });
+  const categoriasData = [
+    { nome: "Categoria 1" },
+    { nome: "Categoria 2" },
+    { nome: "Categoria 3" },
+  ];
+  await prisma.categoria.createMany({ data: categoriasData, skipDuplicates: true });
   const categorias = await prisma.categoria.findMany();
 
   const produtosData = [];

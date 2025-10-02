@@ -1,16 +1,20 @@
 import { prisma } from "@/lib/prisma";
 
 export default async function getPagamentosPorPedido(pedidoId: number) {
-  const pagamentos = await prisma.pagamento.findMany({
-    where: { id: pedidoId },
+  const pagamento = await prisma.pagamento.findUnique({
+    where: { pedido_id: pedidoId },
     include: {
-      formaPagamento: {
-        select: {
-          descricao: true,
+      formas: {
+        include: {
+          forma_pagamento: {
+            select: {
+              descricao: true,
+            },
+          },
         },
       },
     },
   });
 
-  return pagamentos;
+  return pagamento;
 }

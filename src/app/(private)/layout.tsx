@@ -17,6 +17,7 @@ import { usePathname } from "next/navigation";
 
 // Lib
 import useUserRole from "@/lib/hooks/useUserRole";
+import { cn } from "@/lib/utils";
 
 type SidebarLink = {
   label: string;
@@ -78,16 +79,16 @@ export default function PrivateLayout({
         <SidebarBody className="h-screen justify-between gap-10 items-baseline font-medium">
           <div>
             {links.map((link, idx) => (
-              <SidebarLink key={idx} link={link} className={pathname === link.href ? "bg-neutral-300" : ""}/>
+              <SidebarLink key={idx} link={link} pathname={pathname}/>
             ))}
           </div>
           <div>
-            <SidebarLink key={"logout"} link={logoutLink} />
+            <SidebarLink key={"logout"} link={logoutLink} pathname={pathname}/>
             <div className="flex items-center justify-start gap-2 group/sidebar py-2">
               {userRole === "Admin" ? (
-                <ShieldUser width={24} height={24} strokeWidth={1.5} />
+                <ShieldUser width={28} height={28} strokeWidth={1.5} />
               ) : (
-                <CircleUser width={24} height={24} strokeWidth={1.5} />
+                <CircleUser width={28} height={28} strokeWidth={1.5} />
               )}
             </div>
           </div>

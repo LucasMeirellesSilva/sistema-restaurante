@@ -1,9 +1,10 @@
 import { z, ZodError } from 'zod';
 
+import { formaPagamentoFormSchema, formaPagamentoModelSchema } from './formaPagamentoSchema';
+
 export const pagamentoFormSchema = z.object({
-    formaPagamentoId: z.number(),
     pedidoId: z.number(),
-    valor: z.string()
+    formas: z.array(formaPagamentoFormSchema)
 })
 
 export type PagamentoFormType = z.infer<typeof pagamentoFormSchema>
@@ -18,8 +19,8 @@ export function validatePagamentoForm(pagamento: unknown): PagamentoFormType | Z
 
 export const pagamentoModelSchema = z.object({
     id: z.number(),
-    valor: z.string(),
-    formaPagamento: z.string()
+    pedidoId: z.number(),
+    formas: z.array(formaPagamentoModelSchema)
 });
 
 export type PagamentoModelType = z.infer<typeof pagamentoModelSchema>

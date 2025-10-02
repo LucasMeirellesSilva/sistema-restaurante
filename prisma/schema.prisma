@@ -89,18 +89,29 @@ model FormaPagamento {
   id            Int       @id @default(autoincrement())
   descricao     String
 
-  pagamentos    Pagamento[]
+  pagamentos    PagamentoFormaPagamento[]
 }
 
 model Pagamento {
-  id            Int       @id @default(autoincrement())
-  valor         Decimal   @db.Decimal(10, 2)
+  id                  Int       @id @default(autoincrement())
 
+  pedido_id           Int       @unique
+
+  pedido              Pedido?   @relation(fields: [pedido_id], references: [id], onDelete: Cascade)
+  formas              PagamentoFormaPagamento[]
+}
+
+model PagamentoFormaPagamento {
+  valor               Decimal       @db.Decimal(10, 2)
+
+  pagamento_id        Int
   forma_pagamento_id  Int
-  pedido_id           Int
 
-  forma_pagamento     FormaPagamento @relation(fields: [forma_pagamento_id], references: [id])
-  pedido              Pedido @relation(fields: [pedido_id], references: [id])
+  pagamento           Pagamento     @relation(fields: [pagamento_id], references: [id], onDelete: Cascade)
+  forma_pagamento     FormaPagamento @relation(fields: [forma_pagamento_id], references: [id], onDelete: Cascade)
+
+  @@id([pagamento_id, forma_pagamento_id])
+  @@index([pagamento_id])
 }
 
 model Status {
@@ -117,18 +128,18 @@ model Pedido {
   criado_em     DateTime  @default(now())
   
   // Chaves estrangeiras.
+  usuario_id    Int
+  status_id     Int       @default(1)
   mesa_id       Int?
   cliente_id    Int?
-  status_id     Int       @default(1)
-  usuario_id    Int
   
   // Relacionamentos
-  mesa        Mesa?       @relation(fields: [mesa_id], references: [id])
-  cliente     Cliente?    @relation(fields: [cliente_id], references: [id])
   status      Status      @relation(fields: [status_id], references: [id])
   usuario     Usuario     @relation(fields: [usuario_id], references: [id])
+  mesa        Mesa?       @relation(fields: [mesa_id], references: [id])
+  cliente     Cliente?    @relation(fields: [cliente_id], references: [id])
+  pagamento   Pagamento?  
   itens       Item[]
-  pagamentos  Pagamento[]
 
   @@index([status_id])
   @@index([criado_em])

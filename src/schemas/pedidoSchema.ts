@@ -28,7 +28,8 @@ export const pedidoModelSchema = z.object({
     status: z.string(),
     itens: z.array(itemModelSchema),
     valorTotal: z.string(),
-    criadoEm: z.string()
+    criadoEmHora: z.string(),
+    criadoEmData: z.string()
 });
 
 export type PedidoModelType = z.infer<typeof pedidoModelSchema>;

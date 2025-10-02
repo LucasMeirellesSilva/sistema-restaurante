@@ -20,7 +20,7 @@ export const itemModelSchema = z.object({
     id: z.number(),
     valorUnitario: z.string(),
     quantidade: z.number(),
-    produto: z.string(),
+    produto: z.string().optional(),
     pertenceId: z.number().nullable()
 });
 

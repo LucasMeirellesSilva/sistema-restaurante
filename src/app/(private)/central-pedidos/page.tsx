@@ -1,27 +1,49 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, JSX } from "react";
+
+import { useEstabelecimentoData } from "@/lib/hooks/useEstabelecimentoData";
 
 // Components
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Pedido from "@/components/ui/pedido";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { ListFilter, User, Plus } from "lucide-react";
+import Mesa from "@/components/ui/mesa";
+import { User, Plus } from "lucide-react";
 import Image from "next/image";
 
 import { usePedidosPendentes } from "@/lib/hooks/usePedidosPendentes";
 import { PedidoModelType } from "@/schemas/pedidoSchema";
 
 export default function CentralPedidos() {
-  const [orderBy, setOrderBy] = useState("Horário");
+  const [mesasLivres, setMesasLivres] = useState<JSX.Element[]>([]);
 
-  const { data: pedidos, isLoading } = usePedidosPendentes();
+  const { data: pedidos, isLoading: isPedidosPendentesLoading } = usePedidosPendentes();
+  const { data: estabelecimento, isLoading: isEstabelecimentoLoading } = useEstabelecimentoData();
+
+   useEffect(() => {
+    if (estabelecimento) {
+
+      let mesasOcupadas: number[] = [];
+      if (pedidos) {
+        mesasOcupadas = pedidos
+        .filter(p => p.mesa)
+        .map(p => Number(p.mesa));
+      }
+
+      const novasMesas: JSX.Element[] = [];
+
+      for (let i = 1; i <= estabelecimento.numeroMesas; i++) {
+        if (!mesasOcupadas.includes(i)) {
+          const numero = i < 10 ? `0${i}` : `${i}`;
+          novasMesas.push(<Mesa key={i} numero={numero} />);
+        }
+      }
+
+      setMesasLivres(novasMesas);
+    }
+  }, [estabelecimento, pedidos]);
+
   
   return (
     <div className="flex flex-col items-center w-2/3 mx-auto">
@@ -29,16 +51,6 @@ export default function CentralPedidos() {
         Central de Pedidos
       </h1>
       <div className="flex items-center gap-12">
-        <DropdownMenu>
-          <DropdownMenuTrigger className="text-sm flex items-center gap-1 whitespace-nowrap select-none cursor-pointer">
-            <ListFilter width={24} height={24} className="text-neutral-800" />
-            Ordenar por: {orderBy}
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setOrderBy("Horário")} > Horário </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setOrderBy("Autor")} > Autor </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
         <div className="relative">
           <User
             className="absolute inset-0 my-auto ml-2 text-neutral-500"
@@ -69,9 +81,13 @@ export default function CentralPedidos() {
         Pedidos em Aberto
       </h2>
       <div className="flex flex-wrap gap-4 my-4">
-        {!isLoading && pedidos?.map((p: PedidoModelType) => (
-          <Pedido key={p.id} pedido={p} />
-        ))}
+        {!isPedidosPendentesLoading && pedidos?.map((p: PedidoModelType) => p.mesa ? <Mesa key={p.id} numero={p.mesa} pedido={p}></Mesa> : <Pedido key={p.id} pedido={p}></Pedido>)}
+      </div>
+      <h2 className="text-start font-semibold text-lg tracking-tight text-neutral-800 w-full">
+        Mesas Livres
+      </h2>
+      <div className="flex flex-wrap gap-4 my-4">
+        {mesasLivres}
       </div>
     </div>
   );

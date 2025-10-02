@@ -73,6 +73,8 @@ export default function formatPedidoService(pedidos: PedidoComItens[]) {
       minute: "2-digit",
     });
 
+    const dataFormatada = data.toLocaleDateString("pt-BR");
+
     const itensFormatados: ItemModelType[] = pedido.itens.map((item) => ({
       id: item.id,
       valorUnitario: new Intl.NumberFormat("pt-BR", {
@@ -80,7 +82,7 @@ export default function formatPedidoService(pedidos: PedidoComItens[]) {
         currency: "BRL",
       }).format(Number(item.valor_unitario)),
       quantidade: item.quantidade,
-      produto: item.produto.nome,
+      produto: item.produto?.nome,
       pertenceId: item.pertence_a_id,
     }));
 
@@ -93,7 +95,8 @@ export default function formatPedidoService(pedidos: PedidoComItens[]) {
       status: pedido.status.descricao,
       itens: itensFormatados,
       valorTotal: valorTotalFormatado,
-      criadoEm: horaFormatada,
+      criadoEmHora: horaFormatada,
+      criadoEmData: dataFormatada,
     };
 
     const pedidoValidado = pedidoModelSchema.parse(pedidoFormatado);

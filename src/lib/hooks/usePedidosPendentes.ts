@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { PedidoModelType } from "@/schemas/pedidoSchema";
 
-async function fetchPedidosPendentes() {
+async function fetchPedidosPendentes(): Promise<PedidoModelType[]> {
   const res = await fetch("/api/pedidos/pendente", {
     credentials: "include"
   });

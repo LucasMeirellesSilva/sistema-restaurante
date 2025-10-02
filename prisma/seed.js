@@ -40,6 +40,16 @@ async function main() {
       },
     });
   }
+
+  // 4. Criar as Formas de Pagamento
+  await prisma.formaPagamento.createMany({
+    data: [
+      { descricao: "Dinheiro"},
+      { descricao: "Cartão"},
+      { descricao: "Vale-Alimentação"},
+      { descricao: "Outro"},
+    ]
+  });
 }
 
 main()

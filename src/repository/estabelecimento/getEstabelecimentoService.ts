@@ -9,5 +9,8 @@ export default async function getEstabelecimento() {
     }
   });
 
-  return estabelecimento;
+  return {
+    nome: estabelecimento?.nome,
+    numeroMesas: estabelecimento?.numero_mesas
+  };
 }

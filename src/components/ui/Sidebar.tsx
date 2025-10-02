@@ -89,7 +89,7 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-4 py-4 hidden md:flex md:flex-col dark:bg-neutral-800 w-[300px] shrink-0 overflow-hidden text-neutral-700",
+          "h-full px-3 py-4 hidden md:flex md:flex-col dark:bg-neutral-800 w-[300px] shrink-0 overflow-hidden text-neutral-700",
           className
         )}
         animate={{
@@ -158,10 +158,12 @@ export const MobileSidebar = ({
 export const SidebarLink = ({
   link,
   className,
+  pathname,
   ...props
 }: {
   link: Links;
   className?: string;
+  pathname: string;
 }) => {
   const { open, animate } = useSidebar();
   const Icon = link.icon;
@@ -174,7 +176,7 @@ export const SidebarLink = ({
       )}
       {...props}
     >
-      <Icon strokeWidth={1.5} width={24} height={24}/>
+      <Icon strokeWidth={1.5} width={32} height={32} className={cn(pathname === link.href ? "bg-neutral-300" : "", "rounded-full p-1 inline-flex")}/>
 
       <motion.span
         animate={{

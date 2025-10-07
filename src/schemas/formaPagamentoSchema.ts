@@ -5,7 +5,6 @@ export const formaPagamentoFormSchema = z.object({
     valor: z.string()
 });
 
-
 export const formaPagamentoModelSchema = z.object({
     valor: z.string(),
     formaPagamento: z.object({

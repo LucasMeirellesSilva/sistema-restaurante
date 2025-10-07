@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
 
       // Consultar no banco os valores dos produtos.
       const produtoIds = itens.map((item) => item.produtoId);
+      
       const produtos = await getValorProdutos(produtoIds);
 
       // Transformar em Map para otimizar consulta.
@@ -66,6 +67,10 @@ export async function POST(req: NextRequest) {
           throw new Error(`Produto ${item.produtoId} não encontrado`);
         }
 
+        if (!produto.disponivel) {
+          throw new Error(`Produto ${item.produtoId} não está disponível para venda.`);
+        }
+
         await createItem(tx, {
           ...item,
           pedidoId: pedido.id,
@@ -76,7 +81,7 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    return NextResponse.json({ pedido }, { status: 201 });
+    return NextResponse.json(pedido, { status: 201 });
 
   } catch (err) {
     return NextResponse.json(
@@ -86,7 +91,7 @@ export async function POST(req: NextRequest) {
   }  
 }
 
-import updatePedido, { PedidoUpdate } from "@/repository/pedido/updatePedidoService";
+import updatePedido, { PedidoUpdateType } from "@/repository/pedido/updatePedidoService";
 import getPedidoPorId from "@/repository/pedido/getPedidoPorIdService";
 
 export async function PATCH(req: NextRequest) {
@@ -94,7 +99,7 @@ export async function PATCH(req: NextRequest) {
 
   if (!isValid) return res;
 
-  const { pedidoId, clienteId, mesaId, observacao }: PedidoUpdate = await req.json();
+  const { pedidoId, clienteId, mesaId, observacao }: PedidoUpdateType = await req.json();
 
   const pedido = await getPedidoPorId(pedidoId);
 
@@ -107,7 +112,7 @@ export async function PATCH(req: NextRequest) {
   try {
     const result = await updatePedido({ pedidoId, clienteId, mesaId, observacao })
 
-    return NextResponse.json({ result }, { status: 200 });
+    return NextResponse.json(result, { status: 200 });
 
   } catch (err) {
     return NextResponse.json(

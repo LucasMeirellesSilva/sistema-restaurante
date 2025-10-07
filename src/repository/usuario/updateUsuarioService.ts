@@ -3,9 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { UsuarioFormType } from "@/schemas/usuarioSchema";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-type UsuarioUpdate = Partial<UsuarioFormType> & { usuarioId: number }
+export type UsuarioUpdateType = Partial<UsuarioFormType> & { usuarioId: number }
 
-export default async function updateUsuario({ usuarioId, tipoId, nome, senha }: UsuarioUpdate) {
+export default async function updateUsuario({ usuarioId, tipoId, nome, senha }: UsuarioUpdateType) {
   try {
     const usuario = await prisma.usuario.update({
       where: { id: usuarioId },

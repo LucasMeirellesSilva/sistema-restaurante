@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   
   if (!allowed) return notAllowedRes;
 
-  const { id } = await req.json();
+  const { id }: { id: number } = await req.json();
 
   try {
     const pedido = await getPedidoPorId(id);
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     const result = await setPedidoFinalizado(id);
 
-    return NextResponse.json({ result }, { status: 200 });
+    return NextResponse.json(result, { status: 200 });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : String(err) },

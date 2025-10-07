@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   // Token inválido, retorna e reseta token.
   if (!isValid) return res;
 
-  const { id } = await req.json();
+  const { id }: { id: number } = await req.json();
 
   try {
     const pedido = await getPedidoPorId(id);
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
     const result = await setPedidoCancelado(id);
 
-    return NextResponse.json({ result }, { status: 200 });
+    return NextResponse.json(result, { status: 200 });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : String(err) },

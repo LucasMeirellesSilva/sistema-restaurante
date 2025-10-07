@@ -1,4 +1,4 @@
-import { z, ZodError } from 'zod';
+import { z } from 'zod';
 
 export const produtoFormSchema = z.object({
     categoriaId: z.number(),
@@ -10,12 +10,10 @@ export const produtoFormSchema = z.object({
 
 export type ProdutoFormType = z.infer<typeof produtoFormSchema>;
 
-export function validateProdutoForm(produto: unknown): ProdutoFormType | ZodError {
-    const result = produtoFormSchema.safeParse(produto);
+export function validateProdutoForm(produto: unknown): ProdutoFormType {
+    const result = produtoFormSchema.parse(produto);
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 };
 
 export const produtoModelSchema = z.object({
@@ -30,10 +28,8 @@ export const produtoModelSchema = z.object({
 
 export type ProdutoModelType = z.infer<typeof produtoModelSchema>;
 
-export function validateProdutoModel(produto: unknown): ProdutoModelType | ZodError {
-    const result = produtoModelSchema.safeParse(produto);
+export function validateProdutoModel(produto: unknown): ProdutoModelType {
+    const result = produtoModelSchema.parse(produto);
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 };

@@ -1,4 +1,4 @@
-import { z, ZodError } from 'zod';
+import { z } from 'zod';
 
 export const mesaModelSchema = z.object({
     numero: z.string()
@@ -6,10 +6,8 @@ export const mesaModelSchema = z.object({
 
 export type MesaModelType = z.infer<typeof mesaModelSchema>
 
-export function validateMesaModel(mesa: unknown): MesaModelType | ZodError {
-    const result = mesaModelSchema.safeParse(mesa);
+export function validateMesaModel(mesa: unknown): MesaModelType {
+    const result = mesaModelSchema.parse(mesa);
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 }

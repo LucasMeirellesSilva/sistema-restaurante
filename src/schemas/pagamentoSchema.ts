@@ -1,4 +1,4 @@
-import { z, ZodError } from 'zod';
+import { z } from 'zod';
 
 import { formaPagamentoFormSchema, formaPagamentoModelSchema } from './formaPagamentoSchema';
 
@@ -9,12 +9,10 @@ export const pagamentoFormSchema = z.object({
 
 export type PagamentoFormType = z.infer<typeof pagamentoFormSchema>
 
-export function validatePagamentoForm(pagamento: unknown): PagamentoFormType | ZodError {
-    const result = pagamentoFormSchema.safeParse(pagamento);
+export function validatePagamentoForm(pagamento: unknown): PagamentoFormType {
+    const result = pagamentoFormSchema.parse(pagamento);
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 }
 
 export const pagamentoModelSchema = z.object({
@@ -25,10 +23,8 @@ export const pagamentoModelSchema = z.object({
 
 export type PagamentoModelType = z.infer<typeof pagamentoModelSchema>
 
-export function validatePagamentoModel(pagamento: unknown): PagamentoModelType | ZodError {
-    const result = pagamentoModelSchema.safeParse(pagamento);
+export function validatePagamentoModel(pagamento: unknown): PagamentoModelType {
+    const result = pagamentoModelSchema.parse(pagamento);
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 }

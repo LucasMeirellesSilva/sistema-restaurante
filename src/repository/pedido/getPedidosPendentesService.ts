@@ -7,12 +7,22 @@ export default async function getPedidosPendentes() {
     where: { status_id: 1 },
     include: {
       itens: {
+        where: { pertence_a_id: null },
         include: {
           produto: {
             select: {
               nome: true,
             },
           },
+          adicionais: {
+            include: {
+              produto: {
+                select: {
+                  nome: true,
+                }
+              }
+            }
+          }
         },
       },
       usuario: {

@@ -1,4 +1,4 @@
-import { z, ZodError } from 'zod';
+import { z } from 'zod';
 
 export const usuarioFormSchema = z.object({
     tipoId: z.number(),
@@ -8,12 +8,10 @@ export const usuarioFormSchema = z.object({
 
 export type UsuarioFormType = z.infer<typeof usuarioFormSchema>
 
-export function validateUsuarioForm(usuario: unknown): UsuarioFormType | ZodError {
-    const result = usuarioFormSchema.safeParse(usuario);
+export function validateUsuarioForm(usuario: unknown): UsuarioFormType {
+    const result = usuarioFormSchema.parse(usuario);
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 }
 
 export const usuarioModelSchema = z.object({
@@ -24,10 +22,8 @@ export const usuarioModelSchema = z.object({
 
 export type UsuarioModelType = z.infer<typeof usuarioModelSchema>
 
-export function validateUsuarioModel(usuario: unknown): UsuarioModelType | ZodError {
-    const result = usuarioModelSchema.safeParse(usuario);
+export function validateUsuarioModel(usuario: unknown): UsuarioModelType {
+    const result = usuarioModelSchema.parse(usuario);
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 }

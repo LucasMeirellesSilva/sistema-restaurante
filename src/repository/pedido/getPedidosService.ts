@@ -14,12 +14,22 @@ export default async function getPedidos({ limit, skip }: pedidosProps) {
       orderBy: { criado_em: "desc" },
       include: {
         itens: {
+          where: { pertence_a_id: null },
           include: {
             produto: {
               select: {
                 nome: true,
               },
             },
+            adicionais: {
+              include: {
+                produto: {
+                  select: {
+                    nome: true,
+                  }
+                }
+              }
+            }
           },
         },
         usuario: {

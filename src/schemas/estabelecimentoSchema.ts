@@ -1,4 +1,4 @@
-import { z, ZodError } from 'zod';
+import { z } from 'zod';
 
 export const estabelecimentoFormSchema = z.object({
     nome: z.string(),
@@ -10,10 +10,8 @@ export const estabelecimentoFormSchema = z.object({
 
 export type EstabelecimentoFormType = z.infer<typeof estabelecimentoFormSchema>
 
-export function validateItemForm(item: unknown): EstabelecimentoFormType | ZodError {
-    const result = estabelecimentoFormSchema.safeParse(item);
+export function validateItemForm(item: unknown): EstabelecimentoFormType {
+    const result = estabelecimentoFormSchema.parse(item);
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 }

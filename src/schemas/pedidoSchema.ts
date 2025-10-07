@@ -1,4 +1,4 @@
-import { z, ZodError } from 'zod';
+import { z } from 'zod';
 
 import { itemModelSchema, itemFormSchema } from './itemSchema';
 
@@ -11,12 +11,10 @@ export const pedidoFormSchema = z.object({
 
 export type PedidoFormType = z.infer<typeof pedidoFormSchema>;
 
-export function validatePedidoForm(pedido: unknown): PedidoFormType | ZodError {
-    const result = pedidoFormSchema.safeParse(pedido);
+export function validatePedidoForm(pedido: unknown): PedidoFormType {
+    const result = pedidoFormSchema.parse(pedido);
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 };
 
 export const pedidoModelSchema = z.object({
@@ -34,10 +32,8 @@ export const pedidoModelSchema = z.object({
 
 export type PedidoModelType = z.infer<typeof pedidoModelSchema>;
 
-export function validatePedidoModel(pedido: unknown): PedidoModelType | ZodError {
-    const result = pedidoModelSchema.safeParse(pedido);
+export function validatePedidoModel(pedido: unknown): PedidoModelType {
+    const result = pedidoModelSchema.parse(pedido);
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 };

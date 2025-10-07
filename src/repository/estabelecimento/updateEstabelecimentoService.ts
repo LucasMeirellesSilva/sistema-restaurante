@@ -6,9 +6,9 @@ import bcrypt from "bcryptjs";
 
 import createMesas from "../mesa/createMesasService";
 
-export type EstabelecimentoUpdate = Partial<EstabelecimentoFormType>
+export type EstabelecimentoUpdateType = Partial<EstabelecimentoFormType>
 
-export default async function updateEstabelecimento({ nome, cnpj, numeroMesas, perguntaSeguranca, respostaSeguranca }: EstabelecimentoUpdate) {
+export default async function updateEstabelecimento({ nome, cnpj, numeroMesas, perguntaSeguranca, respostaSeguranca }: EstabelecimentoUpdateType) {
   const respostaHash = respostaSeguranca ? await bcrypt.hash(respostaSeguranca, 10) : "";
 
   try {

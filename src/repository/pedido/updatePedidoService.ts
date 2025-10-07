@@ -3,9 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { PedidoFormType } from "@/schemas/pedidoSchema";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export type PedidoUpdate = Omit<PedidoFormType, "itens"> & { pedidoId: number }
+export type PedidoUpdateType = Omit<PedidoFormType, "itens"> & { pedidoId: number }
 
-export default async function updatePedido({ pedidoId, clienteId, mesaId, observacao }: PedidoUpdate) {
+export default async function updatePedido({ pedidoId, clienteId, mesaId, observacao }: PedidoUpdateType) {
   try {
     const pedido = await prisma.pedido.update({
       where: { id: pedidoId },

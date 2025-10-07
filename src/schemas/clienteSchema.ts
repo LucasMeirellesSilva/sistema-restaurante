@@ -1,4 +1,4 @@
-import { z, ZodError } from 'zod';
+import { z } from 'zod';
 import { pedidoModelSchema } from './pedidoSchema';
 
 export const clienteFormSchema = z.object({
@@ -8,12 +8,10 @@ export const clienteFormSchema = z.object({
 
 export type ClienteFormType = z.infer<typeof clienteFormSchema>
 
-export function validateClienteForm(cliente: unknown): ClienteFormType | ZodError {
-    const result = clienteFormSchema.safeParse(cliente);
+export function validateClienteForm(cliente: unknown): ClienteFormType {
+    const result = clienteFormSchema.parse(cliente);
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 }
 
 export const clienteModelSchema = z.object({
@@ -25,10 +23,8 @@ export const clienteModelSchema = z.object({
 
 export type ClienteModelType = z.infer<typeof clienteModelSchema>
 
-export function validateClienteModel(cliente: unknown): ClienteModelType | ZodError {
-    const result = clienteModelSchema.safeParse(cliente);
+export function validateClienteModel(cliente: unknown): ClienteModelType {
+    const result = clienteModelSchema.parse(cliente);;
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 }

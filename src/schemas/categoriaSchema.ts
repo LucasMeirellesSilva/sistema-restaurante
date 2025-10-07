@@ -1,4 +1,4 @@
-import { z, ZodError } from 'zod';
+import { z } from 'zod';
 import { produtoModelSchema } from './produtoSchema';
 
 export const categoriaFormSchema = z.object({
@@ -7,12 +7,10 @@ export const categoriaFormSchema = z.object({
 
 export type CategoriaFormType = z.infer<typeof categoriaFormSchema>
 
-export function validateCategoriaForm(categoria: unknown): CategoriaFormType | ZodError {
-    const result = categoriaFormSchema.safeParse(categoria);
+export function validateCategoriaForm(categoria: unknown): CategoriaFormType {
+    const result = categoriaFormSchema.parse(categoria);
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 }
 
 export const categoriaModelSchema = z.object({
@@ -23,10 +21,8 @@ export const categoriaModelSchema = z.object({
 
 export type CategoriaModelType = z.infer<typeof categoriaModelSchema>
 
-export function validateCategoriaModel(categoria: unknown): CategoriaModelType | ZodError {
-    const result = categoriaModelSchema.safeParse(categoria);
+export function validateCategoriaModel(categoria: unknown): CategoriaModelType {
+    const result = categoriaModelSchema.parse(categoria);
 
-    if (!result.success) return result.error;
-
-    return result.data;
+    return result;
 }

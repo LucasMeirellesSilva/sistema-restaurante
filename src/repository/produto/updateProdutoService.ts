@@ -3,9 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { ProdutoFormType } from "@/schemas/produtoSchema";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export type ProdutoUpdate = ProdutoFormType & { produtoId: number }
+export type ProdutoUpdateType = Omit<ProdutoFormType, "adicional"> & { produtoId: number }
 
-export default async function updateProduto({ produtoId, categoriaId, nome, valor, descricao }: ProdutoUpdate) {
+export default async function updateProduto({ produtoId, categoriaId, nome, valor, descricao }: ProdutoUpdateType) {
   try {
     const produto = await prisma.produto.update({
       where: { id: produtoId },

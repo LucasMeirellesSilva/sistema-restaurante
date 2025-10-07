@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
   }  
 }
 
-import { EstabelecimentoUpdate } from "@/repository/estabelecimento/updateEstabelecimentoService"; 
+import { EstabelecimentoUpdateType } from "@/repository/estabelecimento/updateEstabelecimentoService"; 
 import updateEstabelecimento from "@/repository/estabelecimento/updateEstabelecimentoService";
 
 export async function PATCH(req: NextRequest) {
@@ -52,7 +52,7 @@ export async function PATCH(req: NextRequest) {
   // Apenas administradores podem alterar informações do estabelecimento.
   if (decoded!.role !== "Admin") return NextResponse.json({error: "Acesso negado."}, { status: 400 });
 
-  const estabelecimento: EstabelecimentoUpdate = await req.json();
+  const estabelecimento: EstabelecimentoUpdateType = await req.json();
 
   try {
     const result = await updateEstabelecimento(estabelecimento);

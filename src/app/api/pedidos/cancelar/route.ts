@@ -14,9 +14,9 @@ export async function POST(req: NextRequest) {
   try {
     const pedido = await getPedidoPorId(id);
 
-    if (pedido?.status.descricao !== "Pendente") return NextResponse.json({error: "Não é possível cancelar um pedido que não esteja pendente."}, { status: 400 });
+    if (pedido?.status !== "Pendente") return NextResponse.json({error: "Não é possível cancelar um pedido que não esteja pendente."}, { status: 400 });
 
-    if (pedido?.usuario_id !== decoded!.id && decoded!.role !== "Admin") return NextResponse.json({error: "Não é possível cancelar um pedido feito por outro usuário."}, { status: 400 });
+    if (pedido?.autorId !== decoded!.id && decoded!.role !== "Admin") return NextResponse.json({error: "Não é possível cancelar um pedido feito por outro usuário."}, { status: 400 });
 
     const result = await setPedidoCancelado(id);
 

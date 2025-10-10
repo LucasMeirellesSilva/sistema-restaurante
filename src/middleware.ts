@@ -44,7 +44,8 @@ export const config: MiddlewareConfig = {
         - /_next/*
         - /favicon.ico
         - /api/login
+        - /api/estabelecimento/seguranca
     */
-    "/((?!_next|favicon.ico|api/login).*)",
+    "/((?!_next|favicon.ico|api/login|api/estabelecimento/seguranca).*)",
   ],
 };

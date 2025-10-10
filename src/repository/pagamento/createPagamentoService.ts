@@ -1,17 +1,16 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-
 import { PagamentoFormType } from "@/schemas/pagamentoSchema";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { Prisma } from "@prisma/client";
 
 function parseValorToDecimal(valor: string) {
   const numero = valor.replace("R$", "").replace(/\./g, "").replace(",", ".").trim();
   return new Prisma.Decimal(numero);
 }
 
-export default async function createPagamento({ pedidoId, formas }: PagamentoFormType) {
+export default async function createPagamento(tx: Prisma.TransactionClient,{ pedidoId, formas }: PagamentoFormType) {
   try {
-    const result = await prisma.pagamento.create({
+    const result = await tx.pagamento.create({
       data: {
         pedido_id: pedidoId,
         formas: {

@@ -25,7 +25,7 @@ app.post("/print", async (req, res) => {
 
       pedido.itens.forEach((item) => {
 
-        const espacos = " ".repeat(Math.max(42 - item.nome.length - item.valorUnitario.length, 0));
+        const espacos = " ".repeat(Math.max(32 - item.nome.length - item.valorUnitario.length, 0));
         printer.text(`${item.quantidade}x ${item.nome}${espacos}${item.valorUnitario}`);
 
         item.adicionais.forEach((adicional, i) => {

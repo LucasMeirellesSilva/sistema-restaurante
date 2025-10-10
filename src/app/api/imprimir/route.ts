@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
-import { getPedidoParaImpressaoPorId } from "@/repository/pedido/getPedidoPorIdService";
+import getPedidoPorId from "@/repository/pedido/getPedidoPorIdService";
 
 export async function POST(req: NextRequest) {
   const { isValid, res } = await verifyToken(req);
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   const { id }: { id: number } = await req.json();
 
   try {
-    const pedido = await getPedidoParaImpressaoPorId(id);
+    const pedido = await getPedidoPorId(id);
 
     const result = await fetch("http://localhost:9999/print", {
       method: "POST",

@@ -20,12 +20,14 @@ export function validatePedidoForm(pedido: unknown): PedidoFormType {
 export const pedidoModelSchema = z.object({
     id: z.number(),
     autor: z.string(),
+    autorId: z.number(),
     cliente: z.string().nullable(),
     mesa: z.string().nullable(),
     observacao: z.string().nullable(),
     status: z.string(),
     itens: z.array(itemModelSchema),
-    valorTotal: z.string(),
+    valorTotalFormatado: z.string(),
+    valorTotal: z.number(),
     criadoEmHora: z.string(),
     criadoEmData: z.string()
 });

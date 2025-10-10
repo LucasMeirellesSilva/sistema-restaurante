@@ -104,10 +104,10 @@ export async function PATCH(req: NextRequest) {
   const pedido = await getPedidoPorId(pedidoId);
 
   // Verificar se o usuário é autor ou administrador
-  if (pedido?.usuario_id !== decoded!.id && decoded!.role !== "Admin") return NextResponse.json({error: "Não é possível atualizar um pedido feito por outro usuário."}, { status: 400 });
+  if (pedido?.autorId !== decoded!.id && decoded!.role !== "Admin") return NextResponse.json({error: "Não é possível atualizar um pedido feito por outro usuário."}, { status: 400 });
   
   // Verificar se o status do pedido é pendente
-  if (pedido?.status.descricao !== "Pendente") return NextResponse.json({error: "Não é possível cancelar um pedido que não esteja pendente."}, { status: 400 });
+  if (pedido?.status !== "Pendente") return NextResponse.json({error: "Não é possível cancelar um pedido que não esteja pendente."}, { status: 400 });
 
   try {
     const result = await updatePedido({ pedidoId, clienteId, mesaId, observacao })

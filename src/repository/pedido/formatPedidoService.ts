@@ -99,12 +99,14 @@ export default function formatPedidoService(pedidos: PedidoComItens[]) {
     const pedidoFormatado: PedidoModelType = {
       id: pedido.id,
       autor: pedido.usuario.nome,
+      autorId: pedido.usuario_id,
       cliente: pedido.cliente?.nome ?? null,
       mesa: pedido.mesa?.numero ?? null,
       observacao: pedido.observacao,
       status: pedido.status.descricao,
       itens: itensFormatados,
-      valorTotal: valorTotalFormatado,
+      valorTotalFormatado: valorTotalFormatado,
+      valorTotal: valorTotal,
       criadoEmHora: horaFormatada,
       criadoEmData: dataFormatada,
     };

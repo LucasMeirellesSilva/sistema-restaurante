@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br" className={inter.variable}>
-      <body className="antialiased h-screen">
+      <body className="antialiased min-h-screen">
         <ReactQueryProvider>
           {children}
         </ReactQueryProvider>

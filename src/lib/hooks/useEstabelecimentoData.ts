@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { EstabelecimentoFormType } from "@/schemas/estabelecimentoSchema";
+import { EstabelecimentoModelType } from "@/schemas/estabelecimentoSchema";
 
-async function fetchEstabelecimentoData(): Promise<EstabelecimentoFormType> {
+async function fetchEstabelecimentoData(): Promise<EstabelecimentoModelType> {
   const res = await fetch("/api/estabelecimento", {
     credentials: "include"
   });
@@ -12,7 +12,7 @@ async function fetchEstabelecimentoData(): Promise<EstabelecimentoFormType> {
   return res.json();
 }
 
-export function useEstabelecimentoData() {
+export default function useEstabelecimentoData() {
   return useQuery({
     queryKey: ["estabelecimentoData"],
     queryFn: fetchEstabelecimentoData,

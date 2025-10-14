@@ -2,12 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
 import getEstabelecimento from "@/repository/estabelecimento/getEstabelecimentoService";
 
-export async function GET(req: NextRequest) {
-  const { isValid, res } = await verifyToken(req);
-
-  // Token inválido, retorna e reseta token.
-  if (!isValid) return res;
-
+export async function GET() {
   // Interação com o banco
   const result = await getEstabelecimento();
    

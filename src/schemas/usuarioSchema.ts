@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const usuarioFormSchema = z.object({
     tipoId: z.number(),
     nome: z.string(),
-    senha: z.string()
+    senha: z.string().min(6)
 })
 
 export type UsuarioFormType = z.infer<typeof usuarioFormSchema>

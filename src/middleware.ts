@@ -40,12 +40,12 @@ export const config: MiddlewareConfig = {
     /*
       Ignora:
         - /
-        - /api/*
         - /_next/*
         - /favicon.ico
         - /api/login
-        - /api/estabelecimento/seguranca
+        - /api/estabelecimento/*
+        - /api/recuperar-acesso
     */
-    "/((?!_next|favicon.ico|api/login|api/estabelecimento/seguranca).*)",
+    "/((?!_next|favicon.ico|api/login|api/estabelecimento/*|api/recuperar-acesso).*)",
   ],
 };

@@ -12,11 +12,15 @@ export async function POST(req: NextRequest) {
   const { respostaSeguranca, senha }: RecuperarAcesso = await req.json();
 
   try {
-    const { respostaSeguranca: resposta } = await getEstabelecimentoRespostaSeguranca();
+    if (senha.length < 6) throw new Error("Senha curta.");
     
-    const respostaHash = await bcrypt.hash(respostaSeguranca, 10);
+    const { respostaSeguranca: respostaBanco } = await getEstabelecimentoRespostaSeguranca();
 
-    if (resposta !== respostaHash) throw new Error("Resposta inválida.");
+    if (!respostaBanco) throw new Error("Resposta ausente."); 
+
+    const valid = await bcrypt.compare(respostaSeguranca, respostaBanco)
+
+    if (!valid) throw new Error("Resposta inválida.");
 
     const senhaHash = await bcrypt.hash(senha, 10);
 

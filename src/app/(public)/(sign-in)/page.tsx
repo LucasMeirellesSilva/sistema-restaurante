@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from "react";
 // Next
 import { useRouter } from 'next/navigation';
 import Image from "next/image";
+import Link from "next/link";
 
 // React Query
 import { useQueryClient, useMutation } from "@tanstack/react-query";
@@ -12,10 +13,12 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import Loading from "@/components/ui/loading";
 import { User } from "lucide-react";
 import { LogIn } from "lucide-react";
 import RotatingText from "@/components/ui/RotatingText";
 import { AnimatePresence, motion } from "framer-motion";
+import useEstabelecimentoData from "@/lib/hooks/useEstabelecimentoData";
 
 const images = ["/images/gerenciar.svg", "/images/otimizar.svg","/images/prosperar.svg"]
 
@@ -29,6 +32,7 @@ export default function SignIn() {
   const [imageIdx, setImageIdx] = useState(0);
   const userRef = useRef<HTMLInputElement>(null);
   const passRef = useRef<HTMLInputElement>(null);
+  const { data: estabelecimento } = useEstabelecimentoData();
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -81,7 +85,7 @@ export default function SignIn() {
     },
   });
 
-  async function handleLogin(e: React.FormEvent, username: string, password: string) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     loginMutation.mutate({ username, password });
   }
@@ -97,14 +101,14 @@ export default function SignIn() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 50 }}
-            transition={{ duration: 1 }}
+            transition={{ duration: 0.8 }}
             >
               <Image src={images[imageIdx]} alt="Imagem de ilustração do login" width={600} height={600} className="h-fit select-none" draggable="false" priority />
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <form className="flex-1 flex flex-col gap-4 items-center" onSubmit={(e) => handleLogin(e, username, password)}>
+        <form className="flex-1 flex flex-col gap-4 items-center" onSubmit={(e) => handleLogin(e)}>
           <div className="flex gap-2 items-center">
             <h2 className="text-3xl font-bold">Comece a</h2>
             <RotatingText texts={["Gerenciar", "Otimizar", "Prosperar"]}
@@ -132,13 +136,14 @@ export default function SignIn() {
             animate={{ x: [0, -3, 3, -3, 3, 0] }}
             transition={{ duration: 0.6}}
             >
-              {error && error === "user" && <p className="text-red-600 animate-shake-once">Usuário não encontrado.</p>}
+              {error === "user" && <p className="text-red-600">Usuário não encontrado.</p>}
             </motion.div>
           </div>
 
           <Label htmlFor="password" className="text-md font-medium">
             Senha
             <Input type="password" id="password" placeholder="****" className="w-64" onChange={(e) => setPassword(e.target.value)} ref={passRef}/>
+            {estabelecimento && <Link href="/recuperar-acesso" className="font-medium text-orange-500">Esqueci minha senha.</Link> }
           </Label>
 
           <motion.div
@@ -147,13 +152,13 @@ export default function SignIn() {
           animate={{ x: [0, -3, 3, -3, 3, 0] }}
           transition={{ duration: 0.6}}
           >
-            {error && error === "password" && <p className="text-red-600">Senha inválida.</p>}
-            {error && error === "failedToFetch" && <p className="text-red-600">Erro na conexão com o servidor, tente reiniciar a aplicação.</p>}
+            {error === "password" && <p className="text-red-600">Senha inválida.</p>}
+            {error === "failedToFetch" && <p className="text-red-600">Erro na conexão com o servidor, tente reiniciar a aplicação.</p>}
           </motion.div>
 
 
           <Button type="submit" className="bg-neutral-700 cursor-pointer">
-            {loginMutation.isPending ? <div className="w-6 h-6 border-4 border-[#EA580C] border-t-transparent rounded-full animate-spin"></div> : <div className="flex gap-2 items-center">Entrar <LogIn /></div> }
+            {loginMutation.isPending ? <Loading /> : <div className="flex gap-2 items-center">Entrar <LogIn /></div> }
           </Button>
         </form>
       </div>

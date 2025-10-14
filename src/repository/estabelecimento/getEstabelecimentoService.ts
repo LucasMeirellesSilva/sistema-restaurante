@@ -6,11 +6,13 @@ export default async function getEstabelecimento() {
     select: { 
       nome: true,
       numero_mesas: true,
+      pergunta_seguranca: true
     }
   });
 
   return {
     nome: estabelecimento?.nome,
-    numeroMesas: estabelecimento?.numero_mesas
+    numeroMesas: estabelecimento?.numero_mesas,
+    perguntaSeguranca: estabelecimento?.pergunta_seguranca
   };
 }

@@ -9,7 +9,7 @@ import createMesas from "../mesa/createMesasService";
 export type EstabelecimentoUpdateType = Partial<EstabelecimentoFormType>
 
 export default async function updateEstabelecimento({ nome, cnpj, numeroMesas, perguntaSeguranca, respostaSeguranca }: EstabelecimentoUpdateType) {
-  const respostaHash = respostaSeguranca ? await bcrypt.hash(respostaSeguranca, 10) : "";
+  const respostaHash = respostaSeguranca ? await bcrypt.hash(respostaSeguranca, 10) : undefined
 
   try {
     const result = await prisma.estabelecimento.update({
@@ -19,7 +19,7 @@ export default async function updateEstabelecimento({ nome, cnpj, numeroMesas, p
         cnpj: cnpj,
         numero_mesas: numeroMesas,
         pergunta_seguranca: perguntaSeguranca,
-        resposta_seguranca: respostaHash,
+        resposta_seguranca: respostaHash
       },
     });
     

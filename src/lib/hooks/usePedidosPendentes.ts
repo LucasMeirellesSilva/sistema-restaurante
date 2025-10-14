@@ -12,7 +12,7 @@ async function fetchPedidosPendentes(): Promise<PedidoModelType[]> {
   return res.json();
 }
 
-export function usePedidosPendentes() {
+export default function usePedidosPendentes() {
   return useQuery({
     queryKey: ["pedidosPendentes"],
     queryFn: fetchPedidosPendentes,

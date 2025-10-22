@@ -17,6 +17,10 @@ body {
   clip-path: polygon(100% 0, 0 100%, 100% 100%);
 }
 
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Decimal } from '@prisma/client/runtime/library';
 
 export const produtoFormSchema = z.object({
     categoriaId: z.number(),
@@ -16,10 +17,15 @@ export function validateProdutoForm(produto: unknown): ProdutoFormType {
     return result;
 };
 
+const decimalSchema = z.custom<Decimal>((val) => val instanceof Decimal, {
+  message: "Deve ser um Decimal válido",
+});
+
 export const produtoModelSchema = z.object({
     id: z.number(),
     nome: z.string(),
-    valor: z.string(),
+    valor: decimalSchema,
+    valorFormatado: z.string(),
     descricao: z.string().nullable(),
     categoria: z.string(),
     adicional: z.boolean(),

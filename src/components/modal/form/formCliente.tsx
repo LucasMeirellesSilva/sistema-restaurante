@@ -1,10 +1,6 @@
-import { ClienteModelType } from "@/schemas/clienteSchema";
+"use client"
 
-type FormClienteProps = {
-    cliente?: ClienteModelType
-}
-
-function FormCliente({ cliente }: FormClienteProps) {
+function FormCliente() {
   return <>
     
   </>;

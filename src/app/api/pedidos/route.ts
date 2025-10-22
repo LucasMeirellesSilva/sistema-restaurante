@@ -45,6 +45,8 @@ export async function POST(req: NextRequest) {
 
   let { itens, clienteId, mesaId, observacao }: PedidoFormType = await req.json();
 
+  if (!itens || itens.length < 1) throw new Error ("O pedido deve possuir ao menos um item.");
+
   const autorId = decoded!.id;
 
   try {

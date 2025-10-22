@@ -79,7 +79,8 @@ export default function formatPedidoService(pedidos: PedidoComItens[]) {
 
     const itensFormatados: ItemModelType[] = pedido.itens.map((item) => ({
       id: item.id,
-      valorUnitario: new Intl.NumberFormat("pt-BR", {
+      valorUnitario: Number(item.valor_unitario),
+      valorUnitarioFormatado: new Intl.NumberFormat("pt-BR", {
         style: "currency",
         currency: "BRL",
       }).format(Number(item.valor_unitario)),
@@ -87,7 +88,8 @@ export default function formatPedidoService(pedidos: PedidoComItens[]) {
         id: adicional.id,
         produto: adicional.produto?.nome,
         quantidade: adicional.quantidade,
-        valorUnitario: new Intl.NumberFormat("pt-BR", {
+        valorUnitario: Number(adicional.valor_unitario),
+        valorUnitarioFormatado: new Intl.NumberFormat("pt-BR", {
           style: "currency",
           currency: "BRL",
         }).format(Number(adicional.valor_unitario))

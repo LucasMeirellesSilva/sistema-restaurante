@@ -1,36 +1,338 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sistema Restaurante
 
-## Getting Started
+Este projeto é uma API para gerenciamento de pedidos, produtos, clientes e usuários de um restaurante.
 
-First, run the development server:
+## Estrutura das Rotas da API
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Abaixo estão os principais endpoints, métodos suportados, exemplos de body e possíveis retornos.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Adicionais
+- `GET /api/adicionais`  
+  **Retorno:**  
+  - `200 OK` (lista de adicionais)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+- `POST /api/adicionais`  
+  **Body:**  
+  ```json
+  {
+    "nome": "string",
+    "preco": number
+  }
+  ```
+  **Retorno:**  
+  - `201 Created`
+  - `400 Bad Request`
 
-To learn more about Next.js, take a look at the following resources:
+- `PATCH /api/adicionais`  
+  **Body:**  
+  ```json
+  {
+    "id": "string", 
+  "nome": "string", 
+  "preco": number
+  }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `DELETE /api/adicionais`  
+  **Body:**  
+  ```json
+  { "id": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+### Categorias
+- `GET /api/categorias`  
+  **Retorno:**  
+  - `200 OK` (lista de categorias)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `POST /api/categorias`  
+  **Body:**  
+  ```json
+  { "nome": "string" }
+  ```
+  **Retorno:**  
+  - `201 Created`
+  - `400 Bad Request`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `PATCH /api/categorias`  
+  **Body:**  
+  ```json
+  { "id": "string", "nome": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+- `DELETE /api/categorias`  
+  **Body:**  
+  ```json
+  { "id": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+---
+
+### Clientes
+- `GET /api/clientes`  
+  **Retorno:**  
+  - `200 OK` (lista de clientes)
+
+- `POST /api/clientes`  
+  **Body:**  
+  ```json
+  { "nome": "string", "telefone": "string", "email": "string (opcional)" }
+  ```
+  **Retorno:**  
+  - `201 Created`
+  - `400 Bad Request`
+
+- `PATCH /api/clientes`  
+  **Body:**  
+  ```json
+  { "id": "string", "nome": "string", "telefone": "string", "email": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+- `DELETE /api/clientes`  
+  **Body:**  
+  ```json
+  { "id": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+---
+
+### Estabelecimento
+- `GET /api/estabelecimento`  
+  **Retorno:**  
+  - `200 OK` (dados do estabelecimento)
+
+- `PATCH /api/estabelecimento`  
+  **Body:**  
+  ```json
+  { "nome": "string", "endereco": "string", ... }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+---
+
+#### Segurança
+- `GET /api/estabelecimento/seguranca`  
+  **Retorno:**  
+  - `200 OK` (configurações de segurança)
+
+- `PATCH /api/estabelecimento/seguranca`  
+  **Body:**  
+  ```json
+  { "configuracoes": {...} }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+---
+
+### Imprimir
+- `POST /api/imprimir`  
+  **Body:**  
+  ```json
+  { "pedidoId": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+---
+
+### Login
+- `POST /api/login`  
+  **Body:**  
+  ```json
+  { "usuario": "string", "senha": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK` (token)
+  - `401 Unauthorized`
+
+---
+
+### Logout
+- `POST /api/logout`  
+  **Body:**  
+  ```json
+  { "token": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `400 Bad Request`
+
+---
+
+### Me
+- `GET /api/me`  
+  **Retorno:**  
+  - `200 OK` (dados do usuário autenticado)
+
+---
+
+### Pedidos
+- `GET /api/pedidos`  
+  **Retorno:**  
+  - `200 OK` (lista de pedidos)
+
+- `POST /api/pedidos`  
+  **Body:**  
+  ```json
+  { "clienteId": "string", "produtos": [...], "adicionais": [...] }
+  ```
+  **Retorno:**  
+  - `201 Created`
+  - `400 Bad Request`
+
+- `PATCH /api/pedidos`  
+  **Body:**  
+  ```json
+  { "id": "string", ... }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+- `DELETE /api/pedidos`  
+  **Body:**  
+  ```json
+  { "id": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+#### Cancelar Pedido
+- `POST /api/pedidos/cancelar`  
+  **Body:**  
+  ```json
+  { "pedidoId": "string", "motivo": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+#### Finalizar Pedido
+- `POST /api/pedidos/finalizar`  
+  **Body:**  
+  ```json
+  { "pedidoId": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+#### Pedidos Pendentes
+- `GET /api/pedidos/pendente`  
+  **Retorno:**  
+  - `200 OK` (lista de pedidos pendentes)
+
+---
+
+### Produtos
+- `GET /api/produtos`  
+  **Retorno:**  
+  - `200 OK` (lista de produtos)
+
+- `POST /api/produtos`  
+  **Body:**  
+  ```json
+  { "nome": "string", "preco": number, "categoriaId": "string" }
+  ```
+  **Retorno:**  
+  - `201 Created`
+  - `400 Bad Request`
+
+- `PATCH /api/produtos`  
+  **Body:**  
+  ```json
+  { "id": "string", "nome": "string", "preco": number, "categoriaId": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+- `DELETE /api/produtos`  
+  **Body:**  
+  ```json
+  { "id": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+#### Categoria de Produto
+- `GET /api/produtos/categoria`  
+  **Retorno:**  
+  - `200 OK` (lista de categorias de produtos)
+
+---
+
+### Recuperar Acesso
+- `POST /api/recuperar-acesso`  
+  **Body:**  
+  ```json
+  { "email": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+---
+
+### Usuários
+- `GET /api/usuarios`  
+  **Retorno:**  
+  - `200 OK` (lista de usuários)
+
+- `POST /api/usuarios`  
+  **Body:**  
+  ```json
+  { "nome": "string", "usuario": "string", "senha": "string", "tipo": "string" }
+  ```
+  **Retorno:**  
+  - `201 Created`
+  - `400 Bad Request`
+
+- `PATCH /api/usuarios`  
+  **Body:**  
+  ```json
+  { "id": "string", "nome": "string", "usuario": "string", "senha": "string", "tipo": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+- `DELETE /api/usuarios`  
+  **Body:**  
+  ```json
+  { "id": "string" }
+  ```
+  **Retorno:**  
+  - `200 OK`
+  - `404 Not Found`
+
+---

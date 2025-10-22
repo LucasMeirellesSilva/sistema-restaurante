@@ -19,8 +19,6 @@ import { usePathname } from "next/navigation";
 // Lib
 import useUserRole from "@/lib/hooks/useUserRole";
 
-import { cn } from "@/lib/utils";
-
 type SidebarLink = {
   label: string;
   href: string;
@@ -74,13 +72,11 @@ export default function PrivateLayout({
   const [open, setOpen] = useState(false);
   const { data: userRole } = useUserRole();
   const pathname = usePathname();
-  // const [size, setSize] = useState("mx-16")
 
   return (
     <motion.div layout className="flex">
       <Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className="h-screen justify-between gap-10 items-baseline font-medium">
-          {/* <button onClick={() => setSize(size === "mx-16" ? "mx-32" : "mx-16")}>Tamanho</button> */}
           <div>
             {links.map((link, idx) => (
               <SidebarLink key={idx} link={link} pathname={pathname} />
@@ -98,15 +94,9 @@ export default function PrivateLayout({
           </div>
         </SidebarBody>
       </Sidebar>
-      <motion.main
-        transition={{
-          duration: 0.3,
-          ease: "easeInOut",
-        }}
-        className="bg-neutral-50 px-12 sm:px-2 pt-2 rounded-tl-3xl border-l transition-all"
-      >
+      <main className="flex-1 bg-neutral-50 px-12 sm:px-2 pt-2 rounded-tl-3xl border-l">
         {children}
-      </motion.main>
+      </main>
     </motion.div>
   );
 }

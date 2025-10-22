@@ -20,6 +20,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { PedidoModelType } from "@/schemas/pedidoSchema";
 import { cn } from "@/lib/utils";
+import Loading from "@/components/ui/loading";
 
 export type ModalAberto =
   | { tipo: "criarPedido" }
@@ -35,7 +36,6 @@ export default function CentralPedidos() {
   const [pesquisa, setPesquisa] = useState("");
   const [mesaContainerOpen, setMesaContainerOpen] = useState(true);
   const [modalAberto, setModalAberto] = useState<ModalAberto>(null);
-  const [size, setSize] = useState("mx-16")
 
   const { data: pedidos, isPending: isPedidosPendentesPending } = usePedidosPendentes();
   const { data: estabelecimento } = useEstabelecimentoData();
@@ -134,15 +134,15 @@ export default function CentralPedidos() {
   }
 
   return (
-    <div className={cn("flex flex-col items-center w-full mx-auto lg:w-3/4", size)}>
+    <div className="flex flex-col items-center w-full mx-auto lg:w-3/4">
       {/* Modal dinâmico */}
       <Modal isOpen={!!modalAberto} onClose={() => setModalAberto(null)}>
-        {modalAberto?.tipo === "criarPedido" && <FormPedido />}
+        {modalAberto?.tipo === "criarPedido" && <FormPedido onClose={() => setModalAberto(null)}/>}
         {modalAberto?.tipo === "criarPedidoComMesa" && (
-          <FormPedido mesaSelecionada={modalAberto.mesa} />
+          <FormPedido mesaSelecionada={modalAberto.mesa} onClose={() => setModalAberto(null)}/>
         )}
         {modalAberto?.tipo === "editarPedido" && (
-          <FormPedido pedido={modalAberto.pedido} />
+          <FormPedido pedido={modalAberto.pedido} onClose={() => setModalAberto(null)}/>
         )}
         {modalAberto?.tipo === "detalhesPedido" && (
           <DetalhesPedido pedido={modalAberto.pedido} />
@@ -178,7 +178,7 @@ export default function CentralPedidos() {
             draggable={false}
           />
           <Button
-            className="absolute py-5 bg-orange-600 hover:bg-orange-600 cursor-pointer hover:shadow-lg hover:scale-105 inset-0 my-auto mx-auto w-fit"
+            className="absolute py-5 bg-orange-600 hover:bg-orange-600 cursor-pointer hover:shadow-lg inset-0 my-auto mx-auto w-fit"
             onClick={() => setModalAberto({ tipo: "criarPedido" })}
           >
             <Plus size={32} className="scale-120" />
@@ -189,18 +189,18 @@ export default function CentralPedidos() {
       <h2 className="mb-2 text-start font-semibold text-lg tracking-tight text-neutral-800 w-full">
         Pedidos em Aberto
       </h2>
-      <input type="button" value="Mudar" onClick={() => setSize(size === "px-16" ? "px-32" : "px-16")}/>
-      <motion.div layout className="flex flex-wrap gap-4 m-4">
+      <motion.div layout className="flex flex-wrap items-center gap-4 m-4">
         <AnimatePresence>
-          {!isPedidosPendentesPending &&
-            pedidos &&
-            pesquisa &&
-            renderPedidos(pedidosPorCliente)}
+          {isPedidosPendentesPending && <Loading />}
 
-          {!isPedidosPendentesPending &&
+            {!isPedidosPendentesPending &&
             pedidos &&
-            !pesquisa &&
-            renderPedidos(pedidos)}
+            (pesquisa
+              ? renderPedidos(pedidosPorCliente)
+              : renderPedidos(pedidos))
+            }
+
+          {!isPedidosPendentesPending && !pedidos && <p>Nenhum pedido no momento.</p> }
         </AnimatePresence>
       </motion.div>
       <div className="flex items-center justify-start w-full gap-2">

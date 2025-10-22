@@ -1,8 +1,8 @@
 import { ProdutoModelType } from "@/schemas/produtoSchema";
 
-type ProdutoComValorStringSemCategoria = Omit<ProdutoModelType, "categoria">
+type ProdutoFormatadoSemCategoria = Omit<ProdutoModelType, "categoria">
 
-export default function separarProdutos(produtos: ProdutoComValorStringSemCategoria[]) {
+export default function separarProdutos(produtos: ProdutoFormatadoSemCategoria[]) {
   const adicionais = produtos
     .filter(p => p.adicional)
     .map(({ adicional, ...resto }) => resto);

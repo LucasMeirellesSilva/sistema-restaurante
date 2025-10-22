@@ -1,12 +1,11 @@
-import { Decimal } from "@prisma/client/runtime/library";
 import { ProdutoModelType } from "@/schemas/produtoSchema";
 
-type ProdutoComValorDecimal = Omit<ProdutoModelType, "valor" | "categoria"> & { valor: Decimal }
+type ProdutoComValorDecimal = Omit<ProdutoModelType, "valorFormatado" | "categoria">
 
 export default function formatarProdutos(produtos: ProdutoComValorDecimal[]) {
   return produtos.map((p) => ({
     ...p,
-    valor: new Intl.NumberFormat("pt-BR", {
+    valorFormatado: new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(Number(p.valor)),

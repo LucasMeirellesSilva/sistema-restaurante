@@ -1,13 +1,18 @@
-import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export default async function deleteItem(id: number) {
+type DeleteItemsType = {
+  tx: Prisma.TransactionClient;
+  pedidoId: number;
+};
+
+export default async function deleteItems({ tx, pedidoId }: DeleteItemsType) {
   try {
-    const result = await prisma.item.delete({
-      where: { id: id }
+    const result = await tx.item.deleteMany({
+      where: { pedido_id: pedidoId },
     });
-    
+
     return result;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {

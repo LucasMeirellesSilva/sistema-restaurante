@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react";
 import useProdutosPorCategoria from "@/lib/hooks/useProdutosCategorias";
 import useCategorias from "@/lib/hooks/useCategorias";
-
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
 
 import { PedidoModelType } from "@/schemas/pedidoSchema";
 import { ItemFormType, ItemModelType } from "@/schemas/itemSchema";
+import { PedidoFormType } from "@/schemas/pedidoSchema";
+import { PedidoUpdateType } from "@/repository/pedido/updatePedidoService";
 
 import Modal from "@/components/ui/modal";
 import FormCliente from "./formCliente";
@@ -15,12 +18,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import SelectMesa from "@/components/ui/selectMesa";
 import SelectCliente from "@/components/ui/selectCliente";
+import ItensPedido from "@/components/ui/itensPedido";
+import SeletorCategorias from "@/components/ui/seletorCategorias";
 import ProdutosVenda from "@/components/ui/produtosVenda";
 import { Button } from "@/components/ui/button";
+import Loading from "@/components/ui/loading";
 
 import { User, createLucideIcon } from "lucide-react";
 import { chairsTablePlatter } from "@lucide/lab";
-import Loading from "@/components/ui/loading";
 
 const ChairsTablePlatter = createLucideIcon(
   "chairs-table-platter",
@@ -42,8 +47,29 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
   const [mesa, setMesa] = useState<string | undefined>(
     mesaSelecionada ?? undefined
   );
+  const [observacao, setObservacao] = useState("");
   const [modalCliente, setModalCliente] = useState(false);
   const [items, setItems] = useState<ItemModelType[]>([]);
+
+  const mutation = useMutation({
+    mutationFn: async (data: PedidoFormType | PedidoUpdateType) => {
+      const res = await fetch("/api/pedidos", {
+        method: pedido ? "PATCH" : "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.error);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pedidosPendentes"] });
+      onClose();
+    },
+  });
 
   useEffect(() => {
     if (categorias.length > 0 && !categoria) {
@@ -51,46 +77,54 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
     }
   }, [categorias]);
 
+  useEffect(() => {
+    if (pedido) {
+      setCliente(pedido.clienteId ?? null);
+      setMesa(pedido.mesa ? String(Number(pedido.mesa)) : undefined);
+      setObservacao(pedido.observacao ?? "");
+      setItems(pedido.itens ?? []);
+    }
+  }, [pedido]);
+
   const { data: produtos, isPending: isProdutosPending } =
     useProdutosPorCategoria(categoria);
 
   function handleSubmit() {
     const itemsForm: ItemFormType[] = items.flatMap((item) => {
       const itemBase: ItemFormType = {
-        produtoId: item.id,
+        produtoId: item.produtoId!,
         quantidade: 1,
       };
 
       const adicionais: ItemFormType[] = item.adicionais.map((adicional) => ({
-        produtoId: adicional.id,
+        produtoId: adicional.produtoId!,
         quantidade: adicional.quantidade,
         pertenceId: item.id,
       }));
 
       return [itemBase, ...adicionais];
     });
-  }
 
-  function handleItemRemoval(combinedId: string) {
-    setItems((prev) => prev.filter((item) => cn(item.id, ...item.adicionais.map((a) => String(a.id) + String(a.quantidade ))) !== combinedId));
-  }
+    const formData: PedidoFormType = {
+      ...(pedido && { pedidoId: pedido.id } ),
+      ...(items && { itens: itemsForm}),
+      ...(cliente && { clienteId: cliente }),
+      ...(mesa && { mesaId: Number(mesa) }),
+      ...(observacao && { observacao: observacao }),
+    };
 
-  function formatCurrency(value: number) {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
+    mutation.mutate(formData);
   }
 
   return (
-    <div className="flex flex-col gap-2 w-screen">
+    <div className={cn("flex flex-col gap-2", !pedido && "h-[80vh] w-[80vw]")}>
       <Modal isOpen={modalCliente} onClose={() => setModalCliente(false)}>
-        {modalCliente && <FormCliente />}
+        {modalCliente && <FormCliente onClose={() => setModalCliente(false)}/>}
       </Modal>
       <div className="flex gap-4">
         <div className="flex flex-col gap-4 w-fit">
           <h1 className="w-fit px-6 text-center text-xl font-medium border-b border-neutral-200">
-            Novo Pedido
+            {pedido ? cn("Pedido", pedido.id) : "Novo pedido"}
           </h1>
           <form className="flex gap-2">
             <div className="flex flex-col gap-2">
@@ -112,94 +146,32 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
             <div>
               <Label htmlFor="observacao">
                 Observação
-                <Textarea id="observacao" className="resize-none" rows={4} />
+                <Textarea
+                  id="observacao"
+                  value={observacao}
+                  className="resize-none"
+                  rows={4}
+                  onChange={(e) => setObservacao(e.target.value)}
+                />
               </Label>
             </div>
           </form>
-          <div className="flex flex-col gap-2 overflow-y-auto h-106 scrollbar-none">
-            <h2 className="font-medium">Itens do Pedido</h2>
-            {items &&
-              items.map((item) => (
-                <div
-                  key={cn(item.id, ...item.adicionais.map((a) => String(a.id) + String(a.quantidade)))}
-                  className="flex flex-col gap-0.5 border-b"
-                >
-                  <div className="flex justify-between">
-                    <p>
-                      {item.quantidade}x {item.produto}
-                    </p>
-                    <p>{item.valorUnitarioFormatado}</p>
-                  </div>
-                  {item.adicionais &&
-                    item.adicionais.map((adicional) => (
-                      <div
-                        key={adicional.id}
-                        className="flex justify-between pl-5"
-                      >
-                        <li>
-                          {adicional.quantidade}x {adicional.produto}
-                        </li>
-                        <p className="tracking-tight">
-                          {formatCurrency(
-                            adicional.quantidade * adicional.valorUnitario
-                          )}
-                        </p>
-                      </div>
-                    ))}
-                  <div className="flex justify-between">
-                    <button
-                      className="cursor-pointer text-red-500 font-medium text-sm select-none"
-                      onClick={() => handleItemRemoval(cn(item.id, ...item.adicionais.map((a) => String(a.id) + String(a.quantidade))))}
-                    >
-                      Remover
-                    </button>
-                    {/*
-                    Fórmula de valor = (soma dos adicionais (valor_un * quantidade) * quantidade do item) + valor inicial (valor_un * quantidade)
-                    */}
-                    <p className="border-t font-medium">
-                      {formatCurrency(
-                        item.adicionais.reduce(
-                          (acc, adicional) =>
-                            acc +
-                            item.quantidade *
-                              (adicional.valorUnitario * adicional.quantidade),
-                          item.valorUnitario * item.quantidade
-                        )
-                      )}
-                    </p>
-                  </div>
-                </div>
-              ))}
-          </div>
+          <ItensPedido items={items} setItems={setItems} />
         </div>
         <div className="flex-1 min-w-1/2 border border-neutral-200 rounded-lg py-2 overflow-hidden">
           {isCategoriasPending || isProdutosPending ? (
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="h-full flex items-center justify-center">
               <Loading />
             </div>
           ) : (
             <div>
-              <div className="flex flex-wrap gap-1 space-y-1">
-                {!isCategoriasPending &&
-                  categorias?.map((cat) => (
-                    <div
-                      className="relative flex items-center gap-2 font-medium"
-                      key={cat.id}
-                    >
-                      <div
-                        className={cn(
-                          "px-3 py-1.5 mx-2 cursor-pointer rounded-sm hover:bg-neutral-100 select-none",
-                          cat.id === categoria &&
-                            "bg-orange-600 hover:bg-orange-600 text-white shadow-md"
-                        )}
-                        onClick={() => setCategoria(cat.id)}
-                      >
-                        {cat.nome}
-                      </div>
-                      <div className="absolute top-1/2 right-0 h-1/2 -translate-y-1/2 border-r"></div>
-                    </div>
-                  ))}
-              </div>
+              {!isCategoriasPending && categorias && (
+                <SeletorCategorias
+                  categoria={categoria}
+                  setCategoria={setCategoria}
+                  categorias={categorias}
+                />
+              )}
               {!isProdutosPending && produtos && (
                 <ProdutosVenda produtos={produtos} setItems={setItems} />
               )}
@@ -207,9 +179,20 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
           )}
         </div>
       </div>
-      <div className="flex justify-end gap-2">
-        <Button className="cursor-pointer" onClick={() => onClose()}>Cancelar</Button>
-        <Button className="cursor-pointer bg-emerald-600 hover:bg-emerald-700" onClick={() => handleSubmit()}>Criar pedido</Button>
+      <div className="flex justify-end items-center gap-2">
+        <p className="text-red-500 text-end">
+          {mutation.error instanceof Error ? mutation.error.message : null}
+        </p>
+        <Button className="cursor-pointer" onClick={() => onClose()}>
+          Cancelar
+        </Button>
+        <Button
+          className="cursor-pointer bg-emerald-600 hover:bg-emerald-700"
+          onClick={() => handleSubmit()}
+          disabled={items.length < 1}
+        >
+          {pedido ? "Editar pedido" : "Criar pedido"}
+        </Button>
       </div>
     </div>
   );

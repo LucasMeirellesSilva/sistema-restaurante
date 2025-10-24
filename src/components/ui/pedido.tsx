@@ -8,10 +8,12 @@ import {
 } from "./context-menu";
 
 import { PedidoModelType } from "@/schemas/pedidoSchema";
+import { UserType } from "@/lib/hooks/useUser";
 
 type PedidoProps = {
   className?: string;
   pedido: PedidoModelType;
+  user?: UserType;
   setPedidoSelecionado: () => void;
   abrirPedido: () => void;
 };
@@ -22,7 +24,7 @@ const patrick = Patrick_Hand({
   display: "swap",
 });
 
-export default function Pedido({ className, pedido, setPedidoSelecionado, abrirPedido }: PedidoProps) {
+export default function Pedido({ className, pedido, user, setPedidoSelecionado, abrirPedido }: PedidoProps) {
   return (
     <ContextMenu>
       <ContextMenuTrigger
@@ -42,7 +44,7 @@ export default function Pedido({ className, pedido, setPedidoSelecionado, abrirP
         <div className="absolute bottom-0 right-0 bg-orange-400 w-6 h-5"></div>
       </ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem className="cursor-pointer" onClick={() => setPedidoSelecionado()}> Editar </ContextMenuItem>
+        {user?.role === "Admin" || user?.id === pedido.autorId && <ContextMenuItem className="cursor-pointer" onClick={() => setPedidoSelecionado()}> Editar </ContextMenuItem>}
         <ContextMenuItem className="cursor-pointer"> Cancelar </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

@@ -12,12 +12,12 @@ import {
 } from "lucide-react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/Sidebar";
 import React, { useState } from "react";
-import { motion, LayoutGroup } from "framer-motion";
+import { motion } from "framer-motion";
 
 import { usePathname } from "next/navigation";
 
 // Lib
-import useUserRole from "@/lib/hooks/useUserRole";
+import useUser from "@/lib/hooks/useUser";
 
 type SidebarLink = {
   label: string;
@@ -70,7 +70,7 @@ export default function PrivateLayout({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-  const { data: userRole } = useUserRole();
+  const { data: user } = useUser();
   const pathname = usePathname();
 
   return (
@@ -85,7 +85,7 @@ export default function PrivateLayout({
           <div>
             <SidebarLink key={"logout"} link={logoutLink} pathname={pathname} />
             <div className="flex items-center justify-start gap-2 group/sidebar py-2">
-              {userRole === "Admin" ? (
+              {user?.role === "Admin" ? (
                 <ShieldUser width={28} height={28} strokeWidth={1.5} />
               ) : (
                 <CircleUser width={28} height={28} strokeWidth={1.5} />

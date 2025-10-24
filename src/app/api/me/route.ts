@@ -7,9 +7,9 @@ export async function GET(req: NextRequest) {
 
   if (!isValid) return res;
 
-  const userRole = await getUsuarioPorId(decoded!.id);
+  const user = await getUsuarioPorId(decoded!.id);
 
-  if (!userRole) {
+  if (!user) {
     return NextResponse.json(
       { message: "Usuário não encontrado" },
       { status: 404 }
@@ -17,7 +17,8 @@ export async function GET(req: NextRequest) {
   }
 
   const response = NextResponse.json({
-    role: userRole?.tipo.descricao,
+    role: user.tipo.descricao,
+    id: user.id,
   });
 
   return response;

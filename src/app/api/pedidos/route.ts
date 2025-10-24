@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
 }
 
 import { prisma } from "@/lib/prisma";
-import { PedidoFormType } from "@/schemas/pedidoSchema";
+import { validatePedidoForm } from "@/schemas/pedidoSchema";
 import createPedido from "@/repository/pedido/createPedidoService";
 import getValorProdutos from "@/repository/produto/getValorProdutosService";
 import createItem from "@/repository/item/createItemService";
@@ -43,13 +43,13 @@ export async function POST(req: NextRequest) {
 
   if (!isValid) return res;
 
-  let { itens, clienteId, mesaId, observacao }: PedidoFormType = await req.json();
-
-  if (!itens || itens.length < 1) throw new Error ("O pedido deve possuir ao menos um item.");
-
   const autorId = decoded!.id;
-
+  
   try {
+    const { itens, clienteId, mesaId, observacao } = validatePedidoForm(await req.json()) 
+
+    if (!itens || itens.length < 1) throw new Error ("O pedido deve possuir ao menos um item.");
+
     const pedido = await prisma.$transaction(async (tx) => {
       // Criação do Pedido
       const pedido = await createPedido(tx, { autorId, clienteId, mesaId, observacao });
@@ -95,24 +95,57 @@ export async function POST(req: NextRequest) {
 
 import updatePedido, { PedidoUpdateType } from "@/repository/pedido/updatePedidoService";
 import getPedidoPorId from "@/repository/pedido/getPedidoPorIdService";
+import deleteItems from "@/repository/item/deleteItemService";
 
 export async function PATCH(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);
 
   if (!isValid) return res;
 
-  const { pedidoId, clienteId, mesaId, observacao }: PedidoUpdateType = await req.json();
-
-  const pedido = await getPedidoPorId(pedidoId);
-
-  // Verificar se o usuário é autor ou administrador
-  if (pedido?.autorId !== decoded!.id && decoded!.role !== "Admin") return NextResponse.json({error: "Não é possível atualizar um pedido feito por outro usuário."}, { status: 400 });
-  
-  // Verificar se o status do pedido é pendente
-  if (pedido?.status !== "Pendente") return NextResponse.json({error: "Não é possível cancelar um pedido que não esteja pendente."}, { status: 400 });
-
   try {
-    const result = await updatePedido({ pedidoId, clienteId, mesaId, observacao })
+    const { itens, pedidoId, clienteId, mesaId, observacao }: PedidoUpdateType = await req.json();
+
+    const pedido = await getPedidoPorId(pedidoId);
+
+    // Verifica se o usuário é autor ou administrador
+    if (pedido?.autorId !== decoded!.id && decoded!.role !== "Admin") return NextResponse.json({error: "Não é possível atualizar um pedido feito por outro usuário."}, { status: 400 });
+    
+    // Verifica se o status do pedido é pendente
+    if (pedido?.status !== "Pendente") return NextResponse.json({error: "Não é possível editar um pedido que não esteja pendente."}, { status: 400 });
+
+    if (!itens || itens.length < 1) throw new Error ("O pedido deve possuir ao menos um item.");
+
+    const result = await prisma.$transaction(async (tx) => {
+      await deleteItems({tx, pedidoId})
+
+      // Consultar no banco os valores dos produtos.
+      const produtoIds = itens.map((item) => item.produtoId);
+      
+      const produtos = await getValorProdutos(produtoIds);
+
+      // Transformar em Map para otimizar consulta.
+      const produtoMap = new Map(produtos.map((p) => [p.id, p]));
+
+      // Criar os itens vinculados com valor do produto.
+      for (const item of itens) {
+        const produto = produtoMap.get(item.produtoId);
+        if (!produto) {
+          throw new Error(`Produto ${item.produtoId} não encontrado`);
+        }
+
+        if (!produto.disponivel) {
+          throw new Error(`Produto ${item.produtoId} não está disponível para venda.`);
+        }
+
+        await createItem(tx, {
+          ...item,
+          pedidoId: pedido.id,
+          valorUnitario: produto.valor,
+        });
+      }
+
+      return await updatePedido(tx, { pedidoId, clienteId, mesaId, observacao })
+    });
 
     return NextResponse.json(result, { status: 200 });
 

@@ -15,21 +15,23 @@ export function validateItemForm(item: unknown): ItemFormType {
 }
 
 const adicionalModelSchema = z.object({
-    id: z.number(),
+    id: z.number().optional(),
     valorUnitario: z.number(),
     valorUnitarioFormatado: z.string(),
     quantidade: z.number(),
-    produto: z.string().optional()
+    produto: z.string().optional(),
+    produtoId: z.number().optional()
 })
 
 export type AdicionalModelType = z.infer<typeof adicionalModelSchema>
 
 export const itemModelSchema = z.object({
-    id: z.number(),
+    id: z.number().optional(),
     valorUnitarioFormatado: z.string(),
     valorUnitario: z.number(),
     quantidade: z.number(),
     produto: z.string().optional(),
+    produtoId: z.number().optional(),
     adicionais: z.array(adicionalModelSchema)
 });
 

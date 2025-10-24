@@ -10,8 +10,13 @@ import { ItemModelType, AdicionalModelType } from "@/schemas/itemSchema";
 import { cn } from "@/lib/utils";
 import { isEqual } from "lodash";
 
-
-import { ArrowDownUp, ChevronDown, Plus } from "lucide-react";
+import {
+  ArrowDownUp,
+  ArrowUp,
+  ArrowDown,
+  ChevronDown,
+  Plus,
+} from "lucide-react";
 import { Button } from "./button";
 
 const iconColor = "text-neutral-500";
@@ -23,29 +28,68 @@ type ProdutosVendaProps = {
 
 function ProdutosVenda({ produtos, setItems }: ProdutosVendaProps) {
   const [openId, setOpenId] = useState<number | null>(null);
+  const [sort, setSort] = useState<"asc" | "desc" | null>(null);
+  const [sortedList, setSortedList] = useState<ProdutoType[]>();
 
   function handleToggle(id: number) {
     setOpenId((prev) => (prev === id ? null : id));
   }
 
+  useEffect(() => {
+    if (!sort || !produtos) {
+      setSortedList([]);
+      return;
+    }
+
+    const sortedProducts = [...produtos.normais].sort((a, b) => {
+      const aValor = Number(a.valor);
+      const bValor = Number(b.valor);
+      return sort === "asc" ? aValor - bValor : bValor - aValor;
+    });
+
+    setSortedList(sortedProducts);
+  }, [sort, produtos]);
+
+  const nextSort = !sort ? "desc" : sort === "desc" ? "asc" : null;
+
   return (
     <>
-      <div className="flex justify-between border-b font-medium py-1 pl-2 pr-10">
+      <div className="flex justify-between border-b font-medium py-1 pl-2 pr-10 select-none">
         <p>Nome</p>
-        <p className="flex gap-1 items-center cursor-pointer">
-          Valor <ArrowDownUp size={20} className={cn(iconColor)} />
+        <p
+          className="flex gap-1 items-center cursor-pointer"
+          onClick={() => setSort(nextSort)}
+        >
+          {/* Se sort for null = "asc", se for "asc" = "desc", se for "desc" = null */}
+          Valor
+          {!sort && <ArrowDownUp size={16} className={cn(iconColor)} />}
+          {sort === "asc" && <ArrowUp size={16} className={cn(iconColor)} />}
+          {sort === "desc" && <ArrowDown size={16} className={cn(iconColor)} />}
         </p>
       </div>
       <div className="flex flex-col overflow-y-auto h-140 select-none">
-        {produtos.normais.map((produto) => (
-          <ProdutoItem
-            produto={produto}
-            adicionais={produtos.adicionais}
-            isOpen={openId === produto.id}
-            setItems={setItems}
-            onToggle={handleToggle}
-          ></ProdutoItem>
-        ))}
+        {!sort &&
+          produtos.normais.map((produto) => (
+            <ProdutoItem
+              key={produto.id}
+              produto={produto}
+              adicionais={produtos.adicionais}
+              isOpen={openId === produto.id}
+              setItems={setItems}
+              onToggle={handleToggle}
+            ></ProdutoItem>
+          ))}
+        {sort &&
+          sortedList?.map((produto) => (
+            <ProdutoItem
+              key={produto.id}
+              produto={produto}
+              adicionais={produtos.adicionais}
+              isOpen={openId === produto.id}
+              setItems={setItems}
+              onToggle={handleToggle}
+            ></ProdutoItem>
+          ))}
       </div>
     </>
   );
@@ -108,8 +152,8 @@ function ProdutoItem({
 
   function handleAdicionarItem() {
     const novoItem: ItemModelType = {
-      id: produto.id,
       produto: produto.nome,
+      produtoId: produto.id,
       valorUnitarioFormatado: produto.valorFormatado,
       valorUnitario: Number(produto.valor),
       quantidade: 1,
@@ -120,10 +164,14 @@ function ProdutoItem({
     function normalizar(item: ItemModelType) {
       return {
         ...item,
-        // Garante que os adicionais sempre fiquem em ordem fixa
-        adicionais: [...item.adicionais].sort((a, b) => a.id - b.id),
-        // Ignora quantidade na comparação
-        quantidade: 0,
+        id: 0, // ignora id (caso o item seja um item que já existe no pedido e não criado agora)
+        quantidade: 0, // ignora quantidade
+        adicionais: [...item.adicionais]
+          .map((a) => ({
+            ...a,
+            id: 0, // ignora id (caso o adicional seja um item que já existe no pedido e não criado agora)
+          }))
+          .sort((a, b) => a.produtoId! - b.produtoId!),
       };
     }
 
@@ -148,7 +196,6 @@ function ProdutoItem({
 
   return (
     <div
-      key={produto.id}
       className={cn(
         "flex-col transition-all px-2 hover:bg-neutral-100",
         isOpen && "bg-neutral-100"
@@ -184,6 +231,7 @@ function ProdutoItem({
           {adicionais.map((adicional) => (
             <AdicionalItem
               adicional={adicional}
+              key={adicional.id}
               handleQuantidadeChange={handleQuantidadeChange}
             />
           ))}
@@ -224,7 +272,6 @@ function AdicionalItem({
 
   return (
     <div
-      key={adicional.id}
       className={cn(
         "min-w-70 flex justify-between items-center px-4 rounded-sm select-none border py-0.5",
         quantidade && "border-orange-500"

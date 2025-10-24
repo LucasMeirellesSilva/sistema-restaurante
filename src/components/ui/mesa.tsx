@@ -13,8 +13,10 @@ import { ModalAberto } from "@/app/(private)/central-pedidos/page";
 import { Dispatch, SetStateAction } from "react";
 import { ContextMenuSub } from "@radix-ui/react-context-menu";
 
+import { UserType } from "@/lib/hooks/useUser";
+
 type MesaProps = {
-  className?: string;
+  user?: UserType;
   numero: string;
   pedidos?: PedidoModelType[];
   setMesaSelecionada?: () => void;
@@ -22,7 +24,7 @@ type MesaProps = {
   setPedidos?: () => void;
 };
 
-export default function Mesa({ className, pedidos, numero, setMesaSelecionada, setPedidoSelecionado, setPedidos}: MesaProps) {
+export default function Mesa({ user, pedidos, numero, setMesaSelecionada, setPedidoSelecionado, setPedidos}: MesaProps) {
   const valorMesa = pedidos?.reduce((acc, pedido) => acc + pedido.valorTotal, 0) ?? 0;
   const valorMesaFormatado = new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -34,9 +36,7 @@ export default function Mesa({ className, pedidos, numero, setMesaSelecionada, s
       <ContextMenu>
         <ContextMenuTrigger
           className={cn(
-            "relative flex flex-col justify-between w-[120px] h-[120px] rounded-lg px-2 py-1 hover:scale-105 transition box-border font-bold text-white text-sm cursor-pointer shadow-[0px_2px_4px_rgba(0,0,0,0.15)] bg-orange-600",
-            className
-          )}
+            "relative flex flex-col justify-between w-[120px] h-[120px] rounded-lg px-2 py-1 hover:scale-105 transition box-border font-bold text-white text-sm cursor-pointer shadow-[0px_2px_4px_rgba(0,0,0,0.15)] bg-orange-600")}
           onClick={() => setPedidos?.()}
         >
           <p className="text-end">{pedidos[0].criadoEmHora}</p>
@@ -51,12 +51,12 @@ export default function Mesa({ className, pedidos, numero, setMesaSelecionada, s
             {pedidos.map((p) => 
             <ContextMenuSub>
               <ContextMenuSubTrigger className="cursor-pointer flex justify-between">
-                <p>Pedido {p.id} </p>
-                <p> { p.valorTotalFormatado } </p>
+                <p> Pedido {p.id} </p>
+                <p>{ p.valorTotalFormatado }</p>
               </ContextMenuSubTrigger>
               <ContextMenuSubContent>
                 <ContextMenuItem onClick={() => setPedidoSelecionado?.({ tipo:"detalhesPedido", pedido: p })}> Abrir </ContextMenuItem>
-                <ContextMenuItem onClick={() => setPedidoSelecionado?.({ tipo:"editarPedido", pedido: p })}> Editar </ContextMenuItem>
+                {user?.role === "Admin" || user?.id === p.autorId && <ContextMenuItem onClick={() => setPedidoSelecionado?.({ tipo:"editarPedido", pedido: p })}> Editar </ContextMenuItem>}
                 <ContextMenuItem> Cancelar </ContextMenuItem>
               </ContextMenuSubContent>
             </ContextMenuSub>
@@ -67,10 +67,7 @@ export default function Mesa({ className, pedidos, numero, setMesaSelecionada, s
 
   return (
     <div
-      className={cn(
-        "relative flex flex-col justify-center w-[120px] h-[120px] rounded-lg px-2 py-1 hover:scale-105 transition box-border font-bold text-white text-sm cursor-pointer shadow-[0px_2px_4px_rgba(0,0,0,0.15)] bg-emerald-600 hover:bg-emerald-700",
-        className
-      )}
+      className={cn("relative flex flex-col justify-center w-[120px] h-[120px] rounded-lg px-2 py-1 hover:scale-105 transition box-border font-bold text-white text-sm cursor-pointer shadow-[0px_2px_4px_rgba(0,0,0,0.15)] bg-emerald-600 hover:bg-emerald-700")}
       onClick={() => setMesaSelecionada?.()}
     >
       <p className="text-center text-2xl tracking-wide">{numero}</p>

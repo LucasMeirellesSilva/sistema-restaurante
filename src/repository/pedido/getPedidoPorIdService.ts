@@ -12,6 +12,7 @@ export default async function getPedidoPorId(id: number) {
           produto: {
             select: {
               nome: true,
+              id: true,
             },
           },
           adicionais: {
@@ -19,6 +20,7 @@ export default async function getPedidoPorId(id: number) {
               produto: {
                 select: {
                   nome: true,
+                  id: true,
                 }
               }
             }

@@ -22,6 +22,7 @@ export const pedidoModelSchema = z.object({
     autor: z.string(),
     autorId: z.number(),
     cliente: z.string().nullable(),
+    clienteId: z.number().nullable(),
     mesa: z.string().nullable(),
     observacao: z.string().nullable(),
     status: z.string(),

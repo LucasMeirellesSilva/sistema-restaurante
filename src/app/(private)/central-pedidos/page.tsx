@@ -4,6 +4,7 @@ import { useState, useEffect, JSX } from "react";
 
 import useEstabelecimentoData from "@/lib/hooks/useEstabelecimentoData";
 import usePedidosPendentes from "@/lib/hooks/usePedidosPendentes";
+import useUser from "@/lib/hooks/useUser";
 
 // Components
 import { Input } from "@/components/ui/input";
@@ -14,13 +15,14 @@ import Modal from "@/components/ui/modal";
 import FormPedido from "@/components/modal/form/formPedido";
 import DetalhesPedido from "@/components/modal/detalhesPedido";
 import DetalhesMesa from "@/components/modal/detalhesMesa";
+import Loading from "@/components/ui/loading";
+
 import { User, Plus, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { PedidoModelType } from "@/schemas/pedidoSchema";
 import { cn } from "@/lib/utils";
-import Loading from "@/components/ui/loading";
 
 export type ModalAberto =
   | { tipo: "criarPedido" }
@@ -39,6 +41,7 @@ export default function CentralPedidos() {
 
   const { data: pedidos, isPending: isPedidosPendentesPending } = usePedidosPendentes();
   const { data: estabelecimento } = useEstabelecimentoData();
+  const { data: user } = useUser();
 
   const pedidosPorCliente =
     pesquisa && pedidos
@@ -65,6 +68,7 @@ export default function CentralPedidos() {
             <Mesa
               key={i}
               numero={numero}
+              user={user}
               setMesaSelecionada={() =>
                 setModalAberto({ tipo: "criarPedidoComMesa", mesa: numero })
               }
@@ -104,7 +108,8 @@ export default function CentralPedidos() {
           {p.mesa ? (
             pedidosDaMesa.length > 1 ? (
               <Mesa
-                numero={p.mesa}
+              numero={p.mesa}
+              user={user}
                 pedidos={pedidosDaMesa}
                 setPedidos={() =>
                   setModalAberto({
@@ -120,6 +125,7 @@ export default function CentralPedidos() {
           ) : (
             <Pedido
               pedido={p}
+              user={user}
               setPedidoSelecionado={() =>
                 setModalAberto({ tipo: "editarPedido", pedido: p })
               }

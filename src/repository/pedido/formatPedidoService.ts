@@ -10,6 +10,7 @@ type PedidoComItens = Prisma.PedidoGetPayload<{
         produto: {
           select: {
             nome: true,
+            id: true,
           },
         },
         adicionais: {
@@ -17,6 +18,7 @@ type PedidoComItens = Prisma.PedidoGetPayload<{
             produto: {
               select: {
                 nome: true,
+                id: true,
               }
             }
           }
@@ -87,6 +89,7 @@ export default function formatPedidoService(pedidos: PedidoComItens[]) {
       adicionais: item.adicionais.map((adicional) => ({
         id: adicional.id,
         produto: adicional.produto?.nome,
+        produtoId: adicional.produto?.id,
         quantidade: adicional.quantidade,
         valorUnitario: Number(adicional.valor_unitario),
         valorUnitarioFormatado: new Intl.NumberFormat("pt-BR", {
@@ -95,7 +98,8 @@ export default function formatPedidoService(pedidos: PedidoComItens[]) {
         }).format(Number(adicional.valor_unitario))
       })),
       quantidade: item.quantidade,
-      produto: item.produto?.nome
+      produto: item.produto?.nome,
+      produtoId: item.produto?.id,
     }));
 
     const pedidoFormatado: PedidoModelType = {
@@ -103,6 +107,7 @@ export default function formatPedidoService(pedidos: PedidoComItens[]) {
       autor: pedido.usuario.nome,
       autorId: pedido.usuario_id,
       cliente: pedido.cliente?.nome ?? null,
+      clienteId: pedido.cliente_id ?? null,
       mesa: pedido.mesa?.numero ?? null,
       observacao: pedido.observacao,
       status: pedido.status.descricao,

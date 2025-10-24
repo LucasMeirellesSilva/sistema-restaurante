@@ -4,6 +4,7 @@ export default async function getUsuarioPorId(id: number) {
   const result = await prisma.usuario.findUnique({
     where: { id: id },
     select: {
+      id: true,
       tipo: {
         select: {
           descricao: true,

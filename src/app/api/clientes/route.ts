@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(clientes);
 }
 
-import { ClienteFormType, validateClienteForm } from "@/schemas/clienteSchema"
+import { validateClienteForm } from "@/schemas/clienteSchema"
 import createCliente from "@/repository/cliente/createClienteService";
 import { ZodError } from "zod";
 
@@ -24,10 +24,8 @@ export async function POST(req: NextRequest) {
 
   if (!isValid) return res;
 
-  let { nome, telefone }: ClienteFormType = await req.json();
-
   try {
-    const cliente = validateClienteForm({ nome, telefone });
+    const cliente = validateClienteForm(await req.json());
 
     const result = await createCliente(cliente);
   
@@ -50,10 +48,10 @@ export async function PATCH(req: NextRequest) {
   // Token inválido, retorna e reseta token.
   if (!isValid) return res;
 
-  const { clienteId, nome, telefone }: ClienteUpdateType = await req.json();
+  const cliente: ClienteUpdateType = await req.json();
 
   try {
-    const result = await updateCliente({ clienteId, nome, telefone })
+    const result = await updateCliente(cliente)
 
     return NextResponse.json(result, { status: 200 });
 

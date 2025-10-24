@@ -9,17 +9,14 @@ async function fetchUser() {
   const res = await fetch("/api/me");
   if (!res.ok) throw new Error("Não autenticado");
   const data = await res.json();
-  const user: UserType = {
-    id: data.id,
-    role: data.tipo.descricao
-  }
+  const user: UserType = data;
   return user;
 }
 
 export default function useUser () {
 
   return useQuery({
-    queryKey: ['userRole'],
+    queryKey: ['user'],
     queryFn: fetchUser,
     staleTime: 1000 * 60 * 10,
   });

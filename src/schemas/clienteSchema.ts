@@ -3,7 +3,7 @@ import { pedidoModelSchema } from './pedidoSchema';
 
 export const clienteFormSchema = z.object({
     nome: z.string(),
-    telefone: z.string().max(12).nullable()
+    telefone: z.string().max(12).optional()
 })
 
 export type ClienteFormType = z.infer<typeof clienteFormSchema>

@@ -104,12 +104,12 @@ export default function CentralPedidos() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
+          className="flex justify-center w-[150px] h-[120px]"
         >
           {p.mesa ? (
-            pedidosDaMesa.length > 1 ? (
               <Mesa
-              numero={p.mesa}
-              user={user}
+                numero={p.mesa}
+                user={user}
                 pedidos={pedidosDaMesa}
                 setPedidos={() =>
                   setModalAberto({
@@ -118,10 +118,10 @@ export default function CentralPedidos() {
                   })
                 }
                 setPedidoSelecionado={setModalAberto}
+                setMesaSelecionada={() =>
+                  setModalAberto({ tipo: "criarPedidoComMesa", mesa: p.mesa! })
+                }
               />
-            ) : (
-              <Mesa numero={p.mesa} pedidos={pedidosDaMesa} />
-            )
           ) : (
             <Pedido
               pedido={p}

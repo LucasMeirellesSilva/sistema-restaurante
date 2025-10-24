@@ -74,9 +74,9 @@ export default function PrivateLayout({
   const pathname = usePathname();
 
   return (
-    <motion.div layout className="flex">
+    <motion.div className="flex">
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="h-screen justify-between gap-10 items-baseline font-medium">
+        <SidebarBody className="h-screen justify-between gap-10 items-baseline font-medium overflow-hidden sticky top-0">
           <div>
             {links.map((link, idx) => (
               <SidebarLink key={idx} link={link} pathname={pathname} />

@@ -1,3 +1,5 @@
+"use client"
+
 import { cn } from "@/lib/utils";
 import {
   ContextMenu,
@@ -36,7 +38,7 @@ export default function Mesa({ user, pedidos, numero, setMesaSelecionada, setPed
       <ContextMenu>
         <ContextMenuTrigger
           className={cn(
-            "relative flex flex-col justify-between w-[120px] h-[120px] rounded-lg px-2 py-1 hover:scale-105 transition box-border font-bold text-white text-sm cursor-pointer shadow-[0px_2px_4px_rgba(0,0,0,0.15)] bg-orange-600")}
+            "relative flex flex-col justify-between w-[120px] h-[120px] rounded-lg px-2 py-1 hover:-translate-y-1 transition box-border font-bold text-white text-sm cursor-pointer shadow-[0px_2px_4px_rgba(0,0,0,0.15)] bg-orange-600")}
           onClick={() => setPedidos?.()}
         >
           <p className="text-end">{pedidos[0].criadoEmHora}</p>
@@ -48,15 +50,16 @@ export default function Mesa({ user, pedidos, numero, setMesaSelecionada, setPed
         </ContextMenuTrigger>
         <ContextMenuContent>
           <ContextMenuItem className="cursor-pointer" onClick={() => setPedidos?.()}> Abrir </ContextMenuItem>
+          <ContextMenuItem className="cursor-pointer" onClick={() => setMesaSelecionada?.()}> Novo pedido </ContextMenuItem>
             {pedidos.map((p) => 
-            <ContextMenuSub>
-              <ContextMenuSubTrigger className="cursor-pointer flex justify-between">
+            <ContextMenuSub key={p.id}>
+              <ContextMenuSubTrigger className="cursor-pointer flex gap-4 justify-between">
                 <p> Pedido {p.id} </p>
-                <p>{ p.valorTotalFormatado }</p>
+                <p className="font-medium">{ p.valorTotalFormatado }</p>
               </ContextMenuSubTrigger>
               <ContextMenuSubContent>
                 <ContextMenuItem onClick={() => setPedidoSelecionado?.({ tipo:"detalhesPedido", pedido: p })}> Abrir </ContextMenuItem>
-                {user?.role === "Admin" || user?.id === p.autorId && <ContextMenuItem onClick={() => setPedidoSelecionado?.({ tipo:"editarPedido", pedido: p })}> Editar </ContextMenuItem>}
+                {(user?.role === "Admin" || user?.id === p.autorId) && <ContextMenuItem onClick={() => setPedidoSelecionado?.({ tipo:"editarPedido", pedido: p })}> Editar </ContextMenuItem>}
                 <ContextMenuItem> Cancelar </ContextMenuItem>
               </ContextMenuSubContent>
             </ContextMenuSub>

@@ -44,7 +44,7 @@ export default function Pedido({ className, pedido, user, setPedidoSelecionado, 
         <div className="absolute bottom-0 right-0 bg-orange-400 w-6 h-5"></div>
       </ContextMenuTrigger>
       <ContextMenuContent>
-        {user?.role === "Admin" || user?.id === pedido.autorId && <ContextMenuItem className="cursor-pointer" onClick={() => setPedidoSelecionado()}> Editar </ContextMenuItem>}
+        {(user?.role === "Admin" || user?.id === pedido.autorId) && <ContextMenuItem className="cursor-pointer" onClick={() => setPedidoSelecionado()}> Editar </ContextMenuItem>}
         <ContextMenuItem className="cursor-pointer"> Cancelar </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

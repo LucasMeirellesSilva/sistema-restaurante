@@ -13,7 +13,6 @@ type ModalProps = {
 };
 
 function Modal({ isOpen, blur = true, className, children, onClose }: ModalProps) {
-  if (!isOpen) return null;
 
   useEffect(() => {
     if (isOpen) {
@@ -21,11 +20,13 @@ function Modal({ isOpen, blur = true, className, children, onClose }: ModalProps
     } else {
       document.body.style.overflow = "";
     }
-
+    
     return () => {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  if (!isOpen) return null;
 
   return createPortal(
     <div

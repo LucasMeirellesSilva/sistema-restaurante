@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br" className={cn(inter.variable, "antialiased, font-sans")}>
-      <body className="antialiased min-h-screen">
+      <body className="antialiased min-h-screen scrollbar-none">
         <ReactQueryProvider>
           {children}
         </ReactQueryProvider>

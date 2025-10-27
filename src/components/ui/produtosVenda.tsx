@@ -4,8 +4,7 @@ import { Dispatch, SetStateAction, useState, useEffect } from "react";
 
 import InputQuantidade from "./inputQuantidade";
 
-import { ProdutosPorCategoria } from "@/lib/hooks/useProdutosCategorias";
-import { ProdutoType } from "@/lib/hooks/useProdutosCategorias";
+import { ProdutosPorCategoria, ProdutoType } from "@/lib/hooks/useProdutosCategoria";
 import { ItemModelType, AdicionalModelType } from "@/schemas/itemSchema";
 import { cn } from "@/lib/utils";
 import { isEqual } from "lodash";

@@ -15,12 +15,18 @@ export async function GET(req: NextRequest) {
   if (!isValid) return res;
 
   // Bloqueio de rotas baseado nos roles.
-  const { allowed, res: notAllowedRes } = checkPermission(decoded!.role, "verHistorico");
+  const { allowed, res: notAllowedRes } = checkPermission(
+    decoded!.role,
+    "verHistorico"
+  );
 
   if (!allowed) return notAllowedRes;
-   
+
   // Interação com o banco
-  const { pedidosFormatados, totalPages, total } = await getPedidos({ limit, skip });
+  const { pedidosFormatados, totalPages, total } = await getPedidos({
+    limit,
+    skip,
+  });
 
   const response = NextResponse.json({
     items: pedidosFormatados,
@@ -44,19 +50,27 @@ export async function POST(req: NextRequest) {
   if (!isValid) return res;
 
   const autorId = decoded!.id;
-  
+
   try {
-    const { itens, clienteId, mesaId, observacao } = validatePedidoForm(await req.json()) 
+    const { itens, clienteId, mesaId, observacao } = validatePedidoForm(
+      await req.json()
+    );
 
-    if (!itens || itens.length < 1) throw new Error ("O pedido deve possuir ao menos um item.");
+    if (!itens || itens.length < 1)
+      throw new Error("O pedido deve possuir ao menos um item.");
 
-    const pedido = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       // Criação do Pedido
-      const pedido = await createPedido(tx, { autorId, clienteId, mesaId, observacao });
+      const pedido = await createPedido(tx, {
+        autorId,
+        clienteId,
+        mesaId,
+        observacao,
+      });
 
       // Consultar no banco os valores dos produtos.
       const produtoIds = itens.map((item) => item.produtoId);
-      
+
       const produtos = await getValorProdutos(produtoIds);
 
       // Transformar em Map para otimizar consulta.
@@ -70,7 +84,9 @@ export async function POST(req: NextRequest) {
         }
 
         if (!produto.disponivel) {
-          throw new Error(`Produto ${item.produtoId} não está disponível para venda.`);
+          throw new Error(
+            `Produto ${item.produtoId} não está disponível para venda.`
+          );
         }
 
         await createItem(tx, {
@@ -83,17 +99,36 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    return NextResponse.json(pedido, { status: 201 });
+    if (result) {
+      const pedido = await getPedidoPorId(result.id);
 
+      const res = await fetch("http://localhost:4000/novo-pedido", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pedido),
+      });
+
+      if (res.ok) {
+        console.log(await res.json());
+      } else {
+        console.log(res.status);
+      }
+
+      return NextResponse.json(pedido, { status: 201 });
+    } else {
+      throw new Error("Falha na criação do pedido.")
+    }
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : String(err) },
       { status: 500 }
     );
-  }  
+  }
 }
 
-import updatePedido, { PedidoUpdateType } from "@/repository/pedido/updatePedidoService";
+import updatePedido, {
+  PedidoUpdateType,
+} from "@/repository/pedido/updatePedidoService";
 import getPedidoPorId from "@/repository/pedido/getPedidoPorIdService";
 import deleteItems from "@/repository/item/deleteItemService";
 
@@ -103,24 +138,36 @@ export async function PATCH(req: NextRequest) {
   if (!isValid) return res;
 
   try {
-    const { itens, pedidoId, clienteId, mesaId, observacao }: PedidoUpdateType = await req.json();
+    const { itens, pedidoId, clienteId, mesaId, observacao }: PedidoUpdateType =
+      await req.json();
 
     const pedido = await getPedidoPorId(pedidoId);
 
     // Verifica se o usuário é autor ou administrador
-    if (pedido?.autorId !== decoded!.id && decoded!.role !== "Admin") return NextResponse.json({error: "Não é possível atualizar um pedido feito por outro usuário."}, { status: 400 });
-    
-    // Verifica se o status do pedido é pendente
-    if (pedido?.status !== "Pendente") return NextResponse.json({error: "Não é possível editar um pedido que não esteja pendente."}, { status: 400 });
+    if (pedido?.autorId !== decoded!.id && decoded!.role !== "Admin")
+      return NextResponse.json(
+        {
+          error: "Não é possível atualizar um pedido feito por outro usuário.",
+        },
+        { status: 400 }
+      );
 
-    if (!itens || itens.length < 1) throw new Error ("O pedido deve possuir ao menos um item.");
+    // Verifica se o status do pedido é pendente
+    if (pedido?.status !== "Pendente")
+      return NextResponse.json(
+        { error: "Não é possível editar um pedido que não esteja pendente." },
+        { status: 400 }
+      );
+
+    if (!itens || itens.length < 1)
+      throw new Error("O pedido deve possuir ao menos um item.");
 
     const result = await prisma.$transaction(async (tx) => {
-      await deleteItems({tx, pedidoId})
+      await deleteItems({ tx, pedidoId });
 
       // Consultar no banco os valores dos produtos.
       const produtoIds = itens.map((item) => item.produtoId);
-      
+
       const produtos = await getValorProdutos(produtoIds);
 
       // Transformar em Map para otimizar consulta.
@@ -134,7 +181,9 @@ export async function PATCH(req: NextRequest) {
         }
 
         if (!produto.disponivel) {
-          throw new Error(`Produto ${item.produtoId} não está disponível para venda.`);
+          throw new Error(
+            `Produto ${item.produtoId} não está disponível para venda.`
+          );
         }
 
         await createItem(tx, {
@@ -144,15 +193,39 @@ export async function PATCH(req: NextRequest) {
         });
       }
 
-      return await updatePedido(tx, { pedidoId, clienteId, mesaId, observacao })
+      return await updatePedido(tx, {
+        pedidoId,
+        clienteId,
+        mesaId,
+        observacao,
+      });
     });
 
-    return NextResponse.json(result, { status: 200 });
+    if (result) {
+      const pedido = await getPedidoPorId(result.id);
 
+      const res = await fetch("http://localhost:4000/novo-pedido", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pedido),
+      });
+
+      if (res.ok) {
+        console.log(await res.json());
+      } else {
+        console.log(res.status);
+      }
+
+      return NextResponse.json(result, { status: 200 });
+    } else {
+      throw new Error("Falha na criação do pedido.")
+    }
+
+    return NextResponse.json(result, { status: 200 });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : String(err) },
       { status: 500 }
     );
-  }  
+  }
 }

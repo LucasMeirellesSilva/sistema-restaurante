@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import useProdutosPorCategoria from "@/lib/hooks/useProdutosCategorias";
+import useProdutosPorCategoria from "@/lib/hooks/useProdutosCategoria";
 import useCategorias from "@/lib/hooks/useCategorias";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";

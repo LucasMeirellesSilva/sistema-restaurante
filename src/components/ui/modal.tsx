@@ -12,7 +12,7 @@ type ModalProps = {
   onClose?: () => void;
 };
 
-function Modal({ isOpen, blur = true, className, children, onClose }: ModalProps) {
+function Modal({ isOpen, className, children, onClose }: ModalProps) {
 
   useEffect(() => {
     if (isOpen) {
@@ -31,8 +31,8 @@ function Modal({ isOpen, blur = true, className, children, onClose }: ModalProps
   return createPortal(
     <div
       className={cn(
-        "fixed inset-0 flex justify-center items-center z-50",
-        blur && "bg-black/20 backdrop-blur-[2px]"
+        "fixed inset-0 flex justify-center items-center z-50 bg-black/40 transition-all",
+        isOpen ? "opacity-100 scale-100" : "opacity-0 bg-transparent scale-75",
       )}
       onClick={onClose}
       role="dialog"

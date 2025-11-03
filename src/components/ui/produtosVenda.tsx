@@ -262,6 +262,7 @@ function AdicionalItem({
   useEffect(() => {
     handleQuantidadeChange({
       id: adicional.id,
+      produtoId: adicional.id,
       quantidade: quantidade,
       valorUnitario: Number(adicional.valor),
       valorUnitarioFormatado: adicional.valorFormatado,

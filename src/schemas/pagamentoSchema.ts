@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { formaPagamentoFormSchema, formaPagamentoModelSchema } from './formaPagamentoSchema';
 
-export const pagamentoFormSchema = z.object({
+const pagamentoFormSchema = z.object({
     pedidoId: z.number(),
     formas: z.array(formaPagamentoFormSchema)
 })
@@ -15,7 +15,17 @@ export function validatePagamentoForm(pagamento: unknown): PagamentoFormType {
     return result;
 }
 
-export const pagamentoModelSchema = z.object({
+const pagamentosFormSchema = z.array(pagamentoFormSchema)
+
+export type PagamentosFormType = z.infer<typeof pagamentosFormSchema>
+
+export function validatePagamentosForm(pagamentos: unknown): PagamentosFormType {
+    const result = pagamentosFormSchema.parse(pagamentos)
+
+    return result;
+}
+
+const pagamentoModelSchema = z.object({
     id: z.number(),
     pedidoId: z.number(),
     formas: z.array(formaPagamentoModelSchema)

@@ -17,13 +17,11 @@ import Loading from "./loading";
 import { Plus, Search } from "lucide-react";
 
 type SelectClienteProps = {
-  cliente: number | null;
   setCliente: Dispatch<React.SetStateAction<number | null>>;
   setModalCliente: Dispatch<React.SetStateAction<boolean>>;
 };
 
 function SelectCliente({
-  cliente,
   setCliente,
   setModalCliente,
 }: SelectClienteProps) {

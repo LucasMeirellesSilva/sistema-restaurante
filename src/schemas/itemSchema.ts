@@ -1,9 +1,16 @@
 import { z } from 'zod';
 
+export const itemAdicionalFormSchema = z.object({
+    produtoId: z.number(),
+    quantidade: z.number()
+})
+
+export type ItemAdicionalFormType = z.infer<typeof itemAdicionalFormSchema>
+
 export const itemFormSchema = z.object({
     produtoId: z.number(),
     quantidade: z.number(),
-    pertenceId: z.number().optional()
+    adicionais: z.array(itemAdicionalFormSchema).optional()
 })
 
 export type ItemFormType = z.infer<typeof itemFormSchema>

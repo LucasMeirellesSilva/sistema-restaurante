@@ -69,7 +69,10 @@ export async function POST(req: NextRequest) {
       });
 
       // Consultar no banco os valores dos produtos.
-      const produtoIds = itens.map((item) => item.produtoId);
+      const produtoIds = itens.flatMap((item) => [
+        item.produtoId,
+        ...(item.adicionais?.map((a) => a.produtoId) ?? []),
+      ]);
 
       const produtos = await getValorProdutos(produtoIds);
 
@@ -89,34 +92,49 @@ export async function POST(req: NextRequest) {
           );
         }
 
-        await createItem(tx, {
-          ...item,
+        // cria o item principal
+        const itemCriado = await createItem(tx, {
           pedidoId: pedido.id,
+          produtoId: item.produtoId,
+          quantidade: item.quantidade,
           valorUnitario: produto.valor,
         });
 
-        return pedido;
+        // cria os adicionais se existirem
+        if (item.adicionais?.length) {
+          for (const adicional of item.adicionais) {
+            const prodAd = produtoMap.get(adicional.produtoId);
+            if (!prodAd)
+              throw new Error(`Produto adicional ${adicional.produtoId} não encontrado`);
+            if (!prodAd.disponivel)
+              throw new Error(`Adicional ${adicional.produtoId} não está disponível.`);
+
+            await createItem(tx, {
+              pedidoId: pedido.id,
+              produtoId: adicional.produtoId,
+              quantidade: adicional.quantidade,
+              valorUnitario: prodAd.valor,
+              pertenceId: itemCriado.id,
+            });
+          }
+        }
       }
+
+      return pedido;
     });
 
     if (result) {
       const pedido = await getPedidoPorId(result.id);
 
-      const res = await fetch("http://localhost:4000/novo-pedido", {
+      fetch("http://localhost:4000/novo-pedido", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pedido),
       });
 
-      if (res.ok) {
-        console.log(await res.json());
-      } else {
-        console.log(res.status);
-      }
-
       return NextResponse.json(pedido, { status: 201 });
     } else {
-      throw new Error("Falha na criação do pedido.")
+      throw new Error("Falha inesperada na criação do pedido.")
     }
   } catch (err) {
     return NextResponse.json(
@@ -166,7 +184,10 @@ export async function PATCH(req: NextRequest) {
       await deleteItems({ tx, pedidoId });
 
       // Consultar no banco os valores dos produtos.
-      const produtoIds = itens.map((item) => item.produtoId);
+      const produtoIds = itens.flatMap((item) => [
+        item.produtoId,
+        ...(item.adicionais?.map((a) => a.produtoId) ?? []),
+      ]);
 
       const produtos = await getValorProdutos(produtoIds);
 
@@ -186,11 +207,32 @@ export async function PATCH(req: NextRequest) {
           );
         }
 
-        await createItem(tx, {
-          ...item,
+        // cria o item principal
+        const itemCriado = await createItem(tx, {
           pedidoId: pedido.id,
+          produtoId: item.produtoId,
+          quantidade: item.quantidade,
           valorUnitario: produto.valor,
         });
+
+        // cria os adicionais se existirem
+        if (item.adicionais?.length) {
+          for (const adicional of item.adicionais) {
+            const prodAd = produtoMap.get(adicional.produtoId);
+            if (!prodAd)
+              throw new Error(`Produto adicional ${adicional.produtoId} não encontrado`);
+            if (!prodAd.disponivel)
+              throw new Error(`Adicional ${adicional.produtoId} não está disponível.`);
+
+            await createItem(tx, {
+              pedidoId: pedido.id,
+              produtoId: adicional.produtoId,
+              quantidade: adicional.quantidade,
+              valorUnitario: prodAd.valor,
+              pertenceId: itemCriado.id,
+            });
+          }
+        }
       }
 
       return await updatePedido(tx, {
@@ -204,24 +246,16 @@ export async function PATCH(req: NextRequest) {
     if (result) {
       const pedido = await getPedidoPorId(result.id);
 
-      const res = await fetch("http://localhost:4000/novo-pedido", {
+      fetch("http://localhost:4000/novo-pedido", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pedido),
       });
 
-      if (res.ok) {
-        console.log(await res.json());
-      } else {
-        console.log(res.status);
-      }
-
       return NextResponse.json(result, { status: 200 });
     } else {
-      throw new Error("Falha na criação do pedido.")
+      throw new Error("Falha inesperada na criação do pedido.")
     }
-
-    return NextResponse.json(result, { status: 200 });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : String(err) },

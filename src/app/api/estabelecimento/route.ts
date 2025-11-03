@@ -9,7 +9,7 @@ export async function GET() {
   return NextResponse.json(result, { status: 200 });
 }
 
-import { EstabelecimentoFormType } from "@/schemas/estabelecimentoSchema";
+import { validateEstabelecimentoForm } from "@/schemas/estabelecimentoSchema";
 import createEstabelecimento from "@/repository/estabelecimento/createEstabelecimentoService";
 
 export async function POST(req: NextRequest) {
@@ -20,9 +20,9 @@ export async function POST(req: NextRequest) {
 
   if (decoded!.role !== "Admin") return NextResponse.json({error: "Acesso negado."}, { status: 400 });
 
-  const estabelecimento: EstabelecimentoFormType = await req.json();
-
   try {
+    const estabelecimento = await validateEstabelecimentoForm(await req.json())
+
     const result = await createEstabelecimento(estabelecimento)
 
     return NextResponse.json(result, { status: 201 });

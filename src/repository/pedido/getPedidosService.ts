@@ -1,12 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import formatPedidoService from "./formatPedidoService";
 
-export type pedidosProps = {
+export type PedidosProps = {
   limit: number;
   skip: number;
 };
 
-export default async function getPedidos({ limit, skip }: pedidosProps) {
+export default async function getPedidos({ limit, skip }: PedidosProps) {
   const [pedidos, total] = await Promise.all([
     prisma.pedido.findMany({
       skip,

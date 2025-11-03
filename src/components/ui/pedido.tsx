@@ -16,6 +16,7 @@ type PedidoProps = {
   user?: UserType;
   setPedidoSelecionado: () => void;
   abrirPedido: () => void;
+  cancelarPedido: () => void;
 };
 
 const patrick = Patrick_Hand({
@@ -24,7 +25,7 @@ const patrick = Patrick_Hand({
   display: "swap",
 });
 
-export default function Pedido({ className, pedido, user, setPedidoSelecionado, abrirPedido }: PedidoProps) {
+export default function Pedido({ className, pedido, user, setPedidoSelecionado, abrirPedido, cancelarPedido }: PedidoProps) {
   return (
     <ContextMenu>
       <ContextMenuTrigger
@@ -45,7 +46,7 @@ export default function Pedido({ className, pedido, user, setPedidoSelecionado, 
       </ContextMenuTrigger>
       <ContextMenuContent>
         {(user?.role === "Admin" || user?.id === pedido.autorId) && <ContextMenuItem className="cursor-pointer" onClick={() => setPedidoSelecionado()}> Editar </ContextMenuItem>}
-        <ContextMenuItem className="cursor-pointer"> Cancelar </ContextMenuItem>
+        <ContextMenuItem className="cursor-pointer" onClick={() => cancelarPedido()}> Cancelar </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   );

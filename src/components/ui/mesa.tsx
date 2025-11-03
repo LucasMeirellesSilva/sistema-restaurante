@@ -24,9 +24,10 @@ type MesaProps = {
   setMesaSelecionada?: () => void;
   setPedidoSelecionado?: Dispatch<SetStateAction<ModalAberto>>;
   setPedidos?: () => void;
+  cancelarPedido?: Dispatch<SetStateAction<ModalAberto>>;
 };
 
-export default function Mesa({ user, pedidos, numero, setMesaSelecionada, setPedidoSelecionado, setPedidos}: MesaProps) {
+export default function Mesa({ user, pedidos, numero, setMesaSelecionada, setPedidoSelecionado, setPedidos, cancelarPedido}: MesaProps) {
   const valorMesa = pedidos?.reduce((acc, pedido) => acc + pedido.valorTotal, 0) ?? 0;
   const valorMesaFormatado = new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -60,7 +61,7 @@ export default function Mesa({ user, pedidos, numero, setMesaSelecionada, setPed
               <ContextMenuSubContent>
                 <ContextMenuItem onClick={() => setPedidoSelecionado?.({ tipo:"detalhesPedido", pedido: p })}> Abrir </ContextMenuItem>
                 {(user?.role === "Admin" || user?.id === p.autorId) && <ContextMenuItem onClick={() => setPedidoSelecionado?.({ tipo:"editarPedido", pedido: p })}> Editar </ContextMenuItem>}
-                <ContextMenuItem> Cancelar </ContextMenuItem>
+                <ContextMenuItem onClick={() => cancelarPedido?.({tipo: "cancelarPedido", pedido: p})}> Cancelar </ContextMenuItem>
               </ContextMenuSubContent>
             </ContextMenuSub>
           )}

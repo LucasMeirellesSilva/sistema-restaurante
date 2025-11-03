@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import { ItemFormType } from "@/schemas/itemSchema";
 import { Decimal, PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export type ItemCreate = ItemFormType & { pedidoId: number, valorUnitario: Decimal }
+export type ItemCreate = ItemFormType & { pedidoId: number, pertenceId?: number, valorUnitario: Decimal }
 
 export default async function createItem(tx: Prisma.TransactionClient, { pedidoId, produtoId, quantidade, pertenceId, valorUnitario }: ItemCreate) {
   try {

@@ -1,10 +1,9 @@
-import { prisma } from "@/lib/prisma";
-
+import { Prisma } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export default async function setPedidoFinalizado( pedidoId: number ) {
+export default async function setPedidoFinalizado(tx: Prisma.TransactionClient, pedidoId: number ) {
   try {
-    const pedido = await prisma.pedido.update({
+    const pedido = await tx.pedido.update({
       where: { id: pedidoId },
       data: {
         status_id: 3,

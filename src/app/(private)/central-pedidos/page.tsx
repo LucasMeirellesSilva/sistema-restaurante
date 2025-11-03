@@ -16,6 +16,7 @@ import FormPedido from "@/components/modal/form/formPedido";
 import DetalhesPedido from "@/components/modal/detalhesPedido";
 import DetalhesMesa from "@/components/modal/detalhesMesa";
 import Loading from "@/components/ui/loading";
+import Confirmacao from "@/components/modal/confirmacao";
 
 import { User, Plus, ChevronDown } from "lucide-react";
 import Image from "next/image";
@@ -23,12 +24,15 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { PedidoModelType } from "@/schemas/pedidoSchema";
 import { cn } from "@/lib/utils";
+import { queryClient } from "@/lib/queryClient";
+import { useMutation } from "@tanstack/react-query";
 
 export type ModalAberto =
   | { tipo: "criarPedido" }
   | { tipo: "criarPedidoComMesa"; mesa: string }
   | { tipo: "editarPedido"; pedido: PedidoModelType }
   | { tipo: "detalhesPedido"; pedido: PedidoModelType }
+  | { tipo: "cancelarPedido"; pedido: PedidoModelType }
   | { tipo: "detalhesMesa"; pedidos: PedidoModelType[] }
   | { tipo: "cliente" }
   | null;
@@ -39,7 +43,8 @@ export default function CentralPedidos() {
   const [mesaContainerOpen, setMesaContainerOpen] = useState(true);
   const [modalAberto, setModalAberto] = useState<ModalAberto>(null);
 
-  const { data: pedidos, isPending: isPedidosPendentesPending } = usePedidosPendentes();
+  const { data: pedidos, isPending: isPedidosPendentesPending } =
+    usePedidosPendentes();
   const { data: estabelecimento } = useEstabelecimentoData();
   const { data: user } = useUser();
 
@@ -49,6 +54,26 @@ export default function CentralPedidos() {
           p.cliente?.toLowerCase().includes(pesquisa.toLowerCase())
         )
       : [];
+
+  const cancelarPedido = useMutation({
+    mutationFn: async (id: number) => {
+      const res = await fetch("/api/pedidos/cancelar", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: id }),
+      });
+
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.error);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pedidosPendentes"] });
+      setModalAberto(null);
+    },
+  });
 
   useEffect(() => {
     if (estabelecimento) {
@@ -107,21 +132,22 @@ export default function CentralPedidos() {
           className="flex justify-center w-[150px] h-[120px]"
         >
           {p.mesa ? (
-              <Mesa
-                numero={p.mesa}
-                user={user}
-                pedidos={pedidosDaMesa}
-                setPedidos={() =>
-                  setModalAberto({
-                    tipo: "detalhesMesa",
-                    pedidos: pedidosDaMesa,
-                  })
-                }
-                setPedidoSelecionado={setModalAberto}
-                setMesaSelecionada={() =>
-                  setModalAberto({ tipo: "criarPedidoComMesa", mesa: p.mesa! })
-                }
-              />
+            <Mesa
+              numero={p.mesa}
+              user={user}
+              pedidos={pedidosDaMesa}
+              setPedidos={() =>
+                setModalAberto({
+                  tipo: "detalhesMesa",
+                  pedidos: pedidosDaMesa,
+                })
+              }
+              setPedidoSelecionado={setModalAberto}
+              setMesaSelecionada={() =>
+                setModalAberto({ tipo: "criarPedidoComMesa", mesa: p.mesa! })
+              }
+              cancelarPedido={setModalAberto}
+            />
           ) : (
             <Pedido
               pedido={p}
@@ -132,6 +158,9 @@ export default function CentralPedidos() {
               abrirPedido={() =>
                 setModalAberto({ tipo: "detalhesPedido", pedido: p })
               }
+              cancelarPedido={() =>
+                setModalAberto({ tipo: "cancelarPedido", pedido: p })
+              }
             />
           )}
         </motion.div>
@@ -139,22 +168,44 @@ export default function CentralPedidos() {
     });
   }
 
+  function handleCancelarPedido() {
+    if (modalAberto?.tipo !== "cancelarPedido") return;
+
+    cancelarPedido.mutate(modalAberto.pedido.id);
+  }
+
   return (
     <div className="flex flex-col items-center w-full mx-auto lg:w-3/4">
       {/* Modal dinâmico */}
       <Modal isOpen={!!modalAberto} onClose={() => setModalAberto(null)}>
-        {modalAberto?.tipo === "criarPedido" && <FormPedido onClose={() => setModalAberto(null)}/>}
+        {modalAberto?.tipo === "criarPedido" && (
+          <FormPedido onClose={() => setModalAberto(null)} />
+        )}
         {modalAberto?.tipo === "criarPedidoComMesa" && (
-          <FormPedido mesaSelecionada={modalAberto.mesa} onClose={() => setModalAberto(null)}/>
+          <FormPedido
+            mesaSelecionada={modalAberto.mesa}
+            onClose={() => setModalAberto(null)}
+          />
         )}
         {modalAberto?.tipo === "editarPedido" && (
-          <FormPedido pedido={modalAberto.pedido} onClose={() => setModalAberto(null)}/>
+          <FormPedido
+            pedido={modalAberto.pedido}
+            onClose={() => setModalAberto(null)}
+          />
         )}
         {modalAberto?.tipo === "detalhesPedido" && (
           <DetalhesPedido pedido={modalAberto.pedido} />
         )}
         {modalAberto?.tipo === "detalhesMesa" && (
           <DetalhesMesa pedidos={modalAberto.pedidos} />
+        )}
+        {modalAberto?.tipo === "cancelarPedido" && (
+          <Confirmacao
+            handleConfirmation={handleCancelarPedido}
+            onClose={() => setModalAberto(null)}
+          >
+            Tem certeza que deseja cancelar o pedido {modalAberto.pedido.id}?
+          </Confirmacao>
         )}
       </Modal>
 
@@ -199,14 +250,15 @@ export default function CentralPedidos() {
         <AnimatePresence>
           {isPedidosPendentesPending && <Loading />}
 
-            {!isPedidosPendentesPending &&
+          {!isPedidosPendentesPending &&
             pedidos &&
             (pesquisa
               ? renderPedidos(pedidosPorCliente)
-              : renderPedidos(pedidos))
-            }
+              : renderPedidos(pedidos))}
 
-          {!isPedidosPendentesPending && !pedidos && <p>Nenhum pedido no momento.</p> }
+          {!isPedidosPendentesPending && !pedidos && (
+            <p>Nenhum pedido no momento.</p>
+          )}
         </AnimatePresence>
       </motion.div>
       <div className="flex items-center justify-start w-full gap-2">

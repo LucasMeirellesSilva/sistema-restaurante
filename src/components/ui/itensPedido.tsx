@@ -4,6 +4,8 @@ import { Dispatch, SetStateAction } from "react";
 
 import { ItemModelType } from "@/schemas/itemSchema";
 
+import formatCurrency from "@/lib/formatCurrency";
+
 type ItensPedidoProps = {
   items: ItemModelType[];
   setItems: Dispatch<SetStateAction<ItemModelType[]>>;
@@ -12,13 +14,6 @@ type ItensPedidoProps = {
 function ItensPedido({ items, setItems }: ItensPedidoProps) {
   function handleItemRemoval(indexToRemove: number) {
     setItems((prev) => prev.filter((_, index) => index !== indexToRemove));
-  }
-
-  function formatCurrency(value: number) {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
   }
 
   return (

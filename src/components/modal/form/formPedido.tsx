@@ -8,7 +8,7 @@ import { queryClient } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
 
 import { PedidoModelType } from "@/schemas/pedidoSchema";
-import { ItemFormType, ItemModelType } from "@/schemas/itemSchema";
+import { ItemAdicionalFormType, ItemFormType, ItemModelType } from "@/schemas/itemSchema";
 import { PedidoFormType } from "@/schemas/pedidoSchema";
 import { PedidoUpdateType } from "@/repository/pedido/updatePedidoService";
 
@@ -96,13 +96,15 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
         quantidade: 1,
       };
 
-      const adicionais: ItemFormType[] = item.adicionais.map((adicional) => ({
+      const adicionais: ItemAdicionalFormType[] = item.adicionais.map((adicional) => ({
         produtoId: adicional.produtoId!,
         quantidade: adicional.quantidade,
-        pertenceId: item.id,
       }));
 
-      return [itemBase, ...adicionais];
+      return {
+        ...itemBase,
+        ...(item.adicionais && { adicionais: adicionais } ),
+      };
     });
 
     const formData: PedidoFormType = {
@@ -117,7 +119,7 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
   }
 
   return (
-    <div className={cn("flex flex-col gap-2", !pedido && "h-[80vh] w-[80vw]")}>
+    <div className={cn("flex flex-col gap-2 h-[80vh] w-[80vw]")}>
       <Modal isOpen={modalCliente} onClose={() => setModalCliente(false)}>
         {modalCliente && <FormCliente onClose={() => setModalCliente(false)}/>}
       </Modal>

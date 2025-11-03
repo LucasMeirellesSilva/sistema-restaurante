@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Image from "next/image";
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+
+import { motion } from "framer-motion";
 import Link from "next/link";
 import useEstabelecimentoData from "@/lib/hooks/useEstabelecimentoData";
 import { useMutation } from "@tanstack/react-query";
@@ -17,7 +19,7 @@ export default function recuperarAcesso() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const { data: estabelecimento } = useEstabelecimentoData();
+  const { data: estabelecimento, isLoading: isEstabelecimentoLoading } = useEstabelecimentoData();
   const router = useRouter();
 
   const retrieveAcessMutation = useMutation({
@@ -64,8 +66,10 @@ export default function recuperarAcesso() {
     retrieveAcessMutation.mutate({respostaSeguranca: resposta, senha: password})
   }
 
+  if (isEstabelecimentoLoading) return <></>
+
   return (
-    <div className="flex w-fit h-full mx-auto items-center justify-center gap-12">
+    <div className="flex w-fit h-screen mx-auto items-center justify-center gap-12">
       <Image
         src="/images/acesso.svg"
         alt=""

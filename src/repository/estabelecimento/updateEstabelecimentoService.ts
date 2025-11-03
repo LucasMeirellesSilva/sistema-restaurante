@@ -33,7 +33,7 @@ export default async function updateEstabelecimento({ nome, cnpj, numeroMesas, p
         mesas.push(mesa);
       };
 
-      const mesasCriadas = await createMesas(mesas);
+      await createMesas(mesas);
     }
 
     return result;

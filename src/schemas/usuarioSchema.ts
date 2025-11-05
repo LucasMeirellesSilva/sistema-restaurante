@@ -17,7 +17,9 @@ export function validateUsuarioForm(usuario: unknown): UsuarioFormType {
 export const usuarioModelSchema = z.object({
     id: z.number(),
     nome: z.string(),
-    tipo: z.string()
+    tipo: z.string(),
+    tipoId: z.number(),
+    pedidosAnotados: z.number()
 });
 
 export type UsuarioModelType = z.infer<typeof usuarioModelSchema>

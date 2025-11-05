@@ -4,6 +4,7 @@ import {
   Store,
   PackagePlus,
   History,
+  Users2,
   HandPlatter,
   Settings,
   LogOut,
@@ -47,8 +48,13 @@ const links: SidebarLink[] = [
     icon: History,
   },
   {
-    label: "Pessoas",
-    href: "/pessoas",
+    label: "Clientes",
+    href: "/clientes",
+    icon: Users2,
+  },
+  {
+    label: "Usuários",
+    href: "/usuarios",
     icon: HandPlatter,
   },
   {

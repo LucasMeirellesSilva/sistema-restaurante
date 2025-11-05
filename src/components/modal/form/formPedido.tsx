@@ -133,7 +133,6 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
               <Label htmlFor="cliente">Cliente</Label>
               <div className="flex gap-2 items-center relative">
                 <SelectCliente
-                  cliente={cliente}
                   setCliente={setCliente}
                   setModalCliente={setModalCliente}
                 />

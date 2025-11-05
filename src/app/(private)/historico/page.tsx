@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
 import { useState } from "react";
+import usePedidosPaginado from "@/lib/hooks/usePedidosPaginado";
 
 // Components
 import {
@@ -11,19 +12,125 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { UserX, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import Paginacao from "@/components/ui/paginacao";
 
 export default function Historico() {
-  
+  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState<"criadoEmData" | "valorTotal" | null>(
+    null
+  );
+  const [order, setOrder] = useState<"asc" | "desc">("asc");
+
+  const { data: pedidos, isPending: isPedidosPending } = usePedidosPaginado(page);
+
+  const sorted = pedidos
+    ? [...pedidos.items].sort((a, b) => {
+        if (!sortBy) return 0;
+        const valA = a[sortBy];
+        const valB = b[sortBy];
+        if (valA < valB) return order === "asc" ? -1 : 1;
+        if (valA > valB) return order === "asc" ? 1 : -1;
+        return 0;
+      })
+    : 0;
+
+  function handleSort(key: "criadoEmData" | "valorTotal") {
+    if (sortBy === key) {
+      setOrder(order === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(key);
+      setOrder("asc");
+    }
+  }
+
+  const iconColor = "text-neutral-600";
+
   return (
-    <div className="flex flex-col items-center w-2/3 mx-auto">
+    <div className="flex flex-col gap-2 w-2/3 mx-auto pb-4">
       <h1 className="text-center font-semibold text-xl tracking-tight">
         Histórico
       </h1>
-      <div className="flex items-center gap-12">
-        
+      <div className="w-2/3 lg:w-1/3 flex gap-2">
+        <Input placeholder="Filtrar por autor" />
+        <Input placeholder="Filtrar por cliente" />
+      </div>
+      <div className="flex-1 flex-col justify-center gap-12 rounded-lg border py-4">
+        <Table className="table-center">
+          <TableCaption className="text-start indent-4">
+            Exibindo {pedidos?.items.length} dos {pedidos?.total ?? 0}{" "}
+            pedidos.
+          </TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Autor</TableHead>
+              <TableHead>Mesa</TableHead>
+              <TableHead>Cliente</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead
+                className="cursor-pointer"
+                onClick={() => handleSort("valorTotal")}
+              >
+                Total (R$)
+              </TableHead>
+              <TableHead
+                className="cursor-pointer"
+                onClick={() => handleSort("criadoEmData")}
+              >
+                Data - Hora
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {!isPedidosPending &&
+              sorted &&
+              sorted.map((p) => (
+                <TableRow key={p.id} className="cursor-pointer">
+                  <TableCell className="min-w-32">{p.id}</TableCell>
+                  <TableCell className="min-w-40 px-8">{p.autor}</TableCell>
+                  <TableCell className="min-w-32 px-8">
+                    {p.mesa ?? (
+                      <X
+                        className={cn(iconColor, "mx-auto")}
+                        strokeWidth={1.5}
+                      />
+                    )}
+                  </TableCell>
+                  <TableCell className="min-w-40 px-8">
+                    {p.cliente ?? (
+                      <UserX
+                        className={cn(iconColor, "mx-auto")}
+                        strokeWidth={1.5}
+                      />
+                    )}
+                  </TableCell>
+                  <TableCell
+                    className={cn(
+                      "min-w-40 px-8",
+                      p.status === "Finalizado"
+                        ? "text-emerald-600"
+                        : p.status === "Pendente"
+                        ? "text-orange-500"
+                        : "text-red-600"
+                    )}
+                  >
+                    {p.status}
+                  </TableCell>
+                  <TableCell className="min-w-40 px-8">
+                    {p.valorTotalFormatado}
+                  </TableCell>
+                  <TableCell className="min-w-40 px-8">
+                    {p.criadoEmData} {p.criadoEmHora}
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+        {pedidos && <Paginacao page={page} setPage={setPage} totalPages={pedidos.totalPages}/>}
       </div>
     </div>
   );

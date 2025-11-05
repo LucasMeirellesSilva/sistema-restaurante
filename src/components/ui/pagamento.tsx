@@ -90,7 +90,7 @@ function Pagamento({ selected, setSelected }: PagamentoProps) {
 
     if (valorPagamentos !== totalPedidos) {
       setError(
-        "O valor total do pagamento não confere com o valor do pedido."
+        "O valor total do pagamento não confere com o valor dos pedidos."
       );
       return;
     }
@@ -158,7 +158,7 @@ function Pagamento({ selected, setSelected }: PagamentoProps) {
             </span>
           </p>
         )}
-        {error && <p className="text-red-500 tracking-tight">{error}</p>}
+        {error && <p className="text-red-500 tracking-tight text-sm">{error}</p>}
         <Button
           className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer"
           onClick={() => handleSubmit()}

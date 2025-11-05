@@ -21,6 +21,10 @@ body {
   display: none;
 }
 
+.table-center td,
+.table-center th {
+  text-align: center;
+}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);

@@ -12,18 +12,21 @@ import { queryClient } from "@/lib/queryClient";
 
 import { ClienteFormType, ClienteModelType } from "@/schemas/clienteSchema";
 
+type UpdateClienteFormType = Partial<ClienteFormType>
+
 type FormClienteProps = {
+  cliente?: ClienteModelType
   onClose: () => void;
 };
 
-function FormCliente({ onClose }: FormClienteProps) {
-  const [nome, setNome] = useState("");
-  const [telefone, setTelefone] = useState("");
+function FormCliente({ cliente, onClose }: FormClienteProps) {
+  const [nome, setNome] = useState(cliente?.nome ?? "");
+  const [telefone, setTelefone] = useState(cliente?.telefone ?? "");
 
   const mutation = useMutation({
-    mutationFn: async (data: ClienteFormType) => {
+    mutationFn: async (data: ClienteFormType | UpdateClienteFormType) => {
       const res = await fetch("/api/clientes", {
-        method: "POST",
+        method: cliente ? "PATCH" : "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -36,10 +39,8 @@ function FormCliente({ onClose }: FormClienteProps) {
 
       return await res.json();
     },
-    onSuccess: (cliente: ClienteModelType) => {
-      queryClient.setQueryData(["clientes"], (oldData: any[] = []) => {
-        return [...oldData, cliente];
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clientes"] });
       onClose();
     },
   });
@@ -56,7 +57,7 @@ function FormCliente({ onClose }: FormClienteProps) {
 
   function handleSubmit() {
     mutation.mutate({
-      nome: nome,
+      ...(nome && { nome: nome }),
       ...(telefone && { telefone: telefone }),
     });
   }
@@ -81,6 +82,7 @@ function FormCliente({ onClose }: FormClienteProps) {
         <Label htmlFor="telefone">
           Telefone
           <Input
+            id="telefone"
             type="tel"
             placeholder="(00) 00000-0000"
             value={telefone}
@@ -97,7 +99,7 @@ function FormCliente({ onClose }: FormClienteProps) {
           className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer"
           onClick={() => handleSubmit()}
         >
-          Adicionar
+          {cliente ? "Editar" : "Adicionar"}
         </Button>
       </div>
     </div>

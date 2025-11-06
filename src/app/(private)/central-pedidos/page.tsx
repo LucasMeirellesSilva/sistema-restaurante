@@ -256,8 +256,8 @@ export default function CentralPedidos() {
               ? renderPedidos(pedidosPorCliente)
               : renderPedidos(pedidos))}
 
-          {!isPedidosPendentesPending && !pedidos && (
-            <p>Nenhum pedido no momento.</p>
+          {!isPedidosPendentesPending && !pedidos?.length && (
+            <p className="text-sm">Nenhum pedido no momento.</p>
           )}
         </AnimatePresence>
       </motion.div>

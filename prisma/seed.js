@@ -45,7 +45,9 @@ async function main() {
   await prisma.formaPagamento.createMany({
     data: [
       { descricao: "Dinheiro"},
-      { descricao: "Cartão"},
+      { descricao: "Cartão Crédito"},
+      { descricao: "Cartão Débito"},
+      { descricao: "Pix"},
       { descricao: "Vale-Alimentação"},
       { descricao: "Outro"},
     ]

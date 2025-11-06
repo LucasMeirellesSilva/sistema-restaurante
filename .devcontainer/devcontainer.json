@@ -1,0 +1,10 @@
+{
+  "name": "Next + MariaDB",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "forwardPorts": [3000, 3306],
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y mariadb-server && sudo service mariadb start && npm install",
+  "runArgs": [
+  "--env", "MYSQL_ROOT_PASSWORD=root",
+  "--env", "MYSQL_DATABASE=sistemarestaurante"
+]
+}

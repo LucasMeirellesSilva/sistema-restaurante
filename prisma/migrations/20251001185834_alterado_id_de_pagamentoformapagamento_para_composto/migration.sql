@@ -6,7 +6,7 @@
 
 */
 -- AlterTable
-ALTER TABLE `pagamentoformapagamento` DROP PRIMARY KEY,
+ALTER TABLE `PagamentoFormaPagamento` DROP PRIMARY KEY,
     DROP COLUMN `id`,
     ADD PRIMARY KEY (`pagamento_id`, `forma_pagamento_id`);
 

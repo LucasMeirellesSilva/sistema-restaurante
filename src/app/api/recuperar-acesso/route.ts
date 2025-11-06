@@ -3,22 +3,24 @@ import getEstabelecimentoRespostaSeguranca from "@/repository/estabelecimento/ge
 import bcrypt from "bcryptjs";
 import updateUsuario from "@/repository/usuario/updateUsuarioService";
 
-export type RecuperarAcesso = {
+export type RecuperarAcessoForm = {
   respostaSeguranca: string
   senha: string
 }
 
 export async function POST(req: NextRequest) {
-  const { respostaSeguranca, senha }: RecuperarAcesso = await req.json();
+  const { respostaSeguranca, senha }: RecuperarAcessoForm = await req.json();
 
   try {
-    if (senha.length < 6) throw new Error("Senha curta.");
+    if (senha.length < 6) throw new Error("A senha deve possuir 6 caracteres ou mais.");
     
-    const { respostaSeguranca: respostaBanco } = await getEstabelecimentoRespostaSeguranca();
+    const estabelecimento = await getEstabelecimentoRespostaSeguranca();
 
-    if (!respostaBanco) throw new Error("Resposta ausente."); 
+    if (!estabelecimento) throw new Error("O estabelecimento não existe.")
 
-    const valid = await bcrypt.compare(respostaSeguranca, respostaBanco)
+    if (!estabelecimento.respostaSeguranca) throw new Error("Resposta ausente."); 
+
+    const valid = await bcrypt.compare(respostaSeguranca, estabelecimento.respostaSeguranca)
 
     if (!valid) throw new Error("Resposta inválida.");
 

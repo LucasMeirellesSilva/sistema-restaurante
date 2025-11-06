@@ -1,14 +1,14 @@
 -- DropForeignKey
-ALTER TABLE `item` DROP FOREIGN KEY `Item_produto_id_fkey`;
+ALTER TABLE `Item` DROP FOREIGN KEY `Item_produto_id_fkey`;
 
 -- DropIndex
-DROP INDEX `Item_produto_id_fkey` ON `item`;
+DROP INDEX `Item_produto_id_fkey` ON `Item`;
 
 -- AlterTable
-ALTER TABLE `item` MODIFY `produto_id` INTEGER NULL;
+ALTER TABLE `Item` MODIFY `produto_id` INTEGER NULL;
 
 -- AlterTable
-ALTER TABLE `mesa` ADD COLUMN `disponivel` BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE `Mesa` ADD COLUMN `disponivel` BOOLEAN NOT NULL DEFAULT true;
 
 -- CreateTable
 CREATE TABLE `Estabelecimento` (

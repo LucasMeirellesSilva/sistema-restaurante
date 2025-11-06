@@ -6,13 +6,13 @@
 
 */
 -- DropForeignKey
-ALTER TABLE `pagamento` DROP FOREIGN KEY `Pagamento_forma_pagamento_id_fkey`;
+ALTER TABLE `Pagamento` DROP FOREIGN KEY `Pagamento_forma_pagamento_id_fkey`;
 
 -- DropIndex
-DROP INDEX `Pagamento_forma_pagamento_id_fkey` ON `pagamento`;
+DROP INDEX `Pagamento_forma_pagamento_id_fkey` ON `Pagamento`;
 
 -- AlterTable
-ALTER TABLE `pagamento` DROP COLUMN `forma_pagamento_id`,
+ALTER TABLE `Pagamento` DROP COLUMN `forma_pagamento_id`,
     DROP COLUMN `valor`;
 
 -- CreateTable
@@ -34,4 +34,4 @@ ALTER TABLE `PagamentoFormaPagamento` ADD CONSTRAINT `PagamentoFormaPagamento_fo
 
 -- RedefineIndex
 CREATE INDEX `Pagamento_pedido_id_idx` ON `Pagamento`(`pedido_id`);
-ALTER TABLE `pagamento` DROP FOREIGN KEY `Pagamento_pedido_id_fkey`;
+ALTER TABLE `Pagamento` DROP FOREIGN KEY `Pagamento_pedido_id_fkey`;

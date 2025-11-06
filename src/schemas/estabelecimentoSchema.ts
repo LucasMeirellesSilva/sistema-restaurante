@@ -10,7 +10,13 @@ export const estabelecimentoFormSchema = z.object({
 
 export type EstabelecimentoFormType = z.infer<typeof estabelecimentoFormSchema>
 
-export type EstabelecimentoModelType = z.infer<typeof estabelecimentoFormSchema>
+export const estabelecimentoModelSchema = z.object({
+    nome: z.string(),
+    numeroMesas: z.number(),
+    perguntaSeguranca: z.string()
+})
+
+export type EstabelecimentoModelType = z.infer<typeof estabelecimentoModelSchema>
 
 export function validateEstabelecimentoForm(item: unknown): EstabelecimentoFormType {
     const result = estabelecimentoFormSchema.parse(item);

@@ -10,6 +10,8 @@ export default async function getEstabelecimento() {
     }
   });
 
+  if (!estabelecimento) return null
+  
   return {
     nome: estabelecimento?.nome,
     numeroMesas: estabelecimento?.numero_mesas,

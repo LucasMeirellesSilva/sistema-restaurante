@@ -11,10 +11,10 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import useEstabelecimentoData from "@/lib/hooks/useEstabelecimentoData";
 import { useMutation } from "@tanstack/react-query";
-import { RecuperarAcesso } from "@/app/api/recuperar-acesso/route";
+import { RecuperarAcessoForm } from "@/app/api/recuperar-acesso/route";
 import { useRouter } from "next/navigation";
 
-export default function recuperarAcesso() {
+export default function RecuperarAcesso() {
   const [resposta, setResposta] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,7 +23,7 @@ export default function recuperarAcesso() {
   const router = useRouter();
 
   const retrieveAcessMutation = useMutation({
-    mutationFn: async ({ respostaSeguranca, senha }: RecuperarAcesso) => {
+    mutationFn: async ({ respostaSeguranca, senha }: RecuperarAcessoForm) => {
       const res = await fetch("/api/recuperar-acesso", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -38,7 +38,7 @@ export default function recuperarAcesso() {
 
       return { user: data };
     },
-    onSuccess: (res) => {
+    onSuccess: () => {
       router.push("/central-pedidos");
     },
     onError: (error) => {
@@ -67,6 +67,10 @@ export default function recuperarAcesso() {
   }
 
   if (isEstabelecimentoLoading) return <></>
+
+  if(!isEstabelecimentoLoading) console.log(estabelecimento)
+
+  if (!estabelecimento) router.push("/")
 
   return (
     <div className="flex w-fit h-screen mx-auto items-center justify-center gap-12">

@@ -8,6 +8,8 @@ export default async function getEstabelecimentoRespostaSeguranca() {
     }
   });
 
+  if (!estabelecimento) return null
+
   return {
     respostaSeguranca: estabelecimento?.resposta_seguranca,
   };

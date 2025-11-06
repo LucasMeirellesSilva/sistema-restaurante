@@ -1,14 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { EstabelecimentoModelType } from "@/schemas/estabelecimentoSchema";
 
-async function fetchEstabelecimentoData(): Promise<EstabelecimentoModelType> {
-  const res = await fetch("/api/estabelecimento", {
-    credentials: "include"
-  });
+async function fetchEstabelecimentoData(): Promise<EstabelecimentoModelType | null> {
+  const res = await fetch("/api/estabelecimento");
 
   if (!res.ok) {
-    throw new Error("Erro ao buscar pedidos pendentes");
+    return null;
   }
+  
   return res.json();
 }
 

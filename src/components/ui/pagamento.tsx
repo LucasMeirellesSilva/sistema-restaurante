@@ -36,7 +36,7 @@ function Pagamento({ selected, setSelected }: PagamentoProps) {
 
   const finalizarPedido = useMutation({
     mutationFn: async (pagamento: PagamentoFormType[]) => {
-      const res = await fetch("/api/pedidos/finalizar", {
+      const res = await fetch("/api/pedidos/pagamento", {
         method: "POST",
         credentials: "include",
         body: JSON.stringify(pagamento),

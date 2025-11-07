@@ -18,6 +18,10 @@ import { UserX, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Loading from "@/components/ui/loading";
 import Paginacao from "@/components/ui/paginacao";
+import Modal from "@/components/ui/modal";
+import DetalhesPedido from "@/components/modal/detalhesPedido";
+
+import { PedidoModelType } from "@/schemas/pedidoSchema";
 
 export default function Historico() {
   const [page, setPage] = useState(1);
@@ -25,6 +29,7 @@ export default function Historico() {
     null
   );
   const [order, setOrder] = useState<"asc" | "desc">("asc");
+  const [modalPedido, setModalPedido] = useState<PedidoModelType | null>(null);
 
   const { data: pedidos, isPending: isPedidosPending } =
     usePedidosPaginado(page);
@@ -53,6 +58,13 @@ export default function Historico() {
 
   return (
     <div className="flex flex-col gap-2 w-2/3 mx-auto pb-4">
+      <Modal isOpen={!!modalPedido} onClose={() => setModalPedido(null)}>
+        {modalPedido && (
+          <DetalhesPedido
+            pedido={modalPedido}
+          />
+        )}
+      </Modal>
       <h1 className="text-center font-semibold text-xl tracking-tight">
         Histórico
       </h1>
@@ -96,7 +108,11 @@ export default function Historico() {
               {!isPedidosPending &&
                 sorted &&
                 sorted.map((p) => (
-                  <TableRow key={p.id} className="cursor-pointer">
+                  <TableRow
+                    key={p.id}
+                    className="cursor-pointer"
+                    onClick={() => setModalPedido(p)}
+                  >
                     <TableCell className="min-w-32">{p.id}</TableCell>
                     <TableCell className="min-w-40 px-8">{p.autor}</TableCell>
                     <TableCell className="min-w-32 px-8">

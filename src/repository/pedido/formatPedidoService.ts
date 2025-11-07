@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { PedidoModelType, pedidoModelSchema } from "@/schemas/pedidoSchema";
 import { ItemModelType } from "@/schemas/itemSchema";
+import formatCurrency from "@/lib/formatCurrency";
 
 type PedidoComItens = Prisma.PedidoGetPayload<{
   include: {
@@ -62,10 +63,7 @@ export default function formatPedidoService(pedidos: PedidoComItens[]) {
       );
     }, 0);
 
-    const valorTotalFormatado = new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(valorTotal);
+    const valorTotalFormatado = formatCurrency(valorTotal);
 
     const data = new Date(pedido.criado_em);
 
@@ -82,20 +80,14 @@ export default function formatPedidoService(pedidos: PedidoComItens[]) {
     const itensFormatados: ItemModelType[] = pedido.itens.map((item) => ({
       id: item.id,
       valorUnitario: Number(item.valor_unitario),
-      valorUnitarioFormatado: new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      }).format(Number(item.valor_unitario)),
+      valorUnitarioFormatado: formatCurrency(Number(item.valor_unitario)),
       adicionais: item.adicionais.map((adicional) => ({
         id: adicional.id,
         produto: adicional.produto?.nome,
         produtoId: adicional.produto?.id,
         quantidade: adicional.quantidade,
         valorUnitario: Number(adicional.valor_unitario),
-        valorUnitarioFormatado: new Intl.NumberFormat("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }).format(Number(adicional.valor_unitario))
+        valorUnitarioFormatado: formatCurrency(Number(adicional.valor_unitario))
       })),
       quantidade: item.quantidade,
       produto: item.produto?.nome,

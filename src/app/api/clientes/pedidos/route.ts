@@ -8,14 +8,14 @@ export async function GET(req: NextRequest) {
   // Token inválido, retorna e reseta token.
   if (!isValid) return res;
 
-  const id = req.nextUrl.searchParams.get("id");
-  if (!id) return NextResponse.json({ error: "ID é obrigatório" }, { status: 400 });
-
-  // Interação com o banco
   try {
-    const produtos = await getPedidosPorCliente(Number(id));
+    const { id } =  await req.json()
 
-    return NextResponse.json(produtos);
+    if (!id) throw new Error ("O id é obrigatório.")
+
+    const pedidos = await getPedidosPorCliente(Number(id));
+
+    return NextResponse.json(pedidos);
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : String(err) },

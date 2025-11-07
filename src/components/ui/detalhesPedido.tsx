@@ -52,17 +52,17 @@ function Pedido({ pedido }: PedidoProps) {
             <p># Pedido {pedido.id}</p>
           </div>
           <div className="flex gap-2 items-center text-end">
-            <CalendarClock size={20}/>
+            <CalendarClock size={20} />
             {pedido.criadoEmHora}
           </div>
         </div>
         <div className="flex flex-col gap-1">
           <div className="flex gap-2 justify-between items-center text-end">
-            <User size={20}/>
+            <User size={20} />
             {pedido.cliente ?? "Não identificado"}
           </div>
           <div className="flex gap-2 justify-between items-center text-end">
-            <NotebookPen size={20}/>
+            <NotebookPen size={20} />
             {pedido.autor}
           </div>
         </div>
@@ -74,7 +74,9 @@ function Pedido({ pedido }: PedidoProps) {
               <p>
                 {item.quantidade}x {item.produto ?? "Produto removido"}
               </p>
-              <p className="font-medium">{formatCurrency(item.quantidade * item.valorUnitario)}</p>
+              <p className="font-medium">
+                {formatCurrency(item.quantidade * item.valorUnitario)}
+              </p>
             </div>
             {item.adicionais.map((adicional) => (
               <div key={adicional.id}>
@@ -91,6 +93,20 @@ function Pedido({ pedido }: PedidoProps) {
                 </div>
               </div>
             ))}
+            {item.adicionais.length > 0 && (
+              <div className="flex justify-end text-sm">
+                <span className="border-t">
+                  {formatCurrency(
+                    item.adicionais.reduce(
+                      (acc, adicional) =>
+                        adicional.valorUnitario * adicional.quantidade + acc,
+                      0
+                    ) +
+                      item.quantidade * item.valorUnitario
+                  )}
+                </span>
+              </div>
+            )}
           </div>
         ))}
       </div>

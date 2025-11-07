@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import useClientesPaginado from "@/lib/hooks/useClientesPaginado";
+import { useMutation } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
+import { queryClient } from "@/lib/queryClient";
+
 // Components
 import {
   Table,
@@ -20,7 +23,8 @@ import Modal from "@/components/ui/modal";
 import FormCliente from "@/components/modal/form/formCliente";
 import Paginacao from "@/components/ui/paginacao";
 import Loading from "@/components/ui/loading";
-import { X, Edit } from "lucide-react";
+import { X, Edit, Trash2 } from "lucide-react";
+import Confirmacao from "@/components/modal/confirmacao";
 
 import { ClienteModelType } from "@/schemas/clienteSchema";
 
@@ -31,6 +35,10 @@ type ModalCliente =
   | {
       tipo: "editar";
       cliente: ClienteModelType;
+    }
+  | {
+      tipo: "deletar";
+      clienteId: number;
     }
   | null;
 
@@ -65,6 +73,32 @@ export default function Clientes() {
     }
   }
 
+  const deletarClienteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const res = await fetch("/api/clientes", {
+        method: "DELETE",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: id }),
+      });
+
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.error);
+      }
+
+      return await res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clientes"] });
+      setModalCliente(null);
+    },
+  });
+
+  function handleClienteDelete(id: number) {
+    deletarClienteMutation.mutate(id);
+  }
+
   const iconColor = "text-neutral-600";
 
   return (
@@ -78,6 +112,16 @@ export default function Clientes() {
             onClose={() => setModalCliente(null)}
             cliente={modalCliente.cliente}
           />
+        )}
+        {modalCliente?.tipo === "deletar" && (
+          <Confirmacao
+            handleConfirmation={() =>
+              handleClienteDelete(modalCliente.clienteId)
+            }
+            onClose={() => setModalCliente(null)}
+          >
+            Tem certeza que deseja excluir o cliente {modalCliente.clienteId}?
+          </Confirmacao>
         )}
       </Modal>
       <h1 className="text-center font-semibold text-xl tracking-tight">
@@ -142,6 +186,14 @@ export default function Clientes() {
                       }}
                     >
                       <Edit size={20} strokeWidth={1.7} />
+                    </TableCell>
+                    <TableCell
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setModalCliente({ tipo: "deletar", clienteId: c.id });
+                      }}
+                    >
+                      <Trash2 color="red" size={20} strokeWidth={1.7} />
                     </TableCell>
                   </TableRow>
                 ))}

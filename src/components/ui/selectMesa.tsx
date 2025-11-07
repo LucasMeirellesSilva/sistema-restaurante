@@ -50,6 +50,9 @@ function SelectMesa({ mesa, setMesa }: SelectMesaProps) {
         <SelectGroup>
           <SelectLabel>Mesas</SelectLabel>
           {isEstabelecimentoPending && <Loading />}
+          <SelectItem value={""}>
+            Sem mesa
+          </SelectItem>
           {mesas?.map((mesa) => mesa)}
         </SelectGroup>
       </SelectContent>

@@ -8,17 +8,18 @@ import Loading from "@/components/ui/loading";
 import SeletorPedidos from "@/components/ui/seletorPedidos";
 import DetalhesPedido from "@/components/ui/detalhesPedido";
 import Pagamento from "@/components/ui/pagamento";
+import Image from "next/image";
 
 import { User } from "lucide-react";
 import { PedidoModelType } from "@/schemas/pedidoSchema";
 
 export type SelectedType =
   | {
-      tipo: "mesa";
-      mesa: string;
-      pedidos: PedidoModelType[];
-      pedidosSelecionados: PedidoModelType[];
-    }
+    tipo: "mesa";
+    mesa: string;
+    pedidos: PedidoModelType[];
+    pedidosSelecionados: PedidoModelType[];
+  }
   | { tipo: "pedido"; pedido: PedidoModelType }
   | null;
 
@@ -53,25 +54,35 @@ export default function PontoVenda() {
       <div className="flex border rounded-lg h-4/5">
         <div className="flex-1/4 flex flex-col gap-2 pt-4 border-r">
           <h2 className="font-medium text-center">Pedidos em Aberto</h2>
-          <div className="overflow-y-scroll scrollbar">
-            {pedidos ? (
+          {pedidos?.length ? (
+            <div className="overflow-y-scroll scrollbar">
               <SeletorPedidos
                 pedidos={pedidos}
                 selected={selected}
                 setSelected={setSelected}
               />
-            ) : (
-              <p>Nenhum pedido em andamento.</p>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div>
+              <p className="text-center">Nenhum pedido em aberto.</p>
+            </div>
+          )}
         </div>
         <div className="flex-1/3 flex flex-col gap-2 pt-4 border-r">
           {selected ? (
             <DetalhesPedido selected={selected} />
           ) : (
-            <p className="text-sm text-center my-auto">
-              Selecione um pedido ou mesa para ver informações
-            </p>
+            <div className="flex flex-col items-center space-y-4 h-fit my-auto">
+                  <Image
+                    src="/images/waitingForSelect.svg"
+                    alt=""
+                    width={300}
+                    height={128}
+                    className="select-none"
+                    draggable={false}
+                  />
+                  <p className="text-center text-neutral-700">Selecione um pedido ou mesa para ver informações</p>
+                </div>
           )}
         </div>
         <div className="flex-1/3 flex flex-col gap-2 pt-4">
@@ -88,7 +99,7 @@ export default function PontoVenda() {
           ) : (
             <h2 className="font-medium text-center">Pagamento</h2>
           )}
-          {selected && <Pagamento selected={selected} setSelected={setSelected}/>}
+          {selected && <Pagamento selected={selected} setSelected={setSelected} />}
         </div>
       </div>
     </div>

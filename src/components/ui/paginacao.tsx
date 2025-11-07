@@ -19,8 +19,10 @@ function Paginacao({ page, setPage, totalPages }: PaginacaoProps) {
     <div className="flex gap-2 items-center w-fit mx-auto">
       <button
         className={cn("flex gap-1 cursor-pointer", previous < 1 && "text-neutral-500")}
-        disabled={page === 1}
-        onClick={() => setPage(previous)}
+        onClick={() => {
+          if (previous < 1) return
+          setPage(previous)}
+        }
       >
         <ChevronLeft strokeWidth={1}/>
         Anterior
@@ -43,9 +45,11 @@ function Paginacao({ page, setPage, totalPages }: PaginacaoProps) {
         </button>
       )}
       <button
-        className={cn("flex gap-1 cursor-pointer", page === totalPages && "text-neutral-500")}
-        disabled={page === totalPages}
-        onClick={() => setPage(next)}
+        className={cn("flex gap-1 cursor-pointer", next > totalPages && "text-neutral-500")}
+        onClick={() => {
+          if (next > totalPages) return
+          setPage(next)}
+        }
       >
         Próximo
         <ChevronRight strokeWidth={1}/>

@@ -61,9 +61,10 @@ function ProdutosVenda({ produtos, setItems }: ProdutosVendaProps) {
         >
           {/* Se sort for null = "asc", se for "asc" = "desc", se for "desc" = null */}
           Valor
-          {!sort && <ArrowDownUp size={16} className={cn(iconColor)} />}
-          {sort === "asc" && <ArrowUp size={16} className={cn(iconColor)} />}
-          {sort === "desc" && <ArrowDown size={16} className={cn(iconColor)} />}
+          {!sort 
+          ? <ArrowDownUp size={16} className={cn(iconColor)} /> 
+          : sort === "asc" ? <ArrowUp size={16} className={cn(iconColor)} /> 
+          : <ArrowDown size={16} className={cn(iconColor)} />}
         </p>
       </div>
       <div className="flex flex-col overflow-y-auto h-140 select-none">

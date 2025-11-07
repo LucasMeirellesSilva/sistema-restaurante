@@ -23,9 +23,11 @@ import SeletorCategorias from "@/components/ui/seletorCategorias";
 import ProdutosVenda from "@/components/ui/produtosVenda";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
+import Image from "next/image";
 
 import { User, createLucideIcon } from "lucide-react";
 import { chairsTablePlatter } from "@lucide/lab";
+import { useRouter } from "next/navigation";
 
 const ChairsTablePlatter = createLucideIcon(
   "chairs-table-platter",
@@ -39,17 +41,17 @@ type FormPedidoProps = {
 };
 
 function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
+  const router = useRouter()
+
   const { data: categorias = [], isPending: isCategoriasPending } =
     useCategorias();
 
   const [categoria, setCategoria] = useState<number | null>(null);
-  const [cliente, setCliente] = useState<number | null>(null);
-  const [mesa, setMesa] = useState<string | undefined>(
-    mesaSelecionada ?? undefined
-  );
-  const [observacao, setObservacao] = useState("");
+  const [cliente, setCliente] = useState<number | null>(pedido?.clienteId ?? null);
+  const [mesa, setMesa] = useState<string | undefined>(mesaSelecionada ?? (pedido?.mesa ?? undefined));
+  const [observacao, setObservacao] = useState(pedido?.observacao ?? "");
   const [modalCliente, setModalCliente] = useState(false);
-  const [items, setItems] = useState<ItemModelType[]>([]);
+  const [items, setItems] = useState<ItemModelType[]>(pedido?.itens ?? []);
 
   const mutation = useMutation({
     mutationFn: async (data: PedidoFormType | PedidoUpdateType) => {
@@ -77,15 +79,6 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
     }
   }, [categorias]);
 
-  useEffect(() => {
-    if (pedido) {
-      setCliente(pedido.clienteId ?? null);
-      setMesa(pedido.mesa ? String(Number(pedido.mesa)) : undefined);
-      setObservacao(pedido.observacao ?? "");
-      setItems(pedido.itens ?? []);
-    }
-  }, [pedido]);
-
   const { data: produtos, isPending: isProdutosPending } =
     useProdutosPorCategoria(categoria);
 
@@ -103,13 +96,13 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
 
       return {
         ...itemBase,
-        ...(item.adicionais && { adicionais: adicionais } ),
+        ...(item.adicionais && { adicionais: adicionais }),
       };
     });
 
     const formData: PedidoFormType = {
-      ...(pedido && { pedidoId: pedido.id } ),
-      ...(items && { itens: itemsForm}),
+      ...(pedido && { pedidoId: pedido.id }),
+      ...(items && { itens: itemsForm }),
       ...(cliente && { clienteId: cliente }),
       ...(mesa && { mesaId: Number(mesa) }),
       ...(observacao && { observacao: observacao }),
@@ -121,7 +114,7 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
   return (
     <div className={cn("flex flex-col gap-2 h-[80vh] w-[80vw]")}>
       <Modal isOpen={modalCliente} onClose={() => setModalCliente(false)}>
-        {modalCliente && <FormCliente onClose={() => setModalCliente(false)}/>}
+        {modalCliente && <FormCliente onClose={() => setModalCliente(false)} />}
       </Modal>
       <div className="flex gap-4">
         <div className="flex flex-col gap-4 w-fit">
@@ -159,22 +152,48 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
           </form>
           <ItensPedido items={items} setItems={setItems} />
         </div>
-        <div className="flex-1 min-w-1/2 border border-neutral-200 rounded-lg py-2 overflow-hidden">
-          {isCategoriasPending || isProdutosPending ? (
+        <div className="flex-1 min-w-1/2 min-h-[70vh] border border-neutral-200 rounded-lg py-2 overflow-hidden">
+          {isCategoriasPending ? (
             <div className="h-full flex items-center justify-center">
               <Loading />
             </div>
           ) : (
-            <div>
-              {!isCategoriasPending && categorias && (
+            <div className="h-full flex items-center justify-center">
+              {categorias?.length ? (
                 <SeletorCategorias
                   categoria={categoria}
                   setCategoria={setCategoria}
                   categorias={categorias}
                 />
-              )}
-              {!isProdutosPending && produtos && (
+              ) :
+                <div className="flex flex-col items-center space-y-4 h-fit my-auto">
+                  <p className="text-center text-neutral-700">Nenhuma categoria registrada.</p>
+                  <Image
+                    src="/images/noData.svg"
+                    alt=""
+                    width={200}
+                    height={128}
+                    className="select-none"
+                    draggable={false}
+                  />
+                  <Button className="cursor-pointer bg-orange-600 hover:bg-orange-500" onClick={() => router.push("/catalogo")}>Ir para Catálogo</Button>
+                </div>}
+              {!isProdutosPending && (
+                produtos ?
                 <ProdutosVenda produtos={produtos} setItems={setItems} />
+                :
+                <div className="flex flex-col items-center space-y-4 h-fit my-auto">
+                  <p className="text-center text-neutral-700">Nenhum produto registrado.</p>
+                  <Image
+                    src="/images/noData.svg"
+                    alt=""
+                    width={200}
+                    height={128}
+                    className="select-none"
+                    draggable={false}
+                  />
+                  <Button className="cursor-pointer bg-orange-600 hover:bg-orange-500" onClick={() => router.push("/catalogo")}>Ir para Catálogo</Button>
+                </div>
               )}
             </div>
           )}

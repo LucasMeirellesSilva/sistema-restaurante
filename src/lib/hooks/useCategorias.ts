@@ -9,7 +9,11 @@ async function fetchCategorias(): Promise<CategoriaModelType[]> {
   if (!res.ok) {
     throw new Error("Erro ao buscar categorias");
   }
-  return res.json();
+  const data = res.json();
+
+  if (!data) return null;
+
+  return data;
 }
 
 export default function useCategorias() {

@@ -125,14 +125,7 @@ function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
             {item.adicionais.length > 0 && (
               <div className="flex justify-end">
                 <span className="border-t font-medium">
-                  {formatCurrency(
-                    item.adicionais.reduce(
-                      (acc, adicional) =>
-                        adicional.valorUnitario * adicional.quantidade + acc,
-                      0
-                    ) +
-                      item.quantidade * item.valorUnitario
-                  )}
+                  {item.valorTotalFormatado}
                 </span>
               </div>
             )}

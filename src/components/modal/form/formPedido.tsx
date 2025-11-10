@@ -107,11 +107,11 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
       };
     });
 
-    const formData: PedidoFormType = {
+    const formData: PedidoFormType | PedidoUpdateType = {
       ...(pedido && { pedidoId: pedido.id } ),
       ...(items && { itens: itemsForm}),
-      ...(cliente && { clienteId: cliente }),
-      ...(mesa && { mesaId: Number(mesa) }),
+      ...(cliente ? { clienteId: cliente } : { clienteId: null }),
+      ...(mesa ? { mesaId: Number(mesa) } : { mesaId: null }),
       ...(observacao && { observacao: observacao }),
     };
 
@@ -133,6 +133,7 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
               <Label htmlFor="cliente">Cliente</Label>
               <div className="flex gap-2 items-center relative">
                 <SelectCliente
+                  cliente={cliente}
                   setCliente={setCliente}
                   setModalCliente={setModalCliente}
                 />

@@ -12,6 +12,8 @@ export async function GET(req: NextRequest) {
   // Bloqueio de rotas baseado nos roles.
   const { allowed, res: notAllowedRes } = checkPermission(decoded!.role, "verUsuarios");
 
+  console.log(allowed)
+
   if (!allowed) return notAllowedRes;
    
   // Interação com o banco

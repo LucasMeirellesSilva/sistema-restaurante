@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { itemModelSchema, itemFormSchema } from './itemSchema';
 
 export const pedidoFormSchema = z.object({
-    clienteId: z.number().optional(),
-    mesaId: z.number().optional(),
+    clienteId: z.number().optional().nullable(),
+    mesaId: z.number().optional().nullable(),
     observacao: z.string().max(100).optional(),
     itens: z.array(itemFormSchema)
 });

@@ -17,23 +17,26 @@ import Loading from "./loading";
 import { Plus, Search } from "lucide-react";
 
 type SelectClienteProps = {
+  cliente: number | null,
   setCliente: Dispatch<React.SetStateAction<number | null>>;
   setModalCliente: Dispatch<React.SetStateAction<boolean>>;
 };
 
 function SelectCliente({
+  cliente,
   setCliente,
   setModalCliente,
 }: SelectClienteProps) {
   const { data: clientes, isPending: isClientesPending } = useClientes();
   const [research, setResearch] = useState("");
+  const [open, setOpen] = useState(false);
 
   const clientesFiltrados = clientes?.filter((c) =>
     c.nome.toLowerCase().includes(research.toLowerCase())
   );
 
   return (
-    <Select onValueChange={(id) => setCliente(Number(id))}>
+    <Select value={String(cliente) ?? ""} open={open} onOpenChange={setOpen} onValueChange={(id) => setCliente(Number(id))}>
       <SelectTrigger className="pl-10 cursor-pointer">
         <SelectValue />
       </SelectTrigger>
@@ -61,6 +64,17 @@ function SelectCliente({
         <SelectGroup>
           <SelectLabel>Clientes</SelectLabel>
           {isClientesPending && <Loading />}
+          {!!cliente && (
+            <div
+              className="flex items-center px-1 py-1.5 rounded-sm hover:bg-neutral-100 text-sm cursor-pointer indent-1"
+              onClick={() => {
+                setCliente(null);
+                setOpen(false);
+              }}
+            >
+              Remover cliente
+            </div>
+          )}
           {clientesFiltrados?.map((c) => (
             <SelectItem key={c.id} value={String(c.id)}>
               {c.nome}

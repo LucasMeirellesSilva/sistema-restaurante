@@ -12,7 +12,7 @@ import { queryClient } from "@/lib/queryClient";
 
 import { ClienteFormType, ClienteModelType } from "@/schemas/clienteSchema";
 
-type UpdateClienteFormType = Partial<ClienteFormType>;
+type UpdateClienteFormType = Partial<ClienteModelType>;
 
 type FormClienteProps = {
   cliente?: ClienteModelType;
@@ -57,6 +57,7 @@ function FormCliente({ cliente, onClose }: FormClienteProps) {
 
   function handleSubmit() {
     mutation.mutate({
+      ...(cliente && { clienteId: cliente.id}),
       ...(nome && { nome: nome }),
       ...(telefone && { telefone: telefone }),
     });

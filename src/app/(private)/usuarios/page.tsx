@@ -47,7 +47,7 @@ export default function Usuarios() {
           return 0;
         }),
       ]
-    : 0;
+    : [];
 
   function handleSort(key: "pedidosAnotados") {
     if (sortBy === key) {
@@ -109,7 +109,7 @@ export default function Usuarios() {
             <TableBody>
               {isUsuariosPending && <Loading />}
               {!isUsuariosPending &&
-                sorted &&
+                sorted.length > 0 &&
                 sorted.map((u) => (
                   <TableRow
                     key={u.id}

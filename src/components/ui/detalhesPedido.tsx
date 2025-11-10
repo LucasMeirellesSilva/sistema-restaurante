@@ -96,21 +96,14 @@ function Pedido({ pedido }: PedidoProps) {
             {item.adicionais.length > 0 && (
               <div className="flex justify-end text-sm">
                 <span className="border-t">
-                  {formatCurrency(
-                    item.adicionais.reduce(
-                      (acc, adicional) =>
-                        adicional.valorUnitario * adicional.quantidade + acc,
-                      0
-                    ) +
-                      item.quantidade * item.valorUnitario
-                  )}
+                  {item.valorTotalFormatado}
                 </span>
               </div>
             )}
           </div>
         ))}
       </div>
-      {pedido.observacao && <p>Observação: {pedido.observacao}</p>}
+      {pedido.observacao && <p className="px-4">Observação: {pedido.observacao}</p>}
       <p className="text-center pb-5">
         Total:{" "}
         <span className="font-medium tracking-tight">

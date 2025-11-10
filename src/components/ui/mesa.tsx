@@ -71,7 +71,7 @@ export default function Mesa({ user, pedidos, numero, setMesaSelecionada, setPed
 
   return (
     <div
-      className={cn("relative flex flex-col justify-center w-[120px] h-[120px] rounded-lg px-2 py-1 hover:scale-105 transition box-border font-bold text-white text-sm cursor-pointer shadow-[0px_2px_4px_rgba(0,0,0,0.15)] bg-emerald-600 hover:bg-emerald-700")}
+      className={cn("relative flex flex-col justify-center w-[120px] h-[120px] rounded-lg px-2 py-1 transition box-border font-bold text-white text-sm cursor-pointer shadow-[0px_2px_4px_rgba(0,0,0,0.15)] bg-emerald-600 hover:bg-emerald-700")}
       onClick={() => setMesaSelecionada?.()}
     >
       <p className="text-center text-2xl tracking-wide">{numero}</p>

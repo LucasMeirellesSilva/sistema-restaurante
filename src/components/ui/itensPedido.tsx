@@ -49,19 +49,8 @@ function ItensPedido({ items, setItems }: ItensPedidoProps) {
               >
                 Remover
               </button>
-              {/*
-                Fórmula de valor = (soma dos adicionais (valor_un * quantidade) * quantidade do item) + valor inicial (valor_un * quantidade)
-                */}
               <p className="border-t font-medium">
-                {formatCurrency(
-                  item.adicionais.reduce(
-                    (acc, adicional) =>
-                      acc +
-                      item.quantidade *
-                        (adicional.valorUnitario * adicional.quantidade),
-                    item.valorUnitario * item.quantidade
-                  )
-                )}
+                {item.valorTotalFormatado}
               </p>
             </div>
           </div>

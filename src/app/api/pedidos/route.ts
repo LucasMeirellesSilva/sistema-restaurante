@@ -105,9 +105,13 @@ export async function POST(req: NextRequest) {
           for (const adicional of item.adicionais) {
             const prodAd = produtoMap.get(adicional.produtoId);
             if (!prodAd)
-              throw new Error(`Produto adicional ${adicional.produtoId} não encontrado`);
+              throw new Error(
+                `Produto adicional ${adicional.produtoId} não encontrado`
+              );
             if (!prodAd.disponivel)
-              throw new Error(`Adicional ${adicional.produtoId} não está disponível.`);
+              throw new Error(
+                `Adicional ${adicional.produtoId} não está disponível.`
+              );
 
             await createItem(tx, {
               pedidoId: pedido.id,
@@ -124,17 +128,16 @@ export async function POST(req: NextRequest) {
     });
 
     if (result) {
-      const pedido = await getPedidoPorId(result.id);
-
-      fetch("http://localhost:4000/novo-pedido", {
+      fetch("http://192.168.1.5:3000/api/invalidate-pedidos");
+      fetch("http://192.168.1.5:3000/api/imprimir", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(pedido),
+        body: JSON.stringify({ id: result.id }),
       });
 
-      return NextResponse.json(pedido, { status: 201 });
+      return NextResponse.json({ status: 201 });
     } else {
-      throw new Error("Falha inesperada na criação do pedido.")
+      throw new Error("Falha inesperada na criação do pedido.");
     }
   } catch (err) {
     return NextResponse.json(
@@ -220,9 +223,13 @@ export async function PATCH(req: NextRequest) {
           for (const adicional of item.adicionais) {
             const prodAd = produtoMap.get(adicional.produtoId);
             if (!prodAd)
-              throw new Error(`Produto adicional ${adicional.produtoId} não encontrado`);
+              throw new Error(
+                `Produto adicional ${adicional.produtoId} não encontrado`
+              );
             if (!prodAd.disponivel)
-              throw new Error(`Adicional ${adicional.produtoId} não está disponível.`);
+              throw new Error(
+                `Adicional ${adicional.produtoId} não está disponível.`
+              );
 
             await createItem(tx, {
               pedidoId: pedido.id,
@@ -244,17 +251,16 @@ export async function PATCH(req: NextRequest) {
     });
 
     if (result) {
-      const pedido = await getPedidoPorId(result.id);
-
-      fetch("http://localhost:4000/novo-pedido", {
+      fetch("http://192.168.1.5:3000/api/invalidate-pedidos");
+      fetch("http://192.168.1.5:3000/api/imprimir", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(pedido),
+        body: JSON.stringify({ id: result.id }),
       });
 
-      return NextResponse.json(result, { status: 200 });
+      return NextResponse.json({ status: 200 });
     } else {
-      throw new Error("Falha inesperada na criação do pedido.")
+      throw new Error("Falha inesperada na criação do pedido.");
     }
   } catch (err) {
     return NextResponse.json(

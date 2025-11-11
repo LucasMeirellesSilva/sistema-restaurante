@@ -12,15 +12,17 @@ import {
   CircleUser,
 } from "lucide-react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/Sidebar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { io } from "socket.io-client";
 
 // Lib
 import useUser from "@/lib/hooks/useUser";
 import { forbiddenRoutes } from "@/lib/forbiddenRoutes";
+import { queryClient } from "@/lib/queryClient";
 
 type SidebarLink = {
   label: string;
@@ -72,6 +74,10 @@ const logoutLink = {
   icon: LogOut,
 };
 
+const socket = io({
+  path: "/socket-io",
+});
+
 export default function PrivateLayout({
   children,
 }: {
@@ -80,6 +86,26 @@ export default function PrivateLayout({
   const [open, setOpen] = useState(false);
   const { data: user, isPending: isUserPending } = useUser();
   const pathname = usePathname();
+
+  useEffect(() => {
+    fetch("/api/socket", { method: "POST", credentials: "include" });
+
+    // Quando conectar
+    socket.on("connect", () => {
+      console.log("🟢 Conectado:", socket.id);
+    });
+
+    socket.on("invalidatePedidos", () => {
+      console.log("ouviu")
+      queryClient.invalidateQueries({ queryKey: ["pedidosPendentes"] });
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("invalidatePedidos");
+      socket.disconnect();
+    };
+  }, [queryClient]);
 
   return (
     <motion.div className="flex">
@@ -96,12 +122,16 @@ export default function PrivateLayout({
                 )
                   return;
                 return (
-                  <SidebarLink key={idx} link={link} pathname={pathname} />
+                  <SidebarLink key={idx} link={link} pathname={pathname!} />
                 );
               })}
           </div>
           <div>
-            <SidebarLink key={"logout"} link={logoutLink} pathname={pathname} />
+            <SidebarLink
+              key={"logout"}
+              link={logoutLink}
+              pathname={pathname!}
+            />
             <div className="flex items-center justify-start gap-2 group/sidebar py-2">
               {user?.role === "Admin" ? (
                 <ShieldUser width={28} height={28} strokeWidth={1.5} />

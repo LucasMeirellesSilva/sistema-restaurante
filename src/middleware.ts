@@ -83,7 +83,8 @@ export const config: MiddlewareConfig = {
         - /api/login
         - /api/estabelecimento/*
         - /api/recuperar-acesso
+        - /api/invalidate-pedidos
     */
-    "/((?!_next|favicon.ico|api/login|api/estabelecimento/*|api/recuperar-acesso).*)",
+    "/((?!_next|favicon.ico|api/login|api/estabelecimento/*|api/recuperar-acesso|api/invalidate-pedidos|api/imprimir).*)",
   ],
 };

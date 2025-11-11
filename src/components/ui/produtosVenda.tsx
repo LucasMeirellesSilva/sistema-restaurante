@@ -2,12 +2,14 @@
 
 import { Dispatch, SetStateAction, useState, useEffect } from "react";
 
-import InputQuantidade from "./inputQuantidade";
-
-import { ProdutosPorCategoria, ProdutoType } from "@/lib/hooks/useProdutosCategoria";
+import {
+  ProdutosPorCategoria,
+  ProdutoType,
+} from "@/lib/hooks/useProdutosCategoria";
 import { ItemModelType, AdicionalModelType } from "@/schemas/itemSchema";
 import { cn } from "@/lib/utils";
 import { isEqual } from "lodash";
+import formatCurrency from "@/lib/formatCurrency";
 
 import {
   ArrowDownUp,
@@ -17,6 +19,7 @@ import {
   Plus,
 } from "lucide-react";
 import { Button } from "./button";
+import InputQuantidade from "./inputQuantidade";
 
 const iconColor = "text-neutral-600";
 
@@ -53,7 +56,7 @@ function ProdutosVenda({ produtos, setItems }: ProdutosVendaProps) {
 
   return (
     <>
-      <div className="flex justify-between border-b font-medium py-1 pl-2 pr-10 select-none">
+      <div className="hidden lg:flex justify-between border-b font-medium py-1 pl-2 pr-10 select-none">
         <p>Nome</p>
         <p
           className="flex gap-1 items-center cursor-pointer"
@@ -150,21 +153,13 @@ function ProdutoItem({
   }
 
   function handleAdicionarItem() {
-    const novoItem: ItemModelType = {
-      produto: produto.nome,
-      produtoId: produto.id,
-      valorUnitarioFormatado: produto.valorFormatado,
-      valorUnitario: Number(produto.valor),
-      quantidade: 1,
-      adicionais: adicionaisSelecionados,
-    };
-
-    // Função que "normaliza" o item antes de comparar devido ao fato de que adicionais podem ser adicionados em ordem diferente.
     function normalizar(item: ItemModelType) {
       return {
         ...item,
         id: 0, // ignora id (caso o item seja um item que já existe no pedido e não criado agora)
         quantidade: 0, // ignora quantidade
+        valorTotal: 0, // ignora valorTotal
+        valorTotalFormatado: "",
         adicionais: [...item.adicionais]
           .map((a) => ({
             ...a,
@@ -173,6 +168,23 @@ function ProdutoItem({
           .sort((a, b) => a.produtoId! - b.produtoId!),
       };
     }
+    const valorTotal = adicionaisSelecionados.reduce(
+      (acc, adicional) => acc + adicional.valorUnitario,
+      Number(produto.valor)
+    );
+
+    const novoItem: ItemModelType = {
+      produto: produto.nome,
+      produtoId: produto.id,
+      valorUnitarioFormatado: produto.valorFormatado,
+      valorUnitario: Number(produto.valor),
+      valorTotal: valorTotal,
+      valorTotalFormatado: formatCurrency(valorTotal),
+      quantidade: 1,
+      adicionais: adicionaisSelecionados,
+    };
+
+    // Função que "normaliza" o item antes de comparar devido ao fato de que adicionais podem ser adicionados em ordem diferente.
 
     setItems((prev) => {
       const itemExistente = prev.find((item) =>
@@ -180,10 +192,21 @@ function ProdutoItem({
       );
 
       if (itemExistente) {
-        // Se já existir, incrementa a quantidade
+        // Se já existir, incrementa a quantidade e atualiza o valorTotal
+        const novaQuantidade = itemExistente.quantidade + 1;
+        const novoValorTotal = adicionaisSelecionados.reduce(
+          (acc, adicional) => acc + adicional.valorUnitario * novaQuantidade,
+          Number(produto.valor) * novaQuantidade
+        );
+
         return prev.map((item) =>
           isEqual(normalizar(item), normalizar(novoItem))
-            ? { ...item, quantidade: item.quantidade + 1 }
+            ? {
+                ...item,
+                quantidade: item.quantidade + 1,
+                valorTotal: novoValorTotal,
+                valorTotalFormatado: formatCurrency(novoValorTotal),
+              }
             : item
         );
       } else {

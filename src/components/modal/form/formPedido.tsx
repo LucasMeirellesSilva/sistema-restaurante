@@ -119,7 +119,7 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
   }
 
   return (
-    <div className={cn("flex flex-col gap-2 h-[80vh] w-[80vw]")}>
+    <div className={cn("flex flex-col gap-2 w-full lg:h-[80vh] lg:w-[80vw]")}>
       <Modal isOpen={modalCliente} onClose={() => setModalCliente(false)}>
         {modalCliente && <FormCliente onClose={() => setModalCliente(false)}/>}
       </Modal>

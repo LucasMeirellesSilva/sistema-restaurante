@@ -16,9 +16,11 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 // Lib
 import useUser from "@/lib/hooks/useUser";
+import { forbiddenRoutes } from "@/lib/forbiddenRoutes";
 
 type SidebarLink = {
   label: string;
@@ -76,7 +78,7 @@ export default function PrivateLayout({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-  const { data: user } = useUser();
+  const { data: user, isPending: isUserPending } = useUser();
   const pathname = usePathname();
 
   return (
@@ -84,9 +86,19 @@ export default function PrivateLayout({
       <Sidebar open={open} setOpen={setOpen} >
         <SidebarBody className="h-screen justify-between gap-10 items-baseline font-medium overflow-hidden sticky top-0">
           <div>
-            {links.map((link, idx) => (
-              <SidebarLink key={idx} link={link} pathname={pathname} />
-            ))}
+            {!isUserPending &&
+              user &&
+              links.map((link, idx) => {
+                if (
+                  forbiddenRoutes[user.role].some(
+                    (route) => route === link.href
+                  )
+                )
+                  return;
+                return (
+                  <SidebarLink key={idx} link={link} pathname={pathname} />
+                );
+              })}
           </div>
           <div>
             <SidebarLink key={"logout"} link={logoutLink} pathname={pathname} />

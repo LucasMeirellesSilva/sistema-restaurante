@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "./button";
 
-const iconColor = "text-neutral-500";
+const iconColor = "text-neutral-600";
 
 type ProdutosVendaProps = {
   produtos: ProdutosPorCategoria;

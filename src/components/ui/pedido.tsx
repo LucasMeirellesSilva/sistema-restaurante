@@ -37,10 +37,10 @@ export default function Pedido({ className, pedido, user, setPedidoSelecionado, 
         onClick={() => abrirPedido()}
       >
         <p className="text-end"> {pedido.criadoEmHora}</p>
-        <p className="text-center"> Pedido {pedido.id}</p>
-        <div className="flex justify-between">
-          <p className="text-start"> {pedido.valorTotalFormatado}</p>
-          <p className="text-start mr-5"> {pedido.autor}</p>
+        <p className="text-center truncate">{pedido.cliente ?? `Pedido ${pedido.id}`} </p>
+        <div className="flex flex-wrap justify-between overflow-hidden">
+          <p className="text-start text-md"> {pedido.valorTotalFormatado}</p>
+          <p className="text-start text-md mr-5 truncate"> {pedido.autor}</p>
         </div>
         <div className="absolute bottom-0 right-0 bg-orange-400 w-6 h-5"></div>
       </ContextMenuTrigger>

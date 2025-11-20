@@ -36,6 +36,8 @@ export const itemModelSchema = z.object({
     id: z.number().optional(),
     valorUnitarioFormatado: z.string(),
     valorUnitario: z.number(),
+    valorTotalFormatado: z.string(),
+    valorTotal: z.number(),
     quantidade: z.number(),
     produto: z.string().optional(),
     produtoId: z.number().optional(),

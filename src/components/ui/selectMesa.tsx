@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Dispatch, useState, useEffect, JSX } from "react";
 
@@ -21,8 +21,10 @@ type SelectMesaProps = {
 };
 
 function SelectMesa({ mesa, setMesa }: SelectMesaProps) {
-  const { data: estabelecimento, isPending: isEstabelecimentoPending } = useEstabelecimentoData();
+  const { data: estabelecimento, isPending: isEstabelecimentoPending } =
+    useEstabelecimentoData();
   const [mesas, setMesas] = useState<JSX.Element[]>([]);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (estabelecimento) {
@@ -42,7 +44,12 @@ function SelectMesa({ mesa, setMesa }: SelectMesaProps) {
   }, [estabelecimento]);
 
   return (
-    <Select value={mesa} onValueChange={(id) => setMesa(id)}>
+    <Select
+      open={open}
+      onOpenChange={setOpen}
+      value={mesa}
+      onValueChange={(id) => setMesa(id)}
+    >
       <SelectTrigger className="w-full pl-10 cursor-pointer">
         <SelectValue />
       </SelectTrigger>
@@ -50,6 +57,17 @@ function SelectMesa({ mesa, setMesa }: SelectMesaProps) {
         <SelectGroup>
           <SelectLabel>Mesas</SelectLabel>
           {isEstabelecimentoPending && <Loading />}
+          {mesa && (
+            <div
+              className="flex items-center px-1 py-1.5 rounded-sm hover:bg-neutral-100 text-sm cursor-pointer indent-1"
+              onClick={() => {
+                setMesa("");
+                setOpen(false);
+              }}
+            >
+              Sem mesa
+            </div>
+          )}
           {mesas?.map((mesa) => mesa)}
         </SelectGroup>
       </SelectContent>

@@ -12,10 +12,10 @@ import { queryClient } from "@/lib/queryClient";
 
 import { ClienteFormType, ClienteModelType } from "@/schemas/clienteSchema";
 
-type UpdateClienteFormType = Partial<ClienteFormType>
+type UpdateClienteFormType = Partial<ClienteModelType>;
 
 type FormClienteProps = {
-  cliente?: ClienteModelType
+  cliente?: ClienteModelType;
   onClose: () => void;
 };
 
@@ -57,6 +57,7 @@ function FormCliente({ cliente, onClose }: FormClienteProps) {
 
   function handleSubmit() {
     mutation.mutate({
+      ...(cliente && { clienteId: cliente.id}),
       ...(nome && { nome: nome }),
       ...(telefone && { telefone: telefone }),
     });
@@ -65,7 +66,9 @@ function FormCliente({ cliente, onClose }: FormClienteProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2 border-b w-fit px-4 mx-auto">
-        <h2 className="font-medium text-lg">Novo Cliente</h2>
+        <h2 className="font-medium text-lg">
+          {cliente ? "Editar Cliente" : "Novo Cliente"}{" "}
+        </h2>
         <User className="text-neutral-500" />
       </div>
       <form className="px-6">

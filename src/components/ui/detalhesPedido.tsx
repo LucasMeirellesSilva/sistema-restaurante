@@ -2,7 +2,7 @@ import { SelectedType } from "@/app/(private)/ponto-venda/page";
 import { PedidoModelType } from "@/schemas/pedidoSchema";
 import formatCurrency from "@/lib/formatCurrency";
 
-import { User, NotebookPen, Clock } from "lucide-react";
+import { User, NotebookPen, CalendarClock } from "lucide-react";
 
 type DetalhesPedidoProps = {
   selected: SelectedType;
@@ -52,17 +52,17 @@ function Pedido({ pedido }: PedidoProps) {
             <p># Pedido {pedido.id}</p>
           </div>
           <div className="flex gap-2 items-center text-end">
-            <Clock size={20}/>
+            <CalendarClock size={20} />
             {pedido.criadoEmHora}
           </div>
         </div>
         <div className="flex flex-col gap-1">
           <div className="flex gap-2 justify-between items-center text-end">
-            <User size={20}/>
+            <User size={20} />
             {pedido.cliente ?? "Não identificado"}
           </div>
           <div className="flex gap-2 justify-between items-center text-end">
-            <NotebookPen size={20}/>
+            <NotebookPen size={20} />
             {pedido.autor}
           </div>
         </div>
@@ -74,7 +74,9 @@ function Pedido({ pedido }: PedidoProps) {
               <p>
                 {item.quantidade}x {item.produto ?? "Produto removido"}
               </p>
-              <p className="font-medium">{formatCurrency(item.quantidade * item.valorUnitario)}</p>
+              <p className="font-medium">
+                {formatCurrency(item.quantidade * item.valorUnitario)}
+              </p>
             </div>
             {item.adicionais.map((adicional) => (
               <div key={adicional.id}>
@@ -91,10 +93,17 @@ function Pedido({ pedido }: PedidoProps) {
                 </div>
               </div>
             ))}
+            {item.adicionais.length > 0 && (
+              <div className="flex justify-end text-sm">
+                <span className="border-t">
+                  {item.valorTotalFormatado}
+                </span>
+              </div>
+            )}
           </div>
         ))}
       </div>
-      {pedido.observacao && <p>Observação: {pedido.observacao}</p>}
+      {pedido.observacao && <p className="px-4">Observação: {pedido.observacao}</p>}
       <p className="text-center pb-5">
         Total:{" "}
         <span className="font-medium tracking-tight">

@@ -7,6 +7,38 @@ import createPagamento from "@/repository/pagamento/createPagamentoService";
 import getPedidoPorId from "@/repository/pedido/getPedidoPorIdService";
 import setPedidoFinalizado from "@/repository/pedido/setPedidoFinalizadoService";
 
+import getPagamentoPorPedido from "@/repository/pagamento/getPagamentoPorPedidoService";
+
+export async function GET(req: NextRequest) {
+  const { isValid, decoded, res } = await verifyToken(req);
+
+  // Token inválido, retorna e reseta token.
+  if (!isValid) return res;
+
+  // Bloqueio de rotas baseado nos roles.
+  const { allowed, res: notAllowedRes } = checkPermission(
+    decoded!.role,
+    "verHistorico"
+  );
+
+  if (!allowed) return notAllowedRes;
+
+  try {
+    const id = Number(req.nextUrl.searchParams.get("id"));
+
+    if (!id || isNaN(id)) throw new Error("O id é obrigatório e deve ser um número.");
+
+    const pagamento = await getPagamentoPorPedido(id);
+
+    return NextResponse.json(pagamento);
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);
 

@@ -51,8 +51,8 @@ export default function CentralPedidos() {
   const pedidosPorCliente =
     pesquisa && pedidos
       ? pedidos.filter((p) =>
-          p.cliente?.toLowerCase().includes(pesquisa.toLowerCase())
-        )
+        p.cliente?.toLowerCase().includes(pesquisa.toLowerCase())
+      )
       : [];
 
   const cancelarPedido = useMutation({
@@ -129,7 +129,7 @@ export default function CentralPedidos() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          className="flex justify-center w-[150px] h-[120px]"
+          className="flex justify-center w-[120px] sm:w-[150px] aspect-5/4"
         >
           {p.mesa ? (
             <Mesa
@@ -175,7 +175,7 @@ export default function CentralPedidos() {
   }
 
   return (
-    <div className="flex flex-col items-center w-full mx-auto lg:w-3/4">
+    <div className="flex flex-col gap-4 md:gap-0 min-h-screen items-center sm:w-4/5 mx-auto lg:w-3/4">
       {/* Modal dinâmico */}
       <Modal isOpen={!!modalAberto} onClose={() => setModalAberto(null)}>
         {modalAberto?.tipo === "criarPedido" && (
@@ -212,14 +212,14 @@ export default function CentralPedidos() {
       <h1 className="text-center font-semibold text-xl tracking-tight">
         Central de Pedidos
       </h1>
-      <div className="flex items-center gap-12">
+      <div className="flex flex-col-reverse md:flex-row flex-wrap items-center gap-2 md:gap-12">
         <div className="relative">
           <User
             className="absolute inset-0 my-auto ml-2 text-neutral-500"
             strokeWidth={1.5}
           />
           <Input
-            className="bg-white indent-8 w-80"
+            className="bg-white indent-8 w-48 md:w-64"
             type="text"
             placeholder="Filtrar por cliente"
             onChange={(e) => setPesquisa(e.target.value)}
@@ -231,11 +231,11 @@ export default function CentralPedidos() {
             alt=""
             width={200}
             height={128}
-            className="select-none"
+            className="select-none hidden md:block"
             draggable={false}
           />
           <Button
-            className="absolute py-5 bg-orange-600 hover:bg-orange-600 cursor-pointer hover:shadow-lg inset-0 my-auto mx-auto w-fit"
+            className="md:absolute md:py-5 bg-orange-600 hover:bg-orange-600 cursor-pointer hover:shadow-lg inset-0 my-auto mx-auto w-fit"
             onClick={() => setModalAberto({ tipo: "criarPedido" })}
           >
             <Plus size={32} className="scale-120" />
@@ -246,7 +246,7 @@ export default function CentralPedidos() {
       <h2 className="mb-2 text-start font-semibold text-lg tracking-tight text-neutral-800 w-full">
         Pedidos em Aberto
       </h2>
-      <motion.div layout className="flex flex-wrap items-center gap-4 m-4">
+      <motion.div layout className="flex flex-wrap items-center gap-2 sm:gap-4 md:m-4">
         <AnimatePresence>
           {isPedidosPendentesPending && <Loading />}
 
@@ -281,9 +281,12 @@ export default function CentralPedidos() {
             exit={{ opacity: 0, transition: { duration: 0.2 } }}
             className="flex flex-wrap gap-4 m-4"
           >
-            {mesasLivres}
-          </motion.div>
-        )}
+            {mesasLivres.length > 0 
+            ? mesasLivres 
+            : <p className="text-sm">Nenhuma mesa livre ou registrada.</p>}
+          </motion.div>)
+
+        }
       </AnimatePresence>
     </div>
   );

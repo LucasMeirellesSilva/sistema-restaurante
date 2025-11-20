@@ -11,7 +11,7 @@ type SeletorCategoriasProps = {
 
 function SeletorCategorias({ categoria, setCategoria, categorias }: SeletorCategoriasProps) {
   return (
-    <div className="flex flex-wrap gap-1 space-y-1">
+    <div className="flex flex-wrap max-h-[15vh] md:max-h-[20vh] overflow-y-scroll justify-evenly gap-1 space-y-1 border-b">
       {categorias.map((cat) => (
           <div
             className="relative flex items-center gap-2 font-medium"

@@ -13,12 +13,12 @@ async function main() {
   const tipoCaixa = await prisma.tipo.findFirst({ where: { descricao: "Caixa" } });
   const tipoGarcom = await prisma.tipo.findFirst({ where: { descricao: "Garçom" } });
 
-  const senhaHash = await bcrypt.hash("senha123", 10);
+  const senhaHash = await bcrypt.hash("123", 10);
 
   await prisma.usuario.createMany({
     data: [
-      { nome: "Pessoa 1", senha: senhaHash, tipo_id: tipoCaixa.id },
-      { nome: "Pessoa 2", senha: senhaHash, tipo_id: tipoGarcom.id },
+      { nome: "Caixa 2", senha: senhaHash, tipo_id: tipoCaixa.id },
+      { nome: "Garçom 2", senha: senhaHash, tipo_id: tipoGarcom.id },
     ],
     skipDuplicates: true,
   });
@@ -27,9 +27,9 @@ async function main() {
   // Categorias e Produtos
   // -----------------------
   const categoriasData = [
-    { nome: "Categoria 1" },
-    { nome: "Categoria 2" },
-    { nome: "Categoria 3" },
+    { nome: faker.food.ethnicCategory() + "1" },
+    { nome: faker.food.ethnicCategory() + "2" },
+    { nome: faker.food.ethnicCategory() + "3" },
   ];
   await prisma.categoria.createMany({ data: categoriasData, skipDuplicates: true });
   const categorias = await prisma.categoria.findMany();
@@ -40,8 +40,8 @@ async function main() {
     for (let i = 0; i < 15; i++) {
       produtosData.push({
         nome: faker.food.dish() + ` ${i + 1}`,
-        valor: parseFloat(faker.finance.amount(0, 100, 2)),
-        descricao: faker.lorem.words(3),
+        valor: parseFloat(faker.finance.amount({min: 5, max: 100})),
+        descricao: faker.food.description(),
         disponivel: true,
         adicional: false,
         categoria_id: categoria.id,
@@ -51,15 +51,14 @@ async function main() {
     for (let i = 0; i < 5; i++) {
       produtosData.push({
         nome: faker.food.ingredient() + ` ${i + 1}`,
-        valor: parseFloat(faker.finance.amount(0, 100, 2)),
-        descricao: faker.lorem.words(3),
+          valor: parseFloat(faker.finance.amount({min: 2, max: 12})),
         disponivel: true,
         adicional: true,
         categoria_id: categoria.id,
       });
     }
   }
-  await prisma.produto.createMany({ data: produtosData });
+  await prisma.produto.createMany({ data: produtosData, skipDuplicates: true });
 
   const produtos = await prisma.produto.findMany();
 
@@ -70,13 +69,13 @@ async function main() {
   // -----------------------
   // 3️⃣ Pedidos e Itens
   // -----------------------
-  const totalPedidos = 10; // 10k pedidos x 10 itens = 100k itens
+  const totalPedidos = 10000; // 10k pedidos x 10 itens = 100k itens
   const itensPorPedido = 5;
 
   console.log("📝 Criando pedidos e itens...");
 
-  const batchPedidos = 1; // batch de pedidos
-  const batchItens = 1;  // batch de itens
+  const batchPedidos = 500; // batch de pedidos
+  const batchItens = 10000;  // batch de itens
 
   let pedidosData = [];
   let itensData = [];
@@ -84,11 +83,11 @@ async function main() {
 
   for (let i = 0; i < totalPedidos; i++) {
     const usuarioId = i % 2 === 0 ? tipoCaixa.id : tipoGarcom.id;
-    pedidosData.push({ usuario_id: usuarioId });
+    pedidosData.push({ usuario_id: usuarioId, status_id: 3 });
 
     // Batch de pedidos
     if (pedidosData.length === batchPedidos || i === totalPedidos - 1) {
-      const createdPedidos = await prisma.pedido.createMany({ data: pedidosData });
+      await prisma.pedido.createMany({ data: pedidosData });
       pedidosData = [];
     }
 
@@ -97,7 +96,7 @@ async function main() {
     const itensPrincipais = [];
 
     for (let j = 0; j < itensPorPedido; j++) {
-      // 80% chance de ser normal, 20% chance adicional (ajuste conforme quiser)
+      // 80% chance de ser normal, 20% chance adicional
       const usarAdicional = Math.random() < 0.2 && produtosAdicionais.length > 0 && itensPrincipais.length > 0;
       if (usarAdicional) {
         // Item adicional, precisa apontar para um item principal
@@ -122,7 +121,7 @@ async function main() {
           pertence_a_id: null,
         };
         pedidoItens.push(item);
-        itensPrincipais.push({ ...item, id: itensData.length + pedidoItens.length }); // gerar id fictício
+        itensPrincipais.push({ ...item }); // gerar id fictício
       }
     }
 

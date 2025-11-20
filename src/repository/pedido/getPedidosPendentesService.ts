@@ -1,7 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import formatPedidoService from "./formatPedidoService";
 
+import { performance } from "node:perf_hooks";
+
 export default async function getPedidosPendentes() {
+  const start = performance.now();
+
   const pedidos = await prisma.pedido.findMany({
     orderBy: { criado_em: "desc" },
     where: { status_id: 1 },
@@ -49,6 +53,10 @@ export default async function getPedidosPendentes() {
       },
     },
   });
+  
+  const end = performance.now();
+
+  console.log(`⏱️ Tempo total da rota pedidos pendentes: ${(end - start).toFixed(2)}ms`);
 
   const pedidosPendentesFormatados = formatPedidoService(pedidos);
 

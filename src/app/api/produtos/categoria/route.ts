@@ -9,11 +9,18 @@ export async function GET(req: NextRequest) {
   if (!isValid) return res;
 
   const id = req.nextUrl.searchParams.get("id");
-  if (!id) return NextResponse.json({ error: "ID é obrigatório" }, { status: 400 });
 
   // Interação com o banco
   try {
+    if (!id) throw new Error("Id é obrigatório.")
+
+    const start = performance.now();
+
     const produtos = await getProdutosDisponiveisPorCategoria(Number(id));
+
+    const end = performance.now();
+
+    console.log(`⏱️ Tempo total da rota: ${(end - start).toFixed(2)}ms`);
 
     return NextResponse.json(produtos);
   } catch (err) {

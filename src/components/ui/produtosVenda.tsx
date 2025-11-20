@@ -1,12 +1,12 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState, useEffect } from "react";
+import { Dispatch, SetStateAction, useState, useEffect, memo } from "react";
 
 import InputQuantidade from "./inputQuantidade";
 
 import { ProdutosPorCategoria, ProdutoType } from "@/lib/hooks/useProdutosCategoria";
 import { ItemModelType, AdicionalModelType } from "@/schemas/itemSchema";
-import { cn } from "@/lib/utils";
+import { cn, normalizar } from "@/lib/utils";
 import { isEqual } from "lodash";
 
 import {
@@ -51,8 +51,10 @@ function ProdutosVenda({ produtos, setItems }: ProdutosVendaProps) {
 
   const nextSort = !sort ? "desc" : sort === "desc" ? "asc" : null;
 
+  const lista = sort ? sortedList : produtos.normais;
+
   return (
-    <>
+    <div className="flex flex-col h-full py-2">
       <div className="flex justify-between border-b font-medium py-1 pl-2 pr-10 select-none">
         <p>Nome</p>
         <p
@@ -61,37 +63,26 @@ function ProdutosVenda({ produtos, setItems }: ProdutosVendaProps) {
         >
           {/* Se sort for null = "asc", se for "asc" = "desc", se for "desc" = null */}
           Valor
-          {!sort 
-          ? <ArrowDownUp size={16} className={cn(iconColor)} /> 
-          : sort === "asc" ? <ArrowUp size={16} className={cn(iconColor)} /> 
-          : <ArrowDown size={16} className={cn(iconColor)} />}
+          {!sort
+            ? <ArrowDownUp size={16} className={cn(iconColor)} />
+            : sort === "asc" ? <ArrowUp size={16} className={cn(iconColor)} />
+              : <ArrowDown size={16} className={cn(iconColor)} />}
         </p>
       </div>
-      <div className="flex flex-col overflow-y-auto h-140 select-none">
-        {!sort &&
-          produtos.normais.map((produto) => (
-            <ProdutoItem
-              key={produto.id}
-              produto={produto}
-              adicionais={produtos.adicionais}
-              isOpen={openId === produto.id}
-              setItems={setItems}
-              onToggle={handleToggle}
-            ></ProdutoItem>
-          ))}
-        {sort &&
-          sortedList?.map((produto) => (
-            <ProdutoItem
-              key={produto.id}
-              produto={produto}
-              adicionais={produtos.adicionais}
-              isOpen={openId === produto.id}
-              setItems={setItems}
-              onToggle={handleToggle}
-            ></ProdutoItem>
-          ))}
+      <div className="h-full overflow-y-auto select-none">
+        {lista?.map((produto) => (
+          <MemoProdutoItem
+            key={produto.id}
+            produto={produto}
+            adicionais={produtos.adicionais}
+            isOpen={openId === produto.id}
+            setIsOpen={setOpenId}
+            setItems={setItems}
+            onToggle={handleToggle}
+          ></MemoProdutoItem>
+        ))}
       </div>
-    </>
+    </div>
   );
 }
 
@@ -101,6 +92,7 @@ type ProdutoItemProps = {
   produto: ProdutoType;
   adicionais: ProdutoType[];
   isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<number | null>>;
   setItems: Dispatch<SetStateAction<ItemModelType[]>>;
   onToggle: (id: number) => void;
 };
@@ -113,6 +105,7 @@ function ProdutoItem({
   produto,
   adicionais,
   isOpen,
+  setIsOpen,
   setItems,
   onToggle,
 }: ProdutoItemProps) {
@@ -160,21 +153,6 @@ function ProdutoItem({
       adicionais: adicionaisSelecionados,
     };
 
-    // Função que "normaliza" o item antes de comparar devido ao fato de que adicionais podem ser adicionados em ordem diferente.
-    function normalizar(item: ItemModelType) {
-      return {
-        ...item,
-        id: 0, // ignora id (caso o item seja um item que já existe no pedido e não criado agora)
-        quantidade: 0, // ignora quantidade
-        adicionais: [...item.adicionais]
-          .map((a) => ({
-            ...a,
-            id: 0, // ignora id (caso o adicional seja um item que já existe no pedido e não criado agora)
-          }))
-          .sort((a, b) => a.produtoId! - b.produtoId!),
-      };
-    }
-
     setItems((prev) => {
       const itemExistente = prev.find((item) =>
         isEqual(normalizar(item), normalizar(novoItem))
@@ -192,12 +170,14 @@ function ProdutoItem({
         return [...prev, novoItem];
       }
     });
+
+    setIsOpen(null);
   }
 
   return (
     <div
       className={cn(
-        "flex-col transition-all px-2 hover:bg-neutral-100",
+        "transition-all px-2 hover:bg-neutral-100",
         isOpen && "bg-neutral-100"
       )}
       onClick={() => onToggle(produto.id)}
@@ -218,7 +198,7 @@ function ProdutoItem({
       <div
         className={cn(
           "flex flex-col gap-2 pb-2 transition-all duration-300 ease-in-out overflow-hidden",
-          isOpen ? "max-h-120 px-2 opacity-100" : "max-h-0 opacity-0 p-0"
+          isOpen ? "max-h-[500px] opacity-100 py-2" : "max-h-0 opacity-0 py-0"
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -226,16 +206,18 @@ function ProdutoItem({
           <p className="font-thin">Descrição: {produto.descricao}</p>
         )}
 
-        <h2 className="font-medium">Adicionais</h2>
-        <div className="flex flex-wrap gap-2">
-          {adicionais.map((adicional) => (
-            <AdicionalItem
-              adicional={adicional}
-              key={adicional.id}
-              handleQuantidadeChange={handleQuantidadeChange}
-            />
-          ))}
-        </div>
+        {adicionais && <>
+          <h2 className="font-medium">Adicionais</h2>
+          <div className="grid max-h-80 overflow-y-auto xl:grid-cols-2 gap-2 items-stretch">
+            {adicionais.map((adicional) => (
+              <MemoAdicionalItem
+                adicional={adicional}
+                key={adicional.id}
+                handleQuantidadeChange={handleQuantidadeChange}
+              />
+            ))}
+          </div>
+        </>}
         <div className="flex justify-end px-2 pb">
           <Button
             className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer"
@@ -248,6 +230,15 @@ function ProdutoItem({
     </div>
   );
 }
+
+const MemoProdutoItem = memo(
+  ProdutoItem,
+  (prev, next) =>
+    prev.isOpen === next.isOpen &&
+    prev.produto === next.produto &&
+    prev.adicionais === next.adicionais
+);
+
 
 type AdicionalItemProps = {
   adicional: ProdutoType;
@@ -274,12 +265,12 @@ function AdicionalItem({
   return (
     <div
       className={cn(
-        "min-w-70 flex justify-between items-center px-4 rounded-sm select-none border py-0.5",
+        "box-content flex gap-2 justify-between items-center px-4 rounded-sm select-none border py-0.5",
         quantidade && "border-orange-500"
       )}
     >
       <div className="flex flex-col w-fit">
-        <p className="font-medium">{adicional.nome}</p>
+        <p className="font-medium leading-tight text-sm md:text-normal">{adicional.nome}</p>
         <p className="text-sm">{adicional.valorFormatado}</p>
       </div>
       {quantidade ? (
@@ -298,3 +289,5 @@ function AdicionalItem({
     </div>
   );
 }
+
+const MemoAdicionalItem = memo(AdicionalItem);

@@ -38,7 +38,7 @@ function Modal({ isOpen, className, children, onClose }: ModalProps) {
       role="dialog"
       aria-modal="true"
     >
-      <div className={cn("max-w-4/5 max-h-4/5 overflow-hidden flex justify-center p-4 py-8 z-[100] bg-white rounded-lg", className)} onClick={(e) => e.stopPropagation()}>
+      <div className={cn("max-h-[98vh] md:max-w-[80vw] md:max-h-[93vh] overflow-hidden flex justify-center p-2 md:p-4 py-2 md:py-8 z-[100] bg-white rounded-lg", className)} onClick={(e) => e.stopPropagation()}>
         {children}
       </div>
     </div>,

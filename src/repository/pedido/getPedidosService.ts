@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import formatPedidoService from "./formatPedidoService";
+import { performance } from "node:perf_hooks";
 
 export type PedidosProps = {
   limit: number;
@@ -7,6 +8,8 @@ export type PedidosProps = {
 };
 
 export default async function getPedidos({ limit, skip }: PedidosProps) {
+  const start = performance.now();
+
   const [pedidos, total] = await Promise.all([
     prisma.pedido.findMany({
       skip,
@@ -60,6 +63,10 @@ export default async function getPedidos({ limit, skip }: PedidosProps) {
   ]);
 
   const pedidosFormatados = formatPedidoService(pedidos);
+
+  const end = performance.now();
+
+  console.log(`⏱️ Tempo total da rota pedidos pendentes: ${(end - start).toFixed(2)}ms`);
 
   const totalPages = Math.ceil(total / limit);
 

@@ -1,7 +1,7 @@
 import { CategoriaModelType } from "@/schemas/categoriaSchema";
 import { useQuery } from "@tanstack/react-query";
 
-async function fetchCategorias(): Promise<CategoriaModelType[]> {
+async function fetchCategorias(): Promise<CategoriaModelType[] | null> {
   const res = await fetch("/api/categorias", {
     credentials: "include"
   });
@@ -21,7 +21,7 @@ export default function useCategorias() {
     queryKey: ["categorias"],
     queryFn: fetchCategorias,
     refetchInterval: 50000,
-    staleTime: 1000 * 60,
+    staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10,
   }); 
 }

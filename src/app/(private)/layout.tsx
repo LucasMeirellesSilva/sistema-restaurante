@@ -81,7 +81,7 @@ export default function PrivateLayout({
 
   return (
     <motion.div className="flex">
-      <Sidebar open={open} setOpen={setOpen}>
+      <Sidebar open={open} setOpen={setOpen} >
         <SidebarBody className="h-screen justify-between gap-10 items-baseline font-medium overflow-hidden sticky top-0">
           <div>
             {links.map((link, idx) => (
@@ -100,7 +100,7 @@ export default function PrivateLayout({
           </div>
         </SidebarBody>
       </Sidebar>
-      <main className="flex-1 bg-neutral-50 px-12 sm:px-2 pt-2 rounded-tl-3xl border-l">
+      <main className="w-[100vw] flex-1 bg-neutral-50 px-6 lg:px-2 pt-2 md:rounded-tl-3xl border-l">
         {children}
       </main>
     </motion.div>

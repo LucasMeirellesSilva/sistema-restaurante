@@ -22,11 +22,17 @@ export async function GET(req: NextRequest) {
 
   if (!allowed) return notAllowedRes;
 
+  const start = performance.now();
+
   // Interação com o banco
   const { pedidosFormatados, totalPages, total } = await getPedidos({
     limit,
     skip,
   });
+
+  const end = performance.now();
+
+  console.log(`⏱️ Tempo total da rota: ${(end - start).toFixed(2)}ms`);
 
   const response = NextResponse.json({
     items: pedidosFormatados,

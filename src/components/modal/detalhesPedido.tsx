@@ -13,8 +13,6 @@ function DetalhesPedido({ pedido }: DetalhesPedidoProps) {
     pedido.id
   );
 
-  console.log(pagamento);
-
   return (
     <div className="min-w-[50vw] lg:min-w-[30vw] mx-4">
       <h2 className="w-fit px-6 pb-3 border-b font-medium mx-auto">
@@ -44,8 +42,6 @@ const ChairsTablePlatter = createLucideIcon(
   "chairs-table-platter",
   chairsTablePlatter
 );
-
-import formatCurrency from "@/lib/formatCurrency";
 
 type InformacoesPedidoProps = {
   pedido: PedidoModelType;
@@ -103,6 +99,11 @@ function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
           </div>
         </div>
       </div>
+      <div>
+        <p className="font-medium">Observação: </p>
+        {pedido.observacao ?? "Nenhuma observação."}
+      </div>
+      <hr />
       <div className="space-y-2">
         <h3 className="font-medium">Itens do Pedido</h3>
         {pedido.itens.map((item) => (

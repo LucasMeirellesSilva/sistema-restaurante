@@ -55,7 +55,7 @@ export default function PontoVenda() {
         <div className="flex-1/4 flex flex-col gap-2 pt-4 border-r">
           <h2 className="font-medium text-center">Pedidos em Aberto</h2>
           {pedidos?.length ? (
-            <div className="overflow-y-scroll scrollbar">
+            <div className="overflow-y-auto scrollbar">
               <SeletorPedidos
                 pedidos={pedidos}
                 selected={selected}

@@ -19,8 +19,6 @@ function ItensPedido({ items, setItems }: ItensPedidoProps) {
 
   return (
     <div className="flex-1 flex flex-col gap-2 overflow-y-auto scrollbar-none">
-      <h2 className="font-medium">Itens do Pedido</h2>
-      {items.length < 1 && <p className="font-light">Adicione itens para criar o pedido.</p>}
       {items &&
         items.map((item, index) => (
           <div key={index} className="flex flex-col gap-0.5 border-b">
@@ -50,7 +48,7 @@ function ItensPedido({ items, setItems }: ItensPedidoProps) {
               >
                 Remover
               </button>
-              <p className="border-t font-medium">
+              <p className={cn("border-t", item.adicionais.length < 1 && "hidden")}>
                 {item.valorTotalFormatado}
               </p>
             </div>

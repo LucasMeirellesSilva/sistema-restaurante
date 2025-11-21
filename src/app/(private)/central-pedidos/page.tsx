@@ -233,6 +233,7 @@ export default function CentralPedidos() {
             height={128}
             className="select-none hidden md:block"
             draggable={false}
+            unoptimized
           />
           <Button
             className="md:absolute md:py-5 bg-orange-600 hover:bg-orange-600 cursor-pointer hover:shadow-lg inset-0 my-auto mx-auto w-fit"

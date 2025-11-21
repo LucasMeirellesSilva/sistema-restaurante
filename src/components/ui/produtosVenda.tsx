@@ -17,6 +17,7 @@ import {
   Plus,
 } from "lucide-react";
 import { Button } from "./button";
+import formatCurrency from "@/lib/formatCurrency";
 
 const iconColor = "text-neutral-600";
 
@@ -144,11 +145,18 @@ function ProdutoItem({
   }
 
   function handleAdicionarItem() {
+    const valorTotal = adicionaisSelecionados.reduce(
+      (acc, adicional) => acc + adicional.valorUnitario,
+      Number(produto.valor)
+    );
+
     const novoItem: ItemModelType = {
       produto: produto.nome,
       produtoId: produto.id,
       valorUnitarioFormatado: produto.valorFormatado,
       valorUnitario: Number(produto.valor),
+      valorTotal: valorTotal,
+      valorTotalFormatado: formatCurrency(valorTotal),
       quantidade: 1,
       adicionais: adicionaisSelecionados,
     };
@@ -159,10 +167,21 @@ function ProdutoItem({
       );
 
       if (itemExistente) {
-        // Se já existir, incrementa a quantidade
+        // Se já existir, incrementa a quantidade e atualiza o valorTotal
+        const novaQuantidade = itemExistente.quantidade + 1;
+        const novoValorTotal = adicionaisSelecionados.reduce(
+          (acc, adicional) => acc + adicional.valorUnitario * novaQuantidade,
+          Number(produto.valor) * novaQuantidade
+        );
+
         return prev.map((item) =>
           isEqual(normalizar(item), normalizar(novoItem))
-            ? { ...item, quantidade: item.quantidade + 1 }
+            ? {
+                ...item,
+                quantidade: item.quantidade + 1,
+                valorTotal: novoValorTotal,
+                valorTotalFormatado: formatCurrency(novoValorTotal),
+              }
             : item
         );
       } else {

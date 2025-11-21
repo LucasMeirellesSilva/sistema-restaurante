@@ -11,8 +11,9 @@ type SeletorCategoriasProps = {
 
 function SeletorCategorias({ categoria, setCategoria, categorias }: SeletorCategoriasProps) {
   return (
-    <div className="flex flex-wrap max-h-[15vh] md:max-h-[20vh] overflow-y-scroll justify-evenly gap-1 space-y-1 border-b">
-      {categorias.map((cat) => (
+    <div className="flex flex-wrap max-h-[15vh] md:max-h-[20vh] overflow-y-auto justify-evenly gap-1 space-y-1 border-b">
+      {categorias.map((cat, index) => (
+        <>
           <div
             className="relative flex items-center gap-2 font-medium"
             key={cat.id}
@@ -27,8 +28,9 @@ function SeletorCategorias({ categoria, setCategoria, categorias }: SeletorCateg
             >
               {cat.nome}
             </div>
-            <div className="absolute top-1/2 right-0 h-1/2 -translate-y-1/2 border-r"></div>
           </div>
+          {index + 1 !== categorias.length && <div className="border-r my-2"></div> }
+          </>
         ))}
     </div>
   );

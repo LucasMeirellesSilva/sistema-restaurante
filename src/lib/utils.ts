@@ -1,8 +1,8 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 import { ItemModelType } from "@/schemas/itemSchema";
@@ -13,6 +13,8 @@ export function normalizar(item: ItemModelType) {
     ...item,
     id: 0, // ignora id (caso o item seja um item que já existe no pedido e não criado agora)
     quantidade: 0, // ignora quantidade
+    valorTotal: 0, // ignora valorTotal
+    valorTotalFormatado: "",
     adicionais: [...item.adicionais]
       .map((a) => ({
         ...a,

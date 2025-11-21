@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import getEstabelecimentoRespostaSeguranca from "@/repository/estabelecimento/getEstabelecimentoRespostaSegurancaService";
+import getEstabelecimentoRespostaSeguranca from "@/repository/estabelecimento/getEstabelecimentoRespostaSeguranca";
 import bcrypt from "bcryptjs";
-import updateUsuario from "@/repository/usuario/updateUsuarioService";
+import updateUsuario from "@/repository/usuario/updateUsuario";
 
 export type RecuperarAcessoForm = {
   respostaSeguranca: string

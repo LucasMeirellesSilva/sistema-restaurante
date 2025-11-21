@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
-import getClientes from "@/repository/cliente/getClientesService";
-import getClientesPaginado from "@/repository/cliente/getClientesPaginadoService";
+import getClientes from "@/repository/cliente/getClientes";
+import getClientesPaginado from "@/repository/cliente/getClientesPaginado";
 
 export async function GET(req: NextRequest) {
   const { isValid, res } = await verifyToken(req);
@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
 }
 
 import { validateClienteForm } from "@/schemas/clienteSchema";
-import createCliente from "@/repository/cliente/createClienteService";
+import createCliente from "@/repository/cliente/createCliente";
 import { ZodError } from "zod";
 
 export async function POST(req: NextRequest) {
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
 
 import updateCliente, {
   ClienteUpdateType,
-} from "@/repository/cliente/updateClienteService";
+} from "@/repository/cliente/updateCliente";
 
 export async function PATCH(req: NextRequest) {
   const { isValid, res } = await verifyToken(req);
@@ -90,7 +90,7 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-import deleteCliente from "@/repository/cliente/deleteClientService";
+import deleteCliente from "@/repository/cliente/deleteClient";
 
 export async function DELETE(req: NextRequest) {
   const { isValid, res } = await verifyToken(req);

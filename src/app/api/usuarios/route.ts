@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
-import getUsuarios from "@/repository/usuario/getUsuariosService";
+import getUsuarios from "@/repository/usuario/getUsuarios";
 import checkPermission from "@/lib/checkPermission";
 
 export async function GET(req: NextRequest) {
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
 
 
 import { UsuarioFormType, validateUsuarioForm } from "@/schemas/usuarioSchema";
-import createUsuario from "@/repository/usuario/createUsuarioService";
+import createUsuario from "@/repository/usuario/createUsuario";
 import { ZodError } from "zod";
 
 export async function POST(req: NextRequest) {
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
   }  
 }
 
-import updateUsuario, { UsuarioUpdateType } from "@/repository/usuario/updateUsuarioService";
+import updateUsuario, { UsuarioUpdateType } from "@/repository/usuario/updateUsuario";
 
 export async function PATCH(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);
@@ -83,7 +83,7 @@ export async function PATCH(req: NextRequest) {
   }  
 }
 
-import deleteUsuario from "@/repository/usuario/deleteUsuarioService";
+import deleteUsuario from "@/repository/usuario/deleteUsuario";
 
 export async function DELETE(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);

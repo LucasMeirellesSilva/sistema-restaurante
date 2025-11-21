@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import formatPedidoService from "./formatPedidoService";
+import formatPedidoService from "./formatPedido";
 
 export type PedidosProps = {
   limit: number;

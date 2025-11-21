@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
-import getProdutos from "@/repository/produto/getProdutosService";
+import getProdutos from "@/repository/produto/getProdutos";
 import checkPermission from "@/lib/checkPermission";
 
 export async function GET(req: NextRequest) {
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
 
 import { ProdutoFormType } from "@/schemas/produtoSchema";
 import { validateProdutoForm } from "@/schemas/produtoSchema";
-import createProduto from "@/repository/produto/createProdutoService";
+import createProduto from "@/repository/produto/createProduto";
 import { ZodError } from "zod";
 
 export async function POST(req: NextRequest) {
@@ -61,8 +61,8 @@ export async function POST(req: NextRequest) {
   }  
 }
 
-import updateProduto from "@/repository/produto/updateProdutoService";
-import { ProdutoUpdateType } from "@/repository/produto/updateProdutoService";
+import updateProduto from "@/repository/produto/updateProduto";
+import { ProdutoUpdateType } from "@/repository/produto/updateProduto";
 
 export async function PATCH(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);
@@ -90,7 +90,7 @@ export async function PATCH(req: NextRequest) {
   }  
 }
 
-import deleteProduto from "@/repository/produto/deleteProdutoService";
+import deleteProduto from "@/repository/produto/deleteProduto";
 
 export async function DELETE(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);

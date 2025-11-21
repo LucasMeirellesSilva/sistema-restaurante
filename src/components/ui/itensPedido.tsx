@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction } from "react";
 import { ItemModelType } from "@/schemas/itemSchema";
 
 import formatCurrency from "@/lib/formatCurrency";
+import { cn } from "@/lib/utils";
 
 type ItensPedidoProps = {
   items: ItemModelType[];
@@ -49,7 +50,7 @@ function ItensPedido({ items, setItems }: ItensPedidoProps) {
               >
                 Remover
               </button>
-              <p className="border-t font-medium">
+              <p className={cn("border-t", item.adicionais.length < 1 && "hidden")}>
                 {item.valorTotalFormatado}
               </p>
             </div>

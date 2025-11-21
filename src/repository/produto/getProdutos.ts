@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import formatarProdutos from "./formatProdutoService";
+import formatarProdutos from "./formatProduto";
 
 export type produtosProps = {
   limit: number;

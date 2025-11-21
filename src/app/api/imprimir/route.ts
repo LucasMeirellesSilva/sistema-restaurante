@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
-import getPedidoPorId from "@/repository/pedido/getPedidoPorIdService";
+import getPedidoPorId from "@/repository/pedido/getPedidoPorId";
 import imprimirPedido from "@/lib/printOrder";
 
 export async function POST(req: NextRequest) {

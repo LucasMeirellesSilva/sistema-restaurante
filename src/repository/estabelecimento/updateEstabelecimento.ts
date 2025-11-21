@@ -4,7 +4,7 @@ import { EstabelecimentoFormType } from "@/schemas/estabelecimentoSchema";
 import { MesaModelType } from "@/schemas/mesaSchema";
 import bcrypt from "bcryptjs";
 
-import createMesas from "../mesa/createMesasService";
+import createMesas from "../mesa/createMesas";
 
 export type EstabelecimentoUpdateType = Partial<EstabelecimentoFormType>
 

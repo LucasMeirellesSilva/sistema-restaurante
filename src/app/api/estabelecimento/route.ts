@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
-import getEstabelecimento from "@/repository/estabelecimento/getEstabelecimentoService";
+import getEstabelecimento from "@/repository/estabelecimento/getEstabelecimento";
 
 export async function GET() {
   // Interação com o banco
@@ -10,7 +10,7 @@ export async function GET() {
 }
 
 import { validateEstabelecimentoForm } from "@/schemas/estabelecimentoSchema";
-import createEstabelecimento from "@/repository/estabelecimento/createEstabelecimentoService";
+import createEstabelecimento from "@/repository/estabelecimento/createEstabelecimento";
 
 export async function POST(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);
@@ -35,8 +35,8 @@ export async function POST(req: NextRequest) {
   }  
 }
 
-import { EstabelecimentoUpdateType } from "@/repository/estabelecimento/updateEstabelecimentoService"; 
-import updateEstabelecimento from "@/repository/estabelecimento/updateEstabelecimentoService";
+import { EstabelecimentoUpdateType } from "@/repository/estabelecimento/updateEstabelecimento"; 
+import updateEstabelecimento from "@/repository/estabelecimento/updateEstabelecimento";
 
 export async function PATCH(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);

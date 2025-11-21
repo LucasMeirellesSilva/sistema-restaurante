@@ -122,15 +122,17 @@ function Pagamento({ selected, setSelected }: PagamentoProps) {
 
   return (
     <div className="flex flex-col h-full justify-between p-5">
-      {selected?.tipo === "mesa" ? (
-        <PedidosMesa selected={selected} setSelected={setSelected} />
-      ) : (
-        <Pedido
-          pedido={selected.pedido}
-          selected={selected}
-          handleSelect={() => handleRemoverPedido(selected.pedido)}
-        />
-      )}
+      <div>
+        {selected?.tipo === "mesa" ? (
+          <PedidosMesa selected={selected} setSelected={setSelected} />
+        ) : (
+          <Pedido
+            pedido={selected.pedido}
+            selected={selected}
+            handleSelect={() => handleRemoverPedido(selected.pedido)}
+          />
+        )}
+      </div>
       <div className="flex flex-col gap-2 items-center">
         <PagamentoValores
           formasPagamentoForm={formasPagamento}

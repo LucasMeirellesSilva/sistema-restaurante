@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
-import getPedidoPorId from "@/repository/pedido/getPedidoPorIdService";
-import setPedidoCancelado from "@/repository/pedido/setPedidoCanceladoService";
+import getPedidoPorId from "@/repository/pedido/getPedidoPorId";
+import setPedidoCancelado from "@/repository/pedido/setPedidoCancelado";
 
 export async function POST(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);

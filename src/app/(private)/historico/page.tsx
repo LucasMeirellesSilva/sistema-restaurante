@@ -57,7 +57,7 @@ export default function Historico() {
   const iconColor = "text-neutral-600";
 
   return (
-    <div className="flex flex-col gap-2 w-2/3 mx-auto pb-4">
+    <div className="flex flex-col gap-2 w-[75vw] 2xl:w-2/3 mx-auto pb-4">
       <Modal isOpen={!!modalPedido} onClose={() => setModalPedido(null)}>
         {modalPedido && (
           <DetalhesPedido
@@ -68,7 +68,7 @@ export default function Historico() {
       <h1 className="text-center font-semibold text-xl tracking-tight">
         Histórico
       </h1>
-      <div className="w-2/3 lg:w-1/3 flex gap-2">
+      <div className="lg:w-1/3 flex gap-2">
         <Input placeholder="Filtrar por autor" />
         <Input placeholder="Filtrar por cliente" />
       </div>

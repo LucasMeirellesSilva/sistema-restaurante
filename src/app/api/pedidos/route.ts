@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
-import getPedidos from "@/repository/pedido/getPedidosService";
+import getPedidos from "@/repository/pedido/getPedidos";
 import checkPermission from "@/lib/checkPermission";
 
 export async function GET(req: NextRequest) {
@@ -40,9 +40,9 @@ export async function GET(req: NextRequest) {
 
 import { prisma } from "@/lib/prisma";
 import { validatePedidoForm } from "@/schemas/pedidoSchema";
-import createPedido from "@/repository/pedido/createPedidoService";
-import getValorProdutos from "@/repository/produto/getValorProdutosService";
-import createItem from "@/repository/item/createItemService";
+import createPedido from "@/repository/pedido/createPedido";
+import getValorProdutos from "@/repository/produto/getValorProdutos";
+import createItem from "@/repository/item/createItem";
 
 export async function POST(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);
@@ -149,9 +149,9 @@ export async function POST(req: NextRequest) {
 
 import updatePedido, {
   PedidoUpdateType,
-} from "@/repository/pedido/updatePedidoService";
-import getPedidoPorId from "@/repository/pedido/getPedidoPorIdService";
-import deleteItems from "@/repository/item/deleteItemService";
+} from "@/repository/pedido/updatePedido";
+import getPedidoPorId from "@/repository/pedido/getPedidoPorId";
+import deleteItems from "@/repository/item/deleteItem";
 
 export async function PATCH(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
-import getFormasPagamento from "@/repository/formaPagamento/getFormasPagamentoService";
+import getFormasPagamento from "@/repository/formaPagamento/getFormasPagamento";
 
 export async function GET(req: NextRequest) {
   const { isValid, res } = await verifyToken(req);

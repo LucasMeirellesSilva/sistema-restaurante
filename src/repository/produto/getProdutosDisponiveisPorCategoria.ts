@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import formatarProdutos from "./formatProdutoService";
-import separarProdutos from "./separarProdutoService";
+import formatarProdutos from "./formatProduto";
+import separarProdutos from "./separarProduto";
 
 export default async function getProdutosDisponiveisPorCategoria(categoriaId: number) {
   const produtos = await prisma.produto.findMany({

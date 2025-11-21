@@ -30,7 +30,7 @@ export default function Pedido({ className, pedido, user, setPedidoSelecionado, 
     <ContextMenu>
       <ContextMenuTrigger
         className={cn(
-          "relative flex flex-col justify-between w-[120px] sm:w-[150px] aspect-5/4 text-sm sm:text-base bg-yellow-400 rounded-[4px] hover:-translate-y-1 transition cut-br px-2 box-border cursor-pointer shadow-[0px_2px_4px_rgba(0,0,0,0.25)]",
+          "relative flex flex-col justify-between w-[120px] sm:w-[150px] aspect-5/4 text-sm sm:text-base bg-yellow-400 rounded-[4px] hover:-translate-y-1 transition cut-br px-2 box-border cursor-pointer shadow-[0px_2px_4px_rgba(0,0,0,0.25)] select-none",
           patrick.className,
           className
         )}

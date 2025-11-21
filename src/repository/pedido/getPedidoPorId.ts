@@ -1,12 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import formatPedidoService from "./formatPedidoService";
 
-export default async function getPedidosPorCliente(id: number) {
-  const pedidos = await prisma.pedido.findMany({
-    where: {
-      cliente_id: id,
-    },
-    orderBy: { criado_em: "desc" },
+import formatPedidoService from "./formatPedido";
+
+export default async function getPedidoPorId(id: number) {
+  const pedido = await prisma.pedido.findUnique({
+    where: { id: id },
     include: {
       itens: {
         where: { pertence_a_id: null },
@@ -23,10 +21,10 @@ export default async function getPedidosPorCliente(id: number) {
                 select: {
                   nome: true,
                   id: true,
-                },
-              },
-            },
-          },
+                }
+              }
+            }
+          }
         },
       },
       usuario: {
@@ -49,10 +47,12 @@ export default async function getPedidosPorCliente(id: number) {
           descricao: true,
         },
       },
-    },
+    }
   });
 
-  const pedidosFormatados = formatPedidoService(pedidos);
+  if (!pedido) return null;
 
-  return pedidosFormatados;
+  const pedidosFormatados = formatPedidoService([pedido])
+
+  return pedidosFormatados[0];
 }

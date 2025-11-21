@@ -3,11 +3,11 @@ import verifyToken from "@/lib/verifyToken";
 import checkPermission from "@/lib/checkPermission";
 import { validatePagamentosForm } from "@/schemas/pagamentoSchema";
 import { prisma } from "@/lib/prisma";
-import createPagamento from "@/repository/pagamento/createPagamentoService";
-import getPedidoPorId from "@/repository/pedido/getPedidoPorIdService";
-import setPedidoFinalizado from "@/repository/pedido/setPedidoFinalizadoService";
+import createPagamento from "@/repository/pagamento/createPagamento";
+import getPedidoPorId from "@/repository/pedido/getPedidoPorId";
+import setPedidoFinalizado from "@/repository/pedido/setPedidoFinalizado";
 
-import getPagamentoPorPedido from "@/repository/pagamento/getPagamentoPorPedidoService";
+import getPagamentoPorPedido from "@/repository/pagamento/getPagamentoPorPedido";
 
 export async function GET(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);

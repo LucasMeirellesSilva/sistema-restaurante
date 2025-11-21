@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { PedidoModelType } from "@/schemas/pedidoSchema";
 import { ItemAdicionalFormType, ItemFormType, ItemModelType } from "@/schemas/itemSchema";
 import { PedidoFormType } from "@/schemas/pedidoSchema";
-import { PedidoUpdateType } from "@/repository/pedido/updatePedidoService";
+import { PedidoUpdateType } from "@/repository/pedido/updatePedido";
 
 import Modal from "@/components/ui/modal";
 import FormCliente from "./formCliente";

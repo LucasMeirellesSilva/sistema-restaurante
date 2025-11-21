@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import getEstabelecimentoRespostaSeguranca from "@/repository/estabelecimento/getEstabelecimentoRespostaSegurancaService";
+import getEstabelecimentoRespostaSeguranca from "@/repository/estabelecimento/getEstabelecimentoRespostaSeguranca";
 
 export async function GET() {
   // Interação com o banco

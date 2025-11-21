@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
-import getProdutosDisponiveisPorCategoria from "@/repository/produto/getProdutosDisponiveisPorCategoriaService";
+import getProdutosDisponiveisPorCategoria from "@/repository/produto/getProdutosDisponiveisPorCategoria";
 
 export async function GET(req: NextRequest) {
   const { isValid, res } = await verifyToken(req);

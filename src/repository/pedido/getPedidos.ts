@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
-import formatPedidoService from "./formatPedidoService";
-import { performance } from "node:perf_hooks";
+import formatPedidoService from "./formatPedido";
+
+import { performance } from "perf_hooks";
 
 export type PedidosProps = {
   limit: number;

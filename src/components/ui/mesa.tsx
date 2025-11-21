@@ -39,7 +39,7 @@ export default function Mesa({ user, pedidos, numero, setMesaSelecionada, setPed
       <ContextMenu>
         <ContextMenuTrigger
           className={cn(
-            "relative flex flex-col justify-between w-[120px] h-[120px] rounded-lg px-2 py-1 hover:-translate-y-1 transition box-border font-bold text-white text-sm cursor-pointer shadow-[0px_2px_4px_rgba(0,0,0,0.15)] bg-orange-600")}
+            "relative flex flex-col justify-between w-[120px] h-[120px] rounded-lg px-2 py-1 hover:-translate-y-1 transition box-border font-bold text-white text-sm cursor-pointer shadow-[0px_2px_4px_rgba(0,0,0,0.15)] bg-orange-600 select-none")}
           onClick={() => setPedidos?.()}
         >
           <p className="text-end">{pedidos[0].criadoEmHora}</p>

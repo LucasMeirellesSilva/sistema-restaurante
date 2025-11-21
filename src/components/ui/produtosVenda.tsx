@@ -2,12 +2,14 @@
 
 import { Dispatch, SetStateAction, useState, useEffect, memo } from "react";
 
-import InputQuantidade from "./inputQuantidade";
-
-import { ProdutosPorCategoria, ProdutoType } from "@/lib/hooks/useProdutosCategoria";
+import {
+  ProdutosPorCategoria,
+  ProdutoType,
+} from "@/lib/hooks/useProdutosCategoria";
 import { ItemModelType, AdicionalModelType } from "@/schemas/itemSchema";
 import { cn, normalizar } from "@/lib/utils";
 import { isEqual } from "lodash";
+import formatCurrency from "@/lib/formatCurrency";
 
 import {
   ArrowDownUp,

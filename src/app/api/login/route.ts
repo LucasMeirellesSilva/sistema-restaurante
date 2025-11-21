@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import getUsuarioPorNome from "@/repository/usuario/getUsuarioPorNomeService";
+import getUsuarioPorNome from "@/repository/usuario/getUsuarioPorNome";
 
 const SECRET: string = process.env.JWT_SECRET as string;
 

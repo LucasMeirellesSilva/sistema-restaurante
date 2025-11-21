@@ -33,7 +33,7 @@ export type ModalAberto =
   | { tipo: "editarPedido"; pedido: PedidoModelType }
   | { tipo: "detalhesPedido"; pedido: PedidoModelType }
   | { tipo: "cancelarPedido"; pedido: PedidoModelType }
-  | { tipo: "detalhesMesa"; pedidos: PedidoModelType[] }
+  | { tipo: "detalhesMesa"; mesa: string, pedidos: PedidoModelType[] }
   | { tipo: "cliente" }
   | null;
 
@@ -139,6 +139,7 @@ export default function CentralPedidos() {
               setPedidos={() =>
                 setModalAberto({
                   tipo: "detalhesMesa",
+                  mesa: p.mesa!,
                   pedidos: pedidosDaMesa,
                 })
               }
@@ -197,7 +198,7 @@ export default function CentralPedidos() {
           <DetalhesPedido pedido={modalAberto.pedido} />
         )}
         {modalAberto?.tipo === "detalhesMesa" && (
-          <DetalhesMesa pedidos={modalAberto.pedidos} />
+          <DetalhesMesa mesa={modalAberto.mesa} pedidos={modalAberto.pedidos} />
         )}
         {modalAberto?.tipo === "cancelarPedido" && (
           <Confirmacao

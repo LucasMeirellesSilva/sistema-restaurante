@@ -47,24 +47,24 @@ type InformacoesPedidoProps = {
   pedido: PedidoModelType;
 };
 
-function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
+export function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
   return (
     <div className="my-4 space-y-2">
       <div className="flex w-full justify-between gap-4">
-        <div className="space-y-2">
+        <div className="w-1/2 space-y-2">
           <div className="flex gap-1">
             <span className="flex items-center gap-1 font-medium">
               <User className={cn(iconColor)} />
               Cliente:
             </span>
-            <p>{pedido.cliente ?? "Não identificado"}</p>
+            <p className="truncate">{pedido.cliente ?? "Não identificado"}</p>
           </div>
           <div className="flex gap-1">
             <span className="flex items-center gap-1 font-medium">
               <NotebookPen className={cn(iconColor)} />
               Autor:
             </span>
-            <p>{pedido.autor}</p>
+            <p className="truncate">{pedido.autor}</p>
           </div>
           <div className="flex gap-1">
             <span className="flex items-center gap-1 font-medium">
@@ -74,13 +74,13 @@ function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
             <p>{pedido.mesa ?? "Não identificado"}</p>
           </div>
         </div>
-        <div className="space-y-2">
-          <div className="flex gap-1">
-            <span className="flex items-center gap-1 font-medium">
+        <div className="w-1/2 space-y-2">
+          <div className="flex items-start gap-1">
+            <span className="flex items-center gap-1 font-medium whitespace-nowrap">
               <CalendarClock className={cn(iconColor)} />
               Criado em:
             </span>
-            <p>
+            <p className="text-center">
               {pedido.criadoEmData} {pedido.criadoEmHora}
             </p>
           </div>

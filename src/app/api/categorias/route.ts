@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import verifyToken from "@/lib/verifyToken";
 import checkPermission from "@/lib/checkPermission";
-import getCategorias from "@/repository/categoria/getCategoriasService";
+import getCategorias from "@/repository/categoria/getCategorias";
 
 export async function GET(req: NextRequest) {
   const { isValid, res } = await verifyToken(req);
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 }
 
 import { CategoriaFormType } from "@/schemas/categoriaSchema";
-import createCategoria from "@/repository/categoria/createCategoriaService";
+import createCategoria from "@/repository/categoria/createCategoria";
 import { ZodError } from "zod";
 
 export async function POST(req: NextRequest) {
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
   }  
 }
 
-import updateCategoria, { CategoriaUpdateType } from "@/repository/categoria/updateCategoriaService";
+import updateCategoria, { CategoriaUpdateType } from "@/repository/categoria/updateCategoria";
 
 export async function PATCH(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);
@@ -73,7 +73,7 @@ export async function PATCH(req: NextRequest) {
   }  
 }
 
-import deleteCategoria from "@/repository/categoria/deleteCategoriaService";
+import deleteCategoria from "@/repository/categoria/deleteCategoria";
 
 export async function DELETE(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);

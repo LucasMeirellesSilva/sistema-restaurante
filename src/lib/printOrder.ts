@@ -1,20 +1,43 @@
-import ThermalPrinter, { PrinterTypes } from "node-thermal-printer";
+import { PedidoModelType } from "@/schemas/pedidoSchema";
+import ThermalPrinter, {
+  PrinterTypes,
+  CharacterSet,
+} from "node-thermal-printer";
 
 const printer = new ThermalPrinter.printer({
   type: PrinterTypes.EPSON,
   interface: "tcp://127.0.0.1:9100", // ou "tcp://192.168.0.100"
-  characterSet: "WPC1252",
+  characterSet: CharacterSet.WPC1252,
   removeSpecialCharacters: false,
   lineCharacter: "-",
 });
 
-function calcularEspaco(value1, value2) {
+function calcSpace(value1: number, value2: number) {
   const espacos = " ".repeat(Math.max(printer.getWidth() - value1 - value2, 0));
 
   return espacos;
 }
 
-export default function imprimirPedido(pedido) {
+type DecideAlignmentProps = {
+  spaceBetween: string;
+  string1: string;
+  string2: string;
+};
+
+function decideAlignment({
+  spaceBetween,
+  string1,
+  string2,
+}: DecideAlignmentProps) {
+  if (!spaceBetween || !string1 || !string2) {
+    if (string1) printer.println(string1);
+    if (string2) printer.println(string2);
+  } else {
+    printer.println(`${string1}${spaceBetween}${string2}`);
+  }
+}
+
+export default async function printOrder(pedido: PedidoModelType) {
   const cliente = pedido.cliente ? `Cliente: ${pedido.cliente}` : "";
   const mesa = pedido.mesa ? `Mesa: ${pedido.mesa}` : "";
   const autor = pedido.autor ? `Autor: ${pedido.autor}` : "";
@@ -25,25 +48,15 @@ export default function imprimirPedido(pedido) {
   printer.drawLine();
   printer.println(`Pedido #${pedido.id}`);
 
-  let spaceBetween = calcularEspaco(cliente.length, dataHora.length);
+  let spaceBetween = calcSpace(cliente.length, dataHora.length);
 
   printer.newLine();
 
-  if (!spaceBetween | !cliente | !dataHora) {
-    if (cliente) printer.println(cliente);
-    if (dataHora) printer.println(dataHora);
-  } else {
-    printer.println(`${cliente}${spaceBetween}${dataHora}`);
-  }
+  decideAlignment({ spaceBetween, string1: cliente, string2: dataHora });
 
-  spaceBetween = calcularEspaco(autor.length, mesa.length);
+  spaceBetween = calcSpace(autor.length, mesa.length);
 
-  if (!spaceBetween | !mesa | !autor) {
-    if (mesa) printer.println(mesa);
-    if (autor) printer.println(autor);
-  } else {
-    printer.println(`${mesa}${spaceBetween}${autor}`);
-  }
+  decideAlignment({ spaceBetween, string1: mesa, string2: autor });
 
   printer.drawLine();
   pedido.itens.forEach((item) => {
@@ -52,14 +65,16 @@ export default function imprimirPedido(pedido) {
     }`;
 
     printer.bold(true);
-    spaceBetween = calcularEspaco(
+    spaceBetween = calcSpace(
       itemPrint.length,
       item.valorUnitarioFormatado.length
     );
 
-    printer.println(
-      `${itemPrint}${spaceBetween}${item.valorUnitarioFormatado}`
-    );
+    decideAlignment({
+      spaceBetween,
+      string1: itemPrint,
+      string2: item.valorUnitarioFormatado,
+    });
 
     printer.bold(false);
     item.adicionais.forEach((adicional) => {
@@ -67,19 +82,21 @@ export default function imprimirPedido(pedido) {
         adicional.produto || "Produto excluído"
       }`;
 
-      spaceBetween = calcularEspaco(
+      spaceBetween = calcSpace(
         adicionalPrint.length,
         adicional.valorUnitarioFormatado.length
       );
 
-      printer.println(
-        `${adicionalPrint}${spaceBetween}${adicional.valorUnitarioFormatado}`
-      );
+      decideAlignment({
+        spaceBetween,
+        string1: adicionalPrint,
+        string2: adicional.valorUnitarioFormatado,
+      });
     });
 
     printer.bold(true);
     if (item.adicionais.length > 0) {
-      const spaceLeft = calcularEspaco(item.valorTotalFormatado.length, 0);
+      const spaceLeft = calcSpace(item.valorTotalFormatado.length, 0);
 
       printer.println(`${spaceLeft}${item.valorTotalFormatado}`);
     }
@@ -87,12 +104,13 @@ export default function imprimirPedido(pedido) {
 
   printer.drawLine();
 
-  const spaceLeft = calcularEspaco(
+  const spaceLeft = calcSpace(
     "TOTAL: ".length,
     pedido.valorTotalFormatado.length
   );
 
   printer.println(`${spaceLeft}TOTAL: ${pedido.valorTotalFormatado}`);
   printer.cut();
-  printer.execute();
+  const result = await printer.execute();
+  return result;
 }

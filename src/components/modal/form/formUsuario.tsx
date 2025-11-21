@@ -12,8 +12,7 @@ import SelectTipoUsuario from "@/components/ui/selectTipoUsuario";
 
 import { queryClient } from "@/lib/queryClient";
 import { UsuarioFormType, UsuarioModelType } from "@/schemas/usuarioSchema";
-
-type UpdateUsuarioFormType = Partial<UsuarioFormType>;
+import { UsuarioUpdateType } from "@/repository/usuario/updateUsuario";
 
 type FormUsuarioProps = {
   usuario?: UsuarioModelType;
@@ -31,7 +30,7 @@ function FormUsuario({ usuario, onClose }: FormUsuarioProps) {
   });
 
   const mutation = useMutation({
-    mutationFn: async (data: UsuarioFormType | UpdateUsuarioFormType) => {
+    mutationFn: async (data: UsuarioFormType | UsuarioUpdateType) => {
       const res = await fetch("/api/usuarios", {
         method: usuario ? "PATCH" : "POST",
         credentials: "include",
@@ -57,11 +56,20 @@ function FormUsuario({ usuario, onClose }: FormUsuarioProps) {
       return;
     }
 
-    mutation.mutate({
-      ...(nome && { nome: nome }),
-      ...(tipo && { tipoId: tipo }),
-      ...(senha && { senha: senha.senha }),
-    });
+    if (usuario) {
+      mutation.mutate({
+        ...(usuario && { usuarioId: usuario.id }),
+        ...(nome && { nome: nome }),
+        ...(tipo && { tipoId: tipo }),
+        ...(senha && { senha: senha.senha }),
+      });
+    } else {
+      mutation.mutate({
+        nome: nome,
+        tipoId: tipo,
+        senha: senha.senha,
+      });
+    }
   }
 
   function handleSenhaChange(value: string, type: string = "senha") {

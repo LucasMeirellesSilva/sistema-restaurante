@@ -12,8 +12,8 @@ function DetalhesPedido({ selected }: DetalhesPedidoProps) {
   if (!selected) return;
 
   return (
-    <div className="flex flex-col gap-2">
-      <h2 className="font-medium text-center">
+    <div className="flex flex-col">
+      <h2 className="font-medium text-center mb-2">
         {selected.tipo === "mesa"
           ? "Mesa " + selected.mesa
           : "Pedido " + selected.pedido.id}

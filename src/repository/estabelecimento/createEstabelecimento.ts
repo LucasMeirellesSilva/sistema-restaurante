@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { EstabelecimentoFormType } from "@/schemas/estabelecimentoSchema";
 import { MesaModelType } from "@/schemas/mesaSchema";
 
-import createMesas from "../mesa/createMesasService";
+import createMesas from "../mesa/createMesas";
 
 export default async function createEstabelecimento({ nome, cnpj, numeroMesas, perguntaSeguranca, respostaSeguranca }: EstabelecimentoFormType) {
   const respostaHash = await bcrypt.hash(respostaSeguranca, 10);

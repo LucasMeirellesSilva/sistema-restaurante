@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 }
 
 
-import { UsuarioFormType, validateUsuarioForm } from "@/schemas/usuarioSchema";
+import { validateUsuarioForm } from "@/schemas/usuarioSchema";
 import createUsuario from "@/repository/usuario/createUsuario";
 import { ZodError } from "zod";
 
@@ -37,10 +37,8 @@ export async function POST(req: NextRequest) {
 
   if (!allowed) return notAllowedRes;
 
-  let { tipoId, nome, senha }: UsuarioFormType = await req.json();
-
   try {
-    const usuario = validateUsuarioForm({ tipoId, nome, senha });
+    const usuario = validateUsuarioForm(await req.json());
 
     const result = await createUsuario(usuario);
   

@@ -192,7 +192,7 @@ function ModalProdutos({ setItems, onClose }: ModalProdutosProps) {
     if (categorias && categorias.length > 0 && !categoria) {
       setCategoria(categorias[0].id);
     }
-  }, [categorias]);
+  }, [categorias, categoria]);
 
   return (isCategoriasPending ? (
     <Loading className="m-auto" />

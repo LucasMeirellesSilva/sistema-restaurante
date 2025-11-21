@@ -19,7 +19,7 @@ import {
   Plus,
 } from "lucide-react";
 import { Button } from "./button";
-import formatCurrency from "@/lib/formatCurrency";
+import InputQuantidade from "./inputQuantidade";
 
 const iconColor = "text-neutral-600";
 

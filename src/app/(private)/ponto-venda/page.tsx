@@ -27,6 +27,7 @@ export default function PontoVenda() {
   const { data: pedidos, isPending: isPedidosPendentesPending } =
     usePedidosPendentes();
   const [selected, setSelected] = useState<SelectedType>(null);
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const [research, setResearch] = useState("");
 
   if (isPedidosPendentesPending)

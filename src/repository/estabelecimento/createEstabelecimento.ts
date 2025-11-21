@@ -29,7 +29,7 @@ export default async function createEstabelecimento({ nome, cnpj, numeroMesas, p
         mesas.push(mesa);
       };
 
-      const mesasCriadas = await createMesas(mesas);
+      await createMesas(mesas);
     }
 
     return result;

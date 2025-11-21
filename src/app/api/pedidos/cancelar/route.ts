@@ -28,9 +28,14 @@ export async function POST(req: NextRequest) {
 
     const result = await setPedidoCancelado(id);
 
+    const forwardedHost = req.headers.get("x-forwarded-host");
+    const protocol = req.headers.get("x-forwarded-proto") || "https";
+
+    const baseUrl = `${protocol}://${forwardedHost}`;
+
     if (result) {
-      fetch("http://192.168.1.5:3000/api/invalidate-pedidos");
-      fetch("http://192.168.1.5:3000/api/imprimir", {
+      fetch(`${baseUrl}/api/invalidate-pedidos`);
+      fetch(`${baseUrl}/api/imprimir`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: result.id }),

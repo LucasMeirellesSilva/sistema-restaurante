@@ -14,6 +14,7 @@ export const formaPagamentoModelSchema = z.object({
     })
 });
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const formaPagamentoSchema = z.object({
     id: z.number(),
     descricao: z.string()

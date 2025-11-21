@@ -25,7 +25,6 @@ export async function GET(req: NextRequest) {
   });
 }
 
-import { ProdutoFormType } from "@/schemas/produtoSchema";
 import { validateProdutoForm } from "@/schemas/produtoSchema";
 import createProduto from "@/repository/produto/createProduto";
 import { ZodError } from "zod";
@@ -40,13 +39,11 @@ export async function POST(req: NextRequest) {
 
   if (!allowed) return notAllowedRes;
 
-  let { categoriaId, adicional, descricao, nome, valor }: ProdutoFormType = await req.json();
-
-  // Se o produto possuir adicional === true, então ele não pode ser inserido na rota de Produto, e sim na rota de Adicional. 
-  if (adicional) return NextResponse.json({ message: "Dados inválidos" }, { status: 400 });
-
   try {
-    const produto = validateProdutoForm({ categoriaId, adicional, descricao, nome, valor });
+    const produto = validateProdutoForm(await req.json());
+
+    // Se o produto possuir adicional === true, então ele não pode ser inserido na rota de Produto, e sim na rota de Adicional. 
+    if (produto.adicional) throw new Error("Dados inválidos.")
 
     const result = await createProduto(produto);
   

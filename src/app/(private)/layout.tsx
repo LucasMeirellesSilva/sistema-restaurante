@@ -16,7 +16,6 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { io } from "socket.io-client";
 
 // Lib
@@ -105,7 +104,7 @@ export default function PrivateLayout({
       socket.off("invalidatePedidos");
       socket.disconnect();
     };
-  }, [queryClient]);
+  }, []);
 
   return (
     <motion.div className="flex">

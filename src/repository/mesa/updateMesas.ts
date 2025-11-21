@@ -9,6 +9,6 @@ export default async function updateMesas(quantidade: number) {
 
     return result;
   } catch (err) {
-    throw new Error("Erro: Não foi possível atualizar a disponibilidade das mesas.");
+    throw new Error("Erro: Não foi possível atualizar a disponibilidade das mesas.", err ?? "");
   }
 }

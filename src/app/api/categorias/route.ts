@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(categorias);
 }
 
-import { CategoriaFormType } from "@/schemas/categoriaSchema";
+import { validateCategoriaForm } from "@/schemas/categoriaSchema";
 import createCategoria from "@/repository/categoria/createCategoria";
 import { ZodError } from "zod";
 
@@ -29,10 +29,10 @@ export async function POST(req: NextRequest) {
 
   if (!allowed) return notAllowedRes;
 
-  let { nome }: CategoriaFormType = await req.json();
-
   try {
-    const result = await createCategoria({ nome });
+    const categoria = validateCategoriaForm(await req.json())
+
+    const result = await createCategoria(categoria);
   
     return NextResponse.json(result, { status: 201 });
   } catch (err) {

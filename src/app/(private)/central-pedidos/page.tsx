@@ -104,7 +104,7 @@ export default function CentralPedidos() {
 
       setMesasLivres(novasMesas);
     }
-  }, [estabelecimento, pedidos]);
+  }, [estabelecimento, pedidos, user]);
 
   function renderPedidos(listaPedidos: PedidoModelType[]) {
     return listaPedidos.map((p, i) => {

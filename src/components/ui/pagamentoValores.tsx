@@ -6,7 +6,6 @@ import { SelectedType } from "@/app/(private)/ponto-venda/page";
 import { PagamentoPedidoType } from "./pagamento";
 
 import { Input } from "./input";
-import { Button } from "./button";
 import SelectFormaPagamento from "./selectFormaPagamento";
 import Loading from "./loading";
 
@@ -115,7 +114,7 @@ function PagamentoValores({
       }
       return updated.slice(0, 2);
     });
-  }, [multiPayment]);
+  }, [multiPayment, setFormasPagamento]);
 
   return (
     <div className="flex flex-col gap-2 justify-start">

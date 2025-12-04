@@ -1,4 +1,10 @@
 "use client";
+
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { io } from "socket.io-client";
+
 import {
   NotepadText,
   Store,
@@ -12,11 +18,7 @@ import {
   CircleUser,
 } from "lucide-react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/Sidebar";
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-
-import { usePathname } from "next/navigation";
-import { io } from "socket.io-client";
+import CatalogoSidebar from "@/components/ui/catalogoLink";
 
 // Lib
 import useUser from "@/lib/hooks/useUser";
@@ -42,7 +44,7 @@ const links: SidebarLink[] = [
   },
   {
     label: "Catálogo",
-    href: "/catalogo",
+    href: "",
     icon: PackagePlus,
   },
   {
@@ -95,7 +97,6 @@ export default function PrivateLayout({
     });
 
     socket.on("invalidatePedidos", () => {
-      console.log("ouviu")
       queryClient.invalidateQueries({ queryKey: ["pedidosPendentes"] });
     });
 
@@ -108,7 +109,7 @@ export default function PrivateLayout({
 
   return (
     <motion.div className="flex">
-      <Sidebar open={open} setOpen={setOpen} >
+      <Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className="h-screen justify-between gap-10 items-baseline font-medium overflow-hidden sticky top-0">
           <div>
             {!isUserPending &&
@@ -120,6 +121,10 @@ export default function PrivateLayout({
                   )
                 )
                   return;
+
+                if (link.label === "Catálogo")
+                  return <CatalogoSidebar key={idx} pathname={pathname!} />;
+
                 return (
                   <SidebarLink key={idx} link={link} pathname={pathname!} />
                 );

@@ -100,17 +100,21 @@ export default function formatPedidoService(pedidos: PedidoComItens[]) {
       valorTotalFormatado: formatCurrency(calcValorItem(item)),
       adicionais: item.adicionais.map((adicional) => ({
         id: adicional.id,
-        produto: adicional.produto?.nome,
-        produtoId: adicional.produto?.id,
+        produto: adicional.produto!.nome,
+        produtoId: adicional.produto!.id,
         quantidade: adicional.quantidade,
         valorUnitario: Number(adicional.valor_unitario),
         valorUnitarioFormatado: formatCurrency(
           Number(adicional.valor_unitario)
         ),
+        valorTotal: Number(adicional.valor_unitario) * adicional.quantidade,
+        valorTotalFormatado: formatCurrency(
+          Number(adicional.valor_unitario) * adicional.quantidade
+        ),
       })),
       quantidade: item.quantidade,
-      produto: item.produto?.nome,
-      produtoId: item.produto?.id,
+      produto: item.produto!.nome,
+      produtoId: item.produto!.id
     }));
 
     const pedidoFormatado: PedidoModelType = {

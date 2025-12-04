@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import formatPedidoService from "./formatPedido";
+import formatPedidoService from "../../lib/formatPedido";
 
 export default async function getPedidosPorCliente(id: number) {
   const pedidos = await prisma.pedido.findMany({

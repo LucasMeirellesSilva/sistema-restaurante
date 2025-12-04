@@ -19,7 +19,7 @@ async function fetchPedidos(page: number): Promise<FetchPedidosReturn> {
   return res.json();
 }
 
-export default function usePedidos(page: number) {
+export default function usePedidosPaginado(page: number) {
   return useQuery({
     queryKey: ["pedidos", page],
     queryFn: () => fetchPedidos(page),

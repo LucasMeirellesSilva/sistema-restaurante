@@ -43,13 +43,13 @@ export async function POST(req: NextRequest) {
     const produto = validateProdutoForm(await req.json());
 
     // Se o produto possuir adicional === true, então ele não pode ser inserido na rota de Produto, e sim na rota de Adicional. 
-    if (produto.adicional) throw new Error("Dados inválidos.")
+    if (produto.adicional) throw new Error("Produtos adicionais possuem uma rota própria para inserção.")
 
     const result = await createProduto(produto);
   
     return NextResponse.json(result, { status: 201 });
   } catch (err) {
-    if (err instanceof ZodError) return NextResponse.json({ message: "Dados inválidos" }, { status: 400 });
+    if (err instanceof ZodError) return NextResponse.json({ message: err.issues }, { status: 400 });
 
     return NextResponse.json(
       { error: err instanceof Error ? err.message : String(err) },

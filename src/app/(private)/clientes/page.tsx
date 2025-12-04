@@ -150,7 +150,7 @@ export default function Clientes() {
               clientes.
             </TableCaption>
             <TableHeader>
-              <TableRow>
+              <TableRow className="hover:bg-inherit">
                 <TableHead className="text-neutral-800">Número</TableHead>
                 <TableHead className="text-neutral-800">Nome</TableHead>
                 <TableHead className="text-neutral-800">Telefone</TableHead>

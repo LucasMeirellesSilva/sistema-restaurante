@@ -14,10 +14,10 @@ import {
   SelectSeparator,
 } from "./select";
 import Loading from "./loading";
-import { Plus, Search } from "lucide-react";
+import { Plus, Minus, Search } from "lucide-react";
 
 type SelectClienteProps = {
-  cliente: number | null,
+  cliente: number | null;
   setCliente: Dispatch<React.SetStateAction<number | null>>;
   setModalCliente: Dispatch<React.SetStateAction<boolean>>;
 };
@@ -36,18 +36,38 @@ function SelectCliente({
   );
 
   return (
-    <Select value={String(cliente) ?? ""} open={open} onOpenChange={setOpen} onValueChange={(id) => setCliente(Number(id))}>
+    <Select
+      value={String(cliente) ?? ""}
+      open={open}
+      onOpenChange={setOpen}
+      onValueChange={(id) => setCliente(Number(id))}
+    >
       <SelectTrigger className="pl-10 cursor-pointer">
         <SelectValue />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="max-h-[40vh] md:max-h-[50vh]">
         <div
           className="flex items-center px-1 py-1.5 rounded-sm hover:bg-neutral-100 text-sm cursor-pointer text-orange-600 indent-1"
-          onClick={() => setModalCliente(true)}
+          onClick={() => {
+            setOpen(false);
+            setModalCliente(true);
+          }}
         >
           <Plus size={16} />
           Novo cliente
         </div>
+        {!!cliente && (
+          <div
+            className="flex items-center px-1 py-1.5 rounded-sm hover:bg-neutral-100 text-sm cursor-pointer text-orange-600 indent-1"
+            onClick={() => {
+              setCliente(null);
+              setOpen(false);
+            }}
+          >
+            <Minus size={16} />
+            Remover cliente atual
+          </div>
+        )}
         <SelectSeparator />
         <div className="relative flex gap-1 items-center rounded-sm hover:bg-neutral-100 text-sm cursor-pointer text-orange-600">
           <input
@@ -58,30 +78,26 @@ function SelectCliente({
             onKeyDown={(e) => e.stopPropagation()}
             className="w-full h-full outline-none py-1.5 bg-transparent placeholder:text-orange-600 indent-6"
           />
-          <Search size={16} className="absolute left-1 top-1/2 -translate-y-1/2 cursor-default"/>
+          <Search
+            size={16}
+            className="absolute left-1 top-1/2 -translate-y-1/2 cursor-default"
+          />
         </div>
         <SelectSeparator />
         <SelectGroup>
           <SelectLabel>Clientes</SelectLabel>
-          {isClientesPending && <Loading />}
-          {!!cliente && (
-            <div
-              className="flex items-center px-1 py-1.5 rounded-sm hover:bg-neutral-100 text-sm cursor-pointer indent-1"
-              onClick={() => {
-                setCliente(null);
-                setOpen(false);
-              }}
-            >
-              Remover cliente
+          {isClientesPending ? (
+            <Loading />
+          ) : clientesFiltrados && clientesFiltrados?.length > 0 ? (
+            clientesFiltrados.map((c) => (
+              <SelectItem key={c.id} value={String(c.id)}>
+                {c.nome}
+              </SelectItem>
+            ))
+          ) : (
+            <div className="px-2 py-1 text-sm text-gray-400">
+              Nenhum cliente encontrado
             </div>
-          )}
-          {clientesFiltrados?.map((c) => (
-            <SelectItem key={c.id} value={String(c.id)}>
-              {c.nome}
-            </SelectItem>
-          ))}
-          {clientesFiltrados?.length === 0 && !isClientesPending && (
-            <div className="px-2 py-1 text-sm text-gray-400">Nenhum cliente encontrado</div>
           )}
         </SelectGroup>
       </SelectContent>

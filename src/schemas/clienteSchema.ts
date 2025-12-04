@@ -29,6 +29,8 @@ export type ClienteModelType = z.infer<typeof clienteModelSchema>;
 
 export function validateClienteModel(cliente: unknown): ClienteModelType {
   const result = clienteModelSchema.parse(cliente);
-
+  
   return result;
 }
+
+export type ClienteUpdateType = Partial<ClienteModelType>;

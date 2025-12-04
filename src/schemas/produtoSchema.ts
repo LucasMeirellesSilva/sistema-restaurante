@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { Decimal } from '@prisma/client/runtime/library';
 
 export const produtoFormSchema = z.object({
+    id: z.number().optional(),
     categoriaId: z.number(),
     nome: z.string(),
-    valor: z.string(),
+    valor: z.number(),
     descricao: z.string().max(100).nullable(),
     adicional: z.boolean()
 });
@@ -17,17 +17,14 @@ export function validateProdutoForm(produto: unknown): ProdutoFormType {
     return result;
 };
 
-const decimalSchema = z.custom<Decimal>((val) => val instanceof Decimal, {
-  message: "Deve ser um Decimal válido",
-});
-
 export const produtoModelSchema = z.object({
     id: z.number(),
     nome: z.string(),
-    valor: decimalSchema,
+    valor: z.number(),
     valorFormatado: z.string(),
     descricao: z.string().nullable(),
     categoria: z.string(),
+    categoriaId: z.number(),
     adicional: z.boolean(),
     disponivel: z.boolean()
 });
@@ -39,3 +36,5 @@ export function validateProdutoModel(produto: unknown): ProdutoModelType {
 
     return result;
 };
+
+export type ProdutoUpdateType = Partial<ProdutoFormType> & { id: number };

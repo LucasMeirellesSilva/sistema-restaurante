@@ -8,7 +8,7 @@ import Link from "next/link";
 interface Links {
   label: string;
   href: string;
-  icon: React.ElementType;
+  icon?: React.ElementType;
 }
 
 interface SidebarContextProps {
@@ -176,7 +176,7 @@ export const SidebarLink = ({
       )}
       {...props}
     >
-      <Icon strokeWidth={1.5} width={32} height={32} className={cn(pathname === link.href ? "bg-neutral-300" : "", "rounded-full p-1 inline-flex")}/>
+      {Icon && <Icon strokeWidth={1.5} width={32} height={32} className={cn(pathname === link.href && "bg-neutral-300", "rounded-full p-1 inline-flex")}/>}
 
       <motion.span
         animate={{

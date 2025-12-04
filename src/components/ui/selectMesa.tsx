@@ -53,7 +53,7 @@ function SelectMesa({ mesa, setMesa }: SelectMesaProps) {
       <SelectTrigger className="w-full pl-10 cursor-pointer">
         <SelectValue />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="max-h-[40vh] md:max-h-[50vh]">
         <SelectGroup>
           <SelectLabel>Mesas</SelectLabel>
           {isEstabelecimentoPending && <Loading />}

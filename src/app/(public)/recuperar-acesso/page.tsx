@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 
 import { Label } from "@/components/ui/label";
@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
 import useEstabelecimentoData from "@/lib/hooks/useEstabelecimentoData";
 import { useMutation } from "@tanstack/react-query";
 import { RecuperarAcessoForm } from "@/app/api/recuperar-acesso/route";
@@ -19,22 +18,31 @@ export default function RecuperarAcesso() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const { data: estabelecimento, isLoading: isEstabelecimentoLoading } = useEstabelecimentoData();
+  const { data: estabelecimento, isLoading: isEstabelecimentoLoading } =
+    useEstabelecimentoData();
   const router = useRouter();
+  const answerRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isEstabelecimentoLoading && !estabelecimento) {
+      router.push("/");
+    }
+  }, [estabelecimento, isEstabelecimentoLoading, router]);
 
   const retrieveAcessMutation = useMutation({
     mutationFn: async ({ respostaSeguranca, senha }: RecuperarAcessoForm) => {
       const res = await fetch("/api/recuperar-acesso", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ respostaSeguranca, senha })
+        body: JSON.stringify({ respostaSeguranca, senha }),
       });
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message || "Erro ao alterar senha.");
-
-      window.location.href = "/central-pedidos";
+      if (!res.ok)
+        throw new Error(
+          data.message || "Ocorreu um erro ao conectar com o servidor."
+        );
 
       return { user: data };
     },
@@ -43,9 +51,7 @@ export default function RecuperarAcesso() {
     },
     onError: (error) => {
       if (error instanceof Error) {
-        if (error.message === "Resposta inválida.") setError("answer");
-        else if (error.message === "Senha curta") setError("password");
-        else setError("failedToFetch");
+        answerRef.current?.focus();
       }
     },
   });
@@ -63,14 +69,13 @@ export default function RecuperarAcesso() {
       return;
     }
 
-    retrieveAcessMutation.mutate({respostaSeguranca: resposta, senha: password})
+    retrieveAcessMutation.mutate({
+      respostaSeguranca: resposta,
+      senha: password,
+    });
   }
 
-  if (isEstabelecimentoLoading) return <></>
-
-  if(!isEstabelecimentoLoading) console.log(estabelecimento)
-
-  if (!estabelecimento) router.push("/")
+  if (isEstabelecimentoLoading) return <></>;
 
   return (
     <div className="flex w-fit h-screen mx-auto items-center justify-center gap-12">
@@ -96,6 +101,7 @@ export default function RecuperarAcesso() {
             id="resposta"
             placeholder="Sua resposta"
             onChange={(e) => setResposta(e.target.value)}
+            ref={answerRef}
           />
           <motion.div
             key={error}
@@ -104,9 +110,7 @@ export default function RecuperarAcesso() {
             transition={{ duration: 0.6 }}
           >
             {error === "answer" && (
-              <p className="text-red-600">
-                Resposta incorreta.
-              </p>
+              <p className="text-red-600">Resposta incorreta.</p>
             )}
           </motion.div>
         </Label>
@@ -116,7 +120,7 @@ export default function RecuperarAcesso() {
           <Input
             type="password"
             id="password"
-            placeholder="****"
+            placeholder="******"
             className="w-64"
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -139,7 +143,7 @@ export default function RecuperarAcesso() {
           <Input
             type="password"
             id="confirmPassword"
-            placeholder="****"
+            placeholder="******"
             className="w-64"
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
@@ -156,8 +160,12 @@ export default function RecuperarAcesso() {
         </Label>
 
         <div className="flex gap-2 mx-auto">
-          <Button type="button" className="w-32 bg-orange-600 hover:bg-orange-700 cursor-pointer">
-            <Link href={"/"}>Voltar</Link>
+          <Button
+            type="button"
+            className="w-32 bg-orange-600 hover:bg-orange-700 cursor-pointer"
+            onClick={() => router.push("/")}
+          >
+            Voltar
           </Button>
           <Button className="w-32 cursor-pointer">Confirmar</Button>
         </div>

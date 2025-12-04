@@ -57,7 +57,7 @@ function ProdutosVenda({ produtos, setItems }: ProdutosVendaProps) {
   const lista = sort ? sortedList : produtos.normais;
 
   return (
-    <div className="flex flex-col h-full py-2">
+    <div className="flex flex-col h-full py-2 text-sm sm:text-base">
       <div className="flex justify-between border-b font-medium py-1 pl-2 pr-10 select-none">
         <p>Nome</p>
         <p
@@ -140,7 +140,7 @@ function ProdutoItem({
       // Se já existe -> atualiza a quantidade.
       return prev.map((item) =>
         item.id === adicional.id
-          ? { ...item, quantidade: adicional.quantidade! }
+          ? { ...item, quantidade: adicional.quantidade!, valorTotal: adicional.valorTotal, valorTotalFormatado: adicional.valorTotalFormatado }
           : item
       );
     });
@@ -148,15 +148,15 @@ function ProdutoItem({
 
   function handleAdicionarItem() {
     const valorTotal = adicionaisSelecionados.reduce(
-      (acc, adicional) => acc + adicional.valorUnitario,
-      Number(produto.valor)
+      (acc, adicional) => acc + (adicional.valorUnitario * adicional.quantidade),
+      produto.valor
     );
 
     const novoItem: ItemModelType = {
       produto: produto.nome,
       produtoId: produto.id,
       valorUnitarioFormatado: produto.valorFormatado,
-      valorUnitario: Number(produto.valor),
+      valorUnitario: produto.valor,
       valorTotal: valorTotal,
       valorTotalFormatado: formatCurrency(valorTotal),
       quantidade: 1,
@@ -172,8 +172,8 @@ function ProdutoItem({
         // Se já existir, incrementa a quantidade e atualiza o valorTotal
         const novaQuantidade = itemExistente.quantidade + 1;
         const novoValorTotal = adicionaisSelecionados.reduce(
-          (acc, adicional) => acc + adicional.valorUnitario * novaQuantidade,
-          Number(produto.valor) * novaQuantidade
+          (acc, adicional) => acc + ((adicional.valorUnitario * adicional.quantidade) * novaQuantidade),
+          produto.valor * novaQuantidade
         );
 
         return prev.map((item) =>
@@ -191,8 +191,6 @@ function ProdutoItem({
         return [...prev, novoItem];
       }
     });
-
-    setIsOpen(null);
   }
 
   return (
@@ -279,6 +277,8 @@ function AdicionalItem({
       quantidade: quantidade,
       valorUnitario: Number(adicional.valor),
       valorUnitarioFormatado: adicional.valorFormatado,
+      valorTotal: Number(adicional.valor) * (quantidade ?? 0),
+      valorTotalFormatado: formatCurrency(Number(adicional.valor) * (quantidade ?? 0)),
       produto: adicional.nome,
     });
   }, [quantidade]);

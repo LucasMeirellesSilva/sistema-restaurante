@@ -154,7 +154,7 @@ model Item {
   quantidade      Int
   
   pedido_id       Int
-  produto_id      Int?
+  produto_id      Int
   
   // --- RELACIONAMENTO UNÁRIO (AUTO-RELACIONAMENTO) ---
   // Um item adicional pertence a um item principal.
@@ -170,7 +170,7 @@ model Item {
   
   // Relacionamentos com outras tabelas.
   pedido          Pedido  @relation(fields: [pedido_id], references: [id], onDelete: Cascade)
-  produto         Produto? @relation(fields: [produto_id], references: [id], onDelete: SetNull)
+  produto         Produto @relation(fields: [produto_id], references: [id])
   
   @@index([pedido_id])
   @@index([pertence_a_id])

@@ -1,18 +1,21 @@
 import { prisma } from "@/lib/prisma";
 import formatarProdutos from "./formatProduto";
 
-export type produtosProps = {
+export type GetProdutosProps = {
   limit: number;
   skip: number;
   adicional: boolean;
 };
 
-export default async function getProdutos({ limit, skip, adicional }: produtosProps) {
+export default async function getProdutos({ limit, skip, adicional }: GetProdutosProps) {
   const [produtos, total] = await Promise.all([
     prisma.produto.findMany({
       skip,
       take: limit,
-      where: { adicional: adicional }
+      where: { adicional: adicional },
+      include: {
+        categoria: true
+      }
     }),
     prisma.produto.count(),
   ]);

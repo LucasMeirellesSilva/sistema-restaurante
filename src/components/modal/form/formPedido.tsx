@@ -7,10 +7,9 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
 
-import { PedidoModelType } from "@/schemas/pedidoSchema";
+import { PedidoModelType, PedidoUpdateType } from "@/schemas/pedidoSchema";
 import { ItemAdicionalFormType, ItemFormType, ItemModelType } from "@/schemas/itemSchema";
 import { PedidoFormType } from "@/schemas/pedidoSchema";
-import { PedidoUpdateType } from "@/repository/pedido/updatePedido";
 
 import Modal from "@/components/ui/modal";
 import FormCliente from "./formCliente";
@@ -72,7 +71,7 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
     const itemsForm: ItemFormType[] = items.flatMap((item) => {
       const itemBase: ItemFormType = {
         produtoId: item.produtoId!,
-        quantidade: 1,
+        quantidade: item.quantidade,
       };
 
       const adicionais: ItemAdicionalFormType[] = item.adicionais.map((adicional) => ({
@@ -86,7 +85,7 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
       };
     });
 
-    const formData: PedidoFormType = {
+    const formData = {
       ...(pedido && { pedidoId: pedido.id }),
       ...(items && { itens: itemsForm }),
       ...(cliente && { clienteId: cliente }),
@@ -103,7 +102,7 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
         {modalCliente && <FormCliente onClose={() => setModalCliente(false)} />}
       </Modal>
       <Modal isOpen={modalProdutos} onClose={() => setModalProdutos(false)}>
-        {modalProdutos && <ModalProdutos setItems={setItems} onClose={() => setModalProdutos(false)} />}
+        {modalProdutos && <ModalProdutos items={items} setItems={setItems} onClose={() => setModalProdutos(false)} />}
       </Modal>
       <div className=" h-full flex gap-4">
         <div className="lg:flex-1 mx-auto flex flex-col gap-4 w-fit">
@@ -149,7 +148,7 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
           </div>
         </div>
         <div className="hidden lg:block h-full basis-auto border border-neutral-200 rounded-lg py-2 overflow-hidden">
-          <ModalProdutos setItems={setItems} />
+          <ModalProdutos items={items} setItems={setItems} />
         </div>
       </div>
       <div className="flex justify-end items-center gap-2 mt-auto">
@@ -174,11 +173,12 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
 export default FormPedido;
 
 type ModalProdutosProps = {
+  items: ItemModelType[];
   setItems: Dispatch<SetStateAction<ItemModelType[]>>,
   onClose?: () => void
 }
 
-function ModalProdutos({ setItems, onClose }: ModalProdutosProps) {
+function ModalProdutos({ items, setItems, onClose }: ModalProdutosProps) {
   const router = useRouter();
   const [categoria, setCategoria] = useState<number | null>(null);
 
@@ -199,6 +199,7 @@ function ModalProdutos({ setItems, onClose }: ModalProdutosProps) {
   ) : (
     <div className="flex-1 flex-col items-center justify-center">
       <XCircle size={32} strokeWidth={1} className="md:hidden text-neutral-700 ml-auto mr-2" onClick={() => onClose && onClose()} />
+      { items.length > 0 && <p className="text-sm text-center sm:hidden text-emerald-600">{items.at(-1)?.produto} adicionado com sucesso.</p> }
       <h2 className="md:hidden font-medium my-2">Categorias</h2>
       {(categorias && categorias?.length > 0) ? (
         <SeletorCategorias
@@ -220,13 +221,13 @@ function ModalProdutos({ setItems, onClose }: ModalProdutosProps) {
           <Button className="cursor-pointer bg-orange-600 hover:bg-orange-500" onClick={() => router.push("/catalogo")}>Ir para Catálogo</Button>
         </div>}
       {!isProdutosPending ? (
-        produtos ?
+        produtos && produtos.normais.length > 0 ?
           <div className="h-[90vh] md:h-[70vh] overflow-hidden">
             <ProdutosVenda produtos={produtos} setItems={setItems} />
           </div>
           :
-          <div className="flex flex-col items-center space-y-4 h-fit my-auto">
-            <p className="text-center text-neutral-700">Nenhum produto registrado.</p>
+          <div className="h-[90vh] md:h-[70vh] flex flex-col items-center justify-center space-y-4">
+            <p className="text-center text-neutral-700">Nenhum produto registrado nesta categoria.</p>
             <Image
               src="/images/noData.svg"
               alt=""

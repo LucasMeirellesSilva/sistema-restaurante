@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import formatPedidoService from "./formatPedido";
+import formatPedidoService from "../../lib/formatPedido";
 
 import { performance } from "perf_hooks";
 

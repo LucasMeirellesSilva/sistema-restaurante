@@ -84,7 +84,7 @@ export default function Historico() {
               pedidos.
             </TableCaption>
             <TableHeader>
-              <TableRow>
+              <TableRow className="hover:bg-inherit">
                 <TableHead>ID</TableHead>
                 <TableHead>Autor</TableHead>
                 <TableHead>Mesa</TableHead>

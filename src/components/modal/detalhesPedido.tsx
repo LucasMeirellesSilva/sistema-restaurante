@@ -50,8 +50,8 @@ type InformacoesPedidoProps = {
 export function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
   return (
     <div className="my-4 space-y-2">
-      <div className="flex w-full justify-between gap-4">
-        <div className="w-1/2 space-y-2">
+      <div className="flex flex-col md:flex-row w-full justify-between gap-2 md:gap-4">
+        <div className="md:w-1/2 space-y-2">
           <div className="flex gap-1">
             <span className="flex items-center gap-1 font-medium">
               <User className={cn(iconColor)} />
@@ -74,7 +74,7 @@ export function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
             <p>{pedido.mesa ?? "Não identificado"}</p>
           </div>
         </div>
-        <div className="w-1/2 space-y-2">
+        <div className="md:w-1/2 space-y-2">
           <div className="flex items-start gap-1">
             <span className="flex items-center gap-1 font-medium whitespace-nowrap">
               <CalendarClock className={cn(iconColor)} />
@@ -104,8 +104,8 @@ export function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
         {pedido.observacao ?? "Nenhuma observação."}
       </div>
       <hr />
-      <div className="space-y-2">
-        <h3 className="font-medium">Itens do Pedido</h3>
+      <h3 className="font-medium">Itens do Pedido</h3>
+      <div className="overflow-y-auto max-h-80 space-y-2">
         {pedido.itens.map((item) => (
           <div key={item.id}>
             <div className="flex justify-between">
@@ -120,7 +120,7 @@ export function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
                   {adicional.quantidade}x{" "}
                   {adicional.produto ?? "Produto excluído"}
                 </li>
-                <span>{adicional.valorUnitarioFormatado}</span>
+                <span>{adicional.valorTotalFormatado}</span>
               </div>
             ))}
             {item.adicionais.length > 0 && (
@@ -133,7 +133,7 @@ export function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
           </div>
         ))}
       </div>
-      <div className="flex justify-end">
+      <div className="flex justify-end bg-white sticky bottom-2">
         <span>
           Total:{" "}
           <span className="font-medium">{pedido.valorTotalFormatado}</span>

@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
 
   const end = performance.now();
 
-  console.log(`⏱️ Tempo total da rota: ${(end - start).toFixed(2)}ms`);
+  console.log(`⏱️ Tempo total da rota GET pedidos: ${(end - start).toFixed(2)}ms`);
 
   const response = NextResponse.json({
     items: pedidosFormatados,
@@ -158,11 +158,10 @@ export async function POST(req: NextRequest) {
   }
 }
 
-import updatePedido, {
-  PedidoUpdateType,
-} from "@/repository/pedido/updatePedido";
+import updatePedido from "@/repository/pedido/updatePedido";
 import getPedidoPorId from "@/repository/pedido/getPedidoPorId";
 import deleteItems from "@/repository/item/deleteItem";
+import { PedidoUpdateType } from "@/schemas/pedidoSchema";
 
 export async function PATCH(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);

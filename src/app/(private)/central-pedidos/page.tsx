@@ -39,7 +39,7 @@ export type ModalAberto =
 
 export default function CentralPedidos() {
   const [mesasLivres, setMesasLivres] = useState<JSX.Element[]>([]);
-  const [pesquisa, setPesquisa] = useState("");
+  const [research, setResearch] = useState("");
   const [mesaContainerOpen, setMesaContainerOpen] = useState(true);
   const [modalAberto, setModalAberto] = useState<ModalAberto>(null);
 
@@ -49,9 +49,9 @@ export default function CentralPedidos() {
   const { data: user } = useUser();
 
   const pedidosPorCliente =
-    pesquisa && pedidos
+    research && pedidos
       ? pedidos.filter((p) =>
-        p.cliente?.toLowerCase().includes(pesquisa.toLowerCase())
+        p.cliente?.toLowerCase().includes(research.toLowerCase())
       )
       : [];
 
@@ -223,7 +223,7 @@ export default function CentralPedidos() {
             className="bg-white indent-8 w-48 md:w-64"
             type="text"
             placeholder="Filtrar por cliente"
-            onChange={(e) => setPesquisa(e.target.value)}
+            onChange={(e) => setResearch(e.target.value)}
           />
         </div>
         <div className="relative w-fit">
@@ -254,7 +254,7 @@ export default function CentralPedidos() {
 
           {!isPedidosPendentesPending &&
             pedidos &&
-            (pesquisa
+            (research
               ? renderPedidos(pedidosPorCliente)
               : renderPedidos(pedidos))}
 

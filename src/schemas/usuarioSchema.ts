@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const usuarioFormSchema = z.object({
+    id: z.number().optional(),
     tipoId: z.number(),
     nome: z.string(),
     senha: z.string().min(6)

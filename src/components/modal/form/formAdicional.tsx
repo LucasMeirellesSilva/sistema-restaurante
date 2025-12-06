@@ -17,7 +17,7 @@ import {
   ProdutoModelType,
   ProdutoFormType,
   ProdutoUpdateType,
-  validateProdutoForm
+  validateProdutoForm,
 } from "@/schemas/produtoSchema";
 
 type FormAdicionalProps = {
@@ -28,7 +28,9 @@ type FormAdicionalProps = {
 function FormAdicional({ adicional, onClose }: FormAdicionalProps) {
   const [nome, setNome] = useState(adicional?.nome ?? "");
   const [valor, setValor] = useState(adicional?.valor ?? 0);
-  const [categoria, setCategoria] = useState<number | undefined>(adicional?.categoriaId);
+  const [categoria, setCategoria] = useState<number | undefined>(
+    adicional?.categoriaId
+  );
 
   const createOrPatchAdicional = useMutation({
     mutationFn: async (data: ProdutoFormType | ProdutoUpdateType) => {
@@ -70,7 +72,13 @@ function FormAdicional({ adicional, onClose }: FormAdicionalProps) {
       <FormHeader icon={PackagePlus}>
         {adicional ? "Editar Adicional" : "Novo Adicional"}
       </FormHeader>
-      <form className="px-6">
+      <form
+        className="px-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
         <NomeField nome={nome} setNome={setNome} />
         <ValorField valor={valor} setValor={setValor} />
         <CategoriaField categoria={categoria} setCategoria={setCategoria} />

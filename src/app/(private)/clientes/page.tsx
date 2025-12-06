@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import useClientesPaginado from "@/lib/hooks/useClientesPaginado";
+import useClientesPaginado, {
+  FilteredClientesType,
+} from "@/lib/hooks/useClientesPaginado";
 import { useMutation } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
@@ -27,6 +29,8 @@ import { X, Edit, Trash2 } from "lucide-react";
 import Confirmacao from "@/components/modal/confirmacao";
 
 import { ClienteModelType } from "@/schemas/clienteSchema";
+import useDebounce from "@/lib/hooks/useDebounce";
+import { Label } from "@/components/ui/label";
 
 type ModalCliente =
   | {
@@ -43,13 +47,21 @@ type ModalCliente =
   | null;
 
 export default function Clientes() {
+  const [nome, setNome] = useState("");
+  const debouncedNome = useDebounce(nome);
+  const filter: FilteredClientesType = {
+    nome: debouncedNome,
+  };
+
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<"quantidadePedidos" | null>(null);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [modalCliente, setModalCliente] = useState<ModalCliente>(null);
 
-  const { data: clientes, isPending: isClientesPending } =
-    useClientesPaginado(page);
+  const { data: clientes, isPending: isClientesPending } = useClientesPaginado(
+    page,
+    filter
+  );
 
   const sorted = clientes
     ? [
@@ -129,7 +141,13 @@ export default function Clientes() {
       </h1>
       <div className="flex justify-between">
         <div className="w-2/5 lg:w-1/5">
-          <Input placeholder="Filtrar por nome" />
+          <Label className="flex flex-col gap-1 w-64">
+            Nome
+            <Input
+              placeholder="Filtrar por nome"
+              onChange={(e) => setNome(e.target.value)}
+            />
+          </Label>
         </div>
         <Button
           className="bg-orange-600 hover:bg-orange-500 cursor-pointer"

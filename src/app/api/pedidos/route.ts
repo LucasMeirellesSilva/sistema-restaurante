@@ -4,11 +4,6 @@ import getPedidos from "@/repository/pedido/getPedidos";
 import checkPermission from "@/lib/checkPermission";
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "50");
-  const skip = (page - 1) * limit;
-
   const { isValid, decoded, res } = await verifyToken(req);
 
   // Token inválido, retorna e reseta token.
@@ -22,17 +17,37 @@ export async function GET(req: NextRequest) {
 
   if (!allowed) return notAllowedRes;
 
+  const { searchParams } = new URL(req.url);
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = parseInt(searchParams.get("limit") || "50");
+  const skip = (page - 1) * limit;
+
+  const autorParam = searchParams.get("autor");
+  const clienteParam = searchParams.get("cliente");
+
+  const filter: FilteredHistoricoType = {
+    ...(autorParam !== null && {
+      autor: autorParam,
+    }),
+    ...(clienteParam !== null && {
+      cliente: clienteParam,
+    }),
+  };
+
   const start = performance.now();
 
   // Interação com o banco
   const { pedidosFormatados, totalPages, total } = await getPedidos({
     limit,
     skip,
+    filter,
   });
 
   const end = performance.now();
 
-  console.log(`⏱️ Tempo total da rota GET pedidos: ${(end - start).toFixed(2)}ms`);
+  console.log(
+    `⏱️ Tempo total da rota GET pedidos: ${(end - start).toFixed(2)}ms`
+  );
 
   const response = NextResponse.json({
     items: pedidosFormatados,
@@ -133,8 +148,9 @@ export async function POST(req: NextRequest) {
       return pedido;
     });
 
-    const forwardedHost = req.headers.get("x-forwarded-host");
-    const protocol = req.headers.get("x-forwarded-proto") || "https";
+    const forwardedHost =
+      req.headers.get("x-forwarded-host") || "localhost:3000";
+    const protocol = req.headers.get("x-forwarded-proto") || "http";
 
     const baseUrl = `${protocol}://${forwardedHost}`;
 
@@ -162,6 +178,7 @@ import updatePedido from "@/repository/pedido/updatePedido";
 import getPedidoPorId from "@/repository/pedido/getPedidoPorId";
 import deleteItems from "@/repository/item/deleteItem";
 import { PedidoUpdateType } from "@/schemas/pedidoSchema";
+import { FilteredHistoricoType } from "@/lib/hooks/usePedidosPaginado";
 
 export async function PATCH(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);
@@ -260,8 +277,9 @@ export async function PATCH(req: NextRequest) {
       });
     });
 
-    const forwardedHost = req.headers.get("x-forwarded-host");
-    const protocol = req.headers.get("x-forwarded-proto") || "https";
+    const forwardedHost =
+      req.headers.get("x-forwarded-host") || "localhost:3000";
+    const protocol = req.headers.get("x-forwarded-proto") || "http";
 
     const baseUrl = `${protocol}://${forwardedHost}`;
 

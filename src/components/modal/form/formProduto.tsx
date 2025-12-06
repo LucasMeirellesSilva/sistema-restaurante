@@ -74,7 +74,13 @@ function FormProduto({ produto, onClose }: FormProdutoProps) {
       <FormHeader icon={PackagePlus}>
         {produto ? "Editar Produto" : "Novo Produto"}
       </FormHeader>
-      <form className="px-8">
+      <form
+        className="px-8"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
         <NomeField nome={nome} setNome={setNome} />
         <ValorField valor={valor} setValor={setValor} />
         <CategoriaField categoria={categoria} setCategoria={setCategoria} />

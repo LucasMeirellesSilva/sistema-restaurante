@@ -68,7 +68,13 @@ function FormCliente({ cliente, onClose }: FormClienteProps) {
       <FormHeader icon={User}>
         {cliente ? "Editar Cliente" : "Novo Cliente"}
       </FormHeader>
-      <form className="px-6">
+      <form
+        className="px-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
         <NomeField nome={nome} setNome={setNome} />
         <TelefoneField telefone={telefone} setTelefone={setTelefone} />
       </form>

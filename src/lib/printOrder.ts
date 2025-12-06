@@ -58,6 +58,13 @@ export default async function printOrder(pedido: PedidoModelType) {
 
   decideAlignment({ spaceBetween, string1: mesa, string2: autor });
 
+  if (pedido.status === "Cancelado") {
+    printer.bold(true);
+    printer.drawLine();
+    printer.println("PEDIDO CANCELADO");
+    printer.bold(false);
+  }
+
   printer.drawLine();
   pedido.itens.forEach((item) => {
     const itemPrint = `${item.quantidade}x ${

@@ -34,6 +34,8 @@ function SeletorPedidos({
     });
   }
 
+  if (pedidos.length < 1) return <p className="text-sm text-center">Nenhum pedido encontrado</p>
+
   return pedidos.map((p, i) => {
     // Se o pedido já foi incluído em uma mesa, pula
     if (p.mesa) {

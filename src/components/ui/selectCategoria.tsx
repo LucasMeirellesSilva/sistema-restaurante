@@ -16,19 +16,17 @@ import Loading from "./loading";
 
 type SelectCategoriaProps = {
   categoria?: number;
-  setCategoria: Dispatch<React.SetStateAction<number | undefined>>;
+  setCategoria: Dispatch<SetStateAction<number | undefined>>;
 };
 
-function SelectCategoria({
-  categoria,
-  setCategoria,
-}: SelectCategoriaProps) {
+function SelectCategoria({ categoria, setCategoria }: SelectCategoriaProps) {
   const [open, setOpen] = useState(false);
   const { data: categorias, isPending: isCategoriasPending } = useCategorias();
 
   return (
     <Select
-      defaultValue={String(categoria)}
+      defaultValue={String(categoria) ?? ""}
+      value={categoria !== undefined ? String(categoria) : ""}
       onValueChange={(id) => setCategoria(Number(id))}
       open={open}
       onOpenChange={setOpen}
@@ -39,6 +37,17 @@ function SelectCategoria({
       <SelectContent className="max-h-[40vh] md:max-h-[50vh]">
         <SelectGroup>
           <SelectLabel>Categorias</SelectLabel>
+          {!!categoria && (
+            <div
+              className="flex items-center px-1 py-1.5 rounded-sm hover:bg-neutral-100 text-sm cursor-pointer indent-1"
+              onClick={() => {
+                setCategoria(undefined);
+                setOpen(false);
+              }}
+            >
+              Remover categoria
+            </div>
+          )}
           {isCategoriasPending ? (
             <Loading />
           ) : categorias && categorias?.length > 0 ? (

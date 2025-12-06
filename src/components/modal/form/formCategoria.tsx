@@ -62,7 +62,13 @@ function FormCategoria({ categoria, onClose }: FormCategoriaProps) {
       <FormHeader icon={PackagePlus}>
         {categoria ? "Editar Categoria" : "Nova Categoria"}
       </FormHeader>
-      <form className="px-6">
+      <form
+        className="px-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
         <NomeField nome={nome} setNome={setNome} />
       </form>
       {createOrPatchCategoria.error && (

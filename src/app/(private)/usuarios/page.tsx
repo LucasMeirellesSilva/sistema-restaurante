@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import useUsuarios from "@/lib/hooks/useUsuarios";
+import useUsuarios, { FilteredUsuariosType } from "@/lib/hooks/useUsuarios";
 
 // Components
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -18,6 +19,8 @@ import Loading from "@/components/ui/loading";
 import Modal from "@/components/ui/modal";
 import FormUsuario from "@/components/modal/form/formUsuario";
 import { UsuarioModelType } from "@/schemas/usuarioSchema";
+import useDebounce from "@/lib/hooks/useDebounce";
+import { Label } from "@/components/ui/label";
 
 type ModalUsuario =
   | {
@@ -30,11 +33,17 @@ type ModalUsuario =
   | null;
 
 export default function Usuarios() {
+  const [nome, setNome] = useState("");
+  const debouncedNome = useDebounce(nome);
+  const filter: FilteredUsuariosType = {
+    nome: debouncedNome,
+  };
+
   const [sortBy, setSortBy] = useState<"pedidosAnotados" | null>(null);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [modalUsuario, setModalUsuario] = useState<ModalUsuario>(null);
 
-  const { data: usuarios, isPending: isUsuariosPending } = useUsuarios();
+  const { data: usuarios, isPending: isUsuariosPending } = useUsuarios(filter);
 
   const sorted = usuarios
     ? [
@@ -76,7 +85,13 @@ export default function Usuarios() {
       </h1>
       <div className="flex justify-between">
         <div className="w-2/5 lg:w-1/5">
-          <Input placeholder="Filtrar por nome" />
+          <Label className="flex flex-col gap-1 w-64">
+            Nome
+            <Input
+              placeholder="Filtrar por nome"
+              onChange={(e) => setNome(e.target.value)}
+            />
+          </Label>
         </div>
         <Button
           className="bg-orange-600 hover:bg-orange-500 cursor-pointer"
@@ -92,6 +107,9 @@ export default function Usuarios() {
           </div>
         ) : (
           <Table className="table-center">
+            <TableCaption className="text-start indent-4">
+              Exibindo {usuarios?.length} dos {usuarios?.length} usuários.
+            </TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead className="text-neutral-800">Nome</TableHead>

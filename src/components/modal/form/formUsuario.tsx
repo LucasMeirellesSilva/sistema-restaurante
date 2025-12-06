@@ -73,7 +73,13 @@ function FormUsuario({ usuario, onClose }: FormUsuarioProps) {
       <FormHeader icon={User}>
         {usuario ? "Editar Usuário" : "Novo Usuário"}
       </FormHeader>
-      <form className="px-6">
+      <form
+        className="px-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
         <NomeField nome={nome} setNome={setNome} />
         <div className="text-sm font-light">
           O nome de usuário será utilizado para acessar o sistema.

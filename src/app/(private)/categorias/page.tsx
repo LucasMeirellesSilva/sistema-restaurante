@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import useCategoriasPaginado from "@/lib/hooks/useCategoriasPaginado";
+import { useMutation } from "@tanstack/react-query";
 
 import Modal from "@/components/ui/modal";
 import FormCategoria from "@/components/modal/form/formCategoria";
@@ -20,10 +21,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Edit, Trash2 } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 import { CategoriaModelType } from "@/schemas/categoriaSchema";
-import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
+import useDebounce from "@/lib/hooks/useDebounce";
+import { FilteredCategoriasType } from "@/repository/categoria/getCategoriasPaginado";
 
 type ModalCategoria =
   | {
@@ -41,9 +44,14 @@ type ModalCategoria =
 
 export default function Categorias() {
   const [modalCategoria, setModalCategoria] = useState<ModalCategoria>(null);
+  const [nome, setNome] = useState("");
+  const debouncedNome = useDebounce(nome);
+  const filter: FilteredCategoriasType = {
+    nome: debouncedNome,
+  };
   const [page, setPage] = useState(1);
   const { data: categorias, isPending: isCategoriasPending } =
-    useCategoriasPaginado(page);
+    useCategoriasPaginado(page, filter);
 
   const deleteCategory = useMutation({
     mutationFn: async (data: { id: number }) => {
@@ -99,7 +107,14 @@ export default function Categorias() {
       </h1>
       <div className="flex justify-between">
         <div className="w-2/5 lg:w-1/5">
-          <Input placeholder="Filtrar por nome" />
+          <Label className="flex flex-col gap-1 w-64">
+            Nome
+            <Input
+              className="w-64"
+              placeholder="Filtrar por nome"
+              onChange={(e) => setNome(e.target.value)}
+            />
+          </Label>
         </div>
         <Button
           className="bg-orange-600 hover:bg-orange-500 cursor-pointer"
@@ -124,7 +139,7 @@ export default function Categorias() {
                 <TableHead className="text-neutral-800">ID</TableHead>
                 <TableHead className="text-neutral-800">Nome</TableHead>
                 <TableHead className="text-neutral-800">
-                  Contagem de Produtos e Categorias
+                  Contagem de Produtos e Adicionais
                 </TableHead>
               </TableRow>
             </TableHeader>

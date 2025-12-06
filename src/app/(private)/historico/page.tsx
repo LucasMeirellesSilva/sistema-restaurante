@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import usePedidosPaginado from "@/lib/hooks/usePedidosPaginado";
+import usePedidosPaginado, { FilteredHistoricoType } from "@/lib/hooks/usePedidosPaginado";
 
 // Components
 import {
@@ -22,8 +22,19 @@ import Modal from "@/components/ui/modal";
 import DetalhesPedido from "@/components/modal/detalhesPedido";
 
 import { PedidoModelType } from "@/schemas/pedidoSchema";
+import { Label } from "@/components/ui/label";
+import useDebounce from "@/lib/hooks/useDebounce";
 
 export default function Historico() {
+  const [autor, setAutor] = useState("");
+  const debouncedAutor = useDebounce(autor);
+  const [cliente, setCliente] = useState("");
+  const debouncedCliente = useDebounce(cliente);
+  const filter: FilteredHistoricoType = {
+    autor: debouncedAutor,
+    cliente: debouncedCliente,
+  };
+
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<"criadoEmData" | "valorTotal" | null>(
     null
@@ -32,7 +43,7 @@ export default function Historico() {
   const [modalPedido, setModalPedido] = useState<PedidoModelType | null>(null);
 
   const { data: pedidos, isPending: isPedidosPending } =
-    usePedidosPaginado(page);
+    usePedidosPaginado(page, filter);
 
   const sorted = pedidos
     ? [...pedidos.items].sort((a, b) => {
@@ -59,18 +70,28 @@ export default function Historico() {
   return (
     <div className="flex flex-col gap-2 w-[75vw] 2xl:w-2/3 mx-auto pb-4">
       <Modal isOpen={!!modalPedido} onClose={() => setModalPedido(null)}>
-        {modalPedido && (
-          <DetalhesPedido
-            pedido={modalPedido}
-          />
-        )}
+        {modalPedido && <DetalhesPedido pedido={modalPedido} />}
       </Modal>
       <h1 className="text-center font-semibold text-xl tracking-tight">
         Histórico
       </h1>
-      <div className="lg:w-1/3 flex gap-2">
-        <Input placeholder="Filtrar por autor" />
-        <Input placeholder="Filtrar por cliente" />
+      <div className="flex w-2/3 lg:w-2/5 gap-2">
+        <Label className="flex flex-col gap-1 w-64">
+          Nome
+          <Input
+            className="w-64"
+            placeholder="Filtrar por autor"
+            onChange={(e) => setAutor(e.target.value)}
+          />
+        </Label>
+        <Label className="flex flex-col gap-1 w-64">
+          Categoria
+          <Input
+            className="w-64"
+            placeholder="Filtrar por cliente"
+            onChange={(e) => setCliente(e.target.value)}
+          />
+        </Label>
       </div>
       <div className="flex-1 flex-col justify-center gap-12 rounded-lg border py-4">
         {isPedidosPending ? (

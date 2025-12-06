@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import useAdicionaisPaginado from "@/lib/hooks/useAdicionaisPaginado";
+import useDebounce from "@/lib/hooks/useDebounce";
+import { useMutation } from "@tanstack/react-query";
 
 import Modal from "@/components/ui/modal";
 import FormAdicional from "@/components/modal/form/formAdicional";
@@ -20,12 +22,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Edit, Trash2, TriangleAlert } from "lucide-react";
-
-import { ProdutoModelType } from "@/schemas/produtoSchema";
-import { useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
 import { Switch } from "@/components/ui/switch";
 import ErrorMessage from "@/components/ui/errorMessage";
+import SelectCategoria from "@/components/ui/selectCategoria";
+import { Label } from "@/components/ui/label";
+
+import { queryClient } from "@/lib/queryClient";
+
+import { ProdutoModelType } from "@/schemas/produtoSchema";
+import { FilteredProdutosType } from "@/repository/produto/getProdutos";
 
 type ModalAdicional =
   | {
@@ -43,12 +48,20 @@ type ModalAdicional =
 
 export default function Adicionais() {
   const [modalAdicional, setModalAdicional] = useState<ModalAdicional>(null);
+  const [categoriaId, setCategoriaId] = useState<number>();
+  const [nome, setNome] = useState("");
+  const debouncedNome = useDebounce(nome)
+  const filter: FilteredProdutosType = {
+    categoriaId: categoriaId,
+    nome: debouncedNome,
+  };
+    
   const [page, setPage] = useState(1);
   const [availableAlteredItems, setAvailableAlteredItems] = useState<
     ProdutoModelType[]
   >([]);
   const { data: adicionais, isPending: isAdicionaisPending } =
-    useAdicionaisPaginado(page);
+    useAdicionaisPaginado(page, filter);
 
   const deleteAddon = useMutation({
     mutationFn: async (data: { id: number }) => {
@@ -130,9 +143,23 @@ export default function Adicionais() {
       <h1 className="text-center font-semibold text-xl tracking-tight">
         Adicionais
       </h1>
-      <div className="flex justify-between">
-        <div className="w-2/5 lg:w-1/5">
-          <Input placeholder="Filtrar por nome" />
+      <div className="flex justify-between items-end">
+        <div className="flex w-2/3 lg:w-2/5 gap-2">
+          <Label className="flex flex-col gap-1 w-64">
+            Nome
+            <Input
+              className="w-64"
+              placeholder="Filtrar por nome"
+              onChange={(e) => setNome(e.target.value)}
+            />
+          </Label>
+          <Label className="flex flex-col gap-1 w-64">
+            Categoria
+            <SelectCategoria
+              categoria={categoriaId}
+              setCategoria={setCategoriaId}
+            />
+          </Label>
         </div>
         <Button
           className="bg-orange-600 hover:bg-orange-500 cursor-pointer"

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import useProdutosPaginado from "@/lib/hooks/useProdutosPaginado";
+import useDebounce from "@/lib/hooks/useDebounce";
+import { useMutation } from "@tanstack/react-query";
 
 import Modal from "@/components/ui/modal";
 import FormProduto from "@/components/modal/form/formProduto";
@@ -18,16 +20,18 @@ import { Edit, Trash2 } from "lucide-react";
 import Loading from "@/components/ui/loading";
 import Paginacao from "@/components/ui/paginacao";
 import Confirmacao from "@/components/modal/confirmacao";
-
-import { ProdutoModelType } from "@/schemas/produtoSchema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-
 import { TriangleAlert } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
 import ErrorMessage from "@/components/ui/errorMessage";
+import { Label } from "@/components/ui/label";
+import SelectCategoria from "@/components/ui/selectCategoria";
+
+import { queryClient } from "@/lib/queryClient";
+
+import { FilteredProdutosType } from "@/repository/produto/getProdutos";
+import { ProdutoModelType } from "@/schemas/produtoSchema";
 
 type ModalProduto =
   | {
@@ -45,12 +49,22 @@ type ModalProduto =
 
 export default function Produtos() {
   const [modalProduto, setModalProduto] = useState<ModalProduto>(null);
+  const [categoriaId, setCategoriaId] = useState<number>();
+  const [nome, setNome] = useState("");
+  const debouncedNome = useDebounce(nome);
+  const filter: FilteredProdutosType = {
+    categoriaId: categoriaId,
+    nome: debouncedNome,
+  };
+
   const [page, setPage] = useState(1);
   const [availableAlteredItems, setAvailableAlteredItems] = useState<
     ProdutoModelType[]
   >([]);
-  const { data: produtos, isPending: isProdutosPending } =
-    useProdutosPaginado(page);
+  const { data: produtos, isPending: isProdutosPending } = useProdutosPaginado(
+    page,
+    filter
+  );
 
   const deleteProduct = useMutation({
     mutationFn: async (data: { id: number }) => {
@@ -74,12 +88,12 @@ export default function Produtos() {
   });
 
   const patchProductsAvailability = useMutation({
-    mutationFn: async (productsId: number[])  => {
+    mutationFn: async (productsId: number[]) => {
       const res = await fetch("/api/produtos/disponibilidade", {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({productsId}),
+        body: JSON.stringify({ productsId }),
       });
 
       if (!res.ok) {
@@ -91,7 +105,7 @@ export default function Produtos() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["produtos"] });
-      setAvailableAlteredItems([])
+      setAvailableAlteredItems([]);
     },
   });
 
@@ -131,9 +145,23 @@ export default function Produtos() {
       <h1 className="text-center font-semibold text-xl tracking-tight">
         Produtos
       </h1>
-      <div className="flex justify-between">
-        <div className="w-2/5 lg:w-1/5">
-          <Input placeholder="Filtrar por nome" />
+      <div className="flex justify-between items-end">
+        <div className="flex w-2/3 lg:w-2/5 gap-2">
+          <Label className="flex flex-col gap-1 w-64">
+            Nome
+            <Input
+              className="w-64"
+              placeholder="Filtrar por nome"
+              onChange={(e) => setNome(e.target.value)}
+            />
+          </Label>
+          <Label className="flex flex-col gap-1 w-64">
+            Categoria
+            <SelectCategoria
+              categoria={categoriaId}
+              setCategoria={setCategoriaId}
+            />
+          </Label>
         </div>
         <Button
           className="bg-orange-600 hover:bg-orange-500 cursor-pointer"
@@ -142,8 +170,18 @@ export default function Produtos() {
           Novo Produto
         </Button>
       </div>
-      {patchProductsAvailability.error && <ErrorMessage error={patchProductsAvailability.error}/>}
+      {patchProductsAvailability.error && (
+        <ErrorMessage error={patchProductsAvailability.error} />
+      )}
       <div className="relative flex-1 flex-col justify-center gap-12 rounded-lg border py-4">
+        {produtos && (
+          <Paginacao
+            page={page}
+            setPage={setPage}
+            totalPages={produtos.totalPages}
+          />
+        )}
+        <hr className="mt-4" />
         {isProdutosPending ? (
           <div className="w-fit mx-auto">
             <Loading />

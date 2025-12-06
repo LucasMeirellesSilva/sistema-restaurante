@@ -1,18 +1,31 @@
 import { prisma } from "@/lib/prisma";
 
+export type FilteredCategoriasType = {
+  nome?: string;
+};
+
 export type GetCategoriasPaginadoProps = {
   limit: number;
   skip: number;
+  filter: FilteredCategoriasType;
 };
 
 export default async function getCategoriasPaginado({
   limit,
   skip,
+  filter,
 }: GetCategoriasPaginadoProps) {
   const [categorias, total] = await Promise.all([
     prisma.categoria.findMany({
       skip,
       take: limit,
+      where: {
+        ...(filter.nome && {
+          nome: {
+            contains: filter.nome,
+          },
+        }),
+      },
       orderBy: {
         id: "desc",
       },
@@ -24,7 +37,15 @@ export default async function getCategoriasPaginado({
         },
       },
     }),
-    prisma.categoria.count(),
+    prisma.categoria.count({
+      where: {
+        ...(filter.nome && {
+          nome: {
+            contains: filter.nome,
+          },
+        }),
+      },
+    }),
   ]);
 
   const totalPages = Math.ceil(total / limit);

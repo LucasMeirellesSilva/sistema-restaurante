@@ -2,6 +2,7 @@ import { z } from "zod";
 import { produtoModelSchema } from "./produtoSchema";
 
 export const categoriaFormSchema = z.object({
+  id: z.number().optional(),
   nome: z.string().max(40),
 });
 

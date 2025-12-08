@@ -129,7 +129,7 @@ export default function CentralPedidos() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          className="flex justify-center w-[120px] sm:w-[150px] aspect-5/4"
+          className="flex justify-center mx-auto sm:mx-0 w-[120px] sm:w-[150px] aspect-5/4"
         >
           {p.mesa ? (
             <Mesa
@@ -248,7 +248,7 @@ export default function CentralPedidos() {
       <h2 className="mb-2 text-start font-semibold text-lg tracking-tight text-neutral-800 w-full">
         Pedidos em Aberto
       </h2>
-      <motion.div layout className="flex flex-wrap items-center gap-2 sm:gap-4 md:m-4">
+      <motion.div layout className="flex flex-wrap items-center gap-2 sm:gap-3 xl:gap-4 md:m-4">
         <AnimatePresence>
           {isPedidosPendentesPending && <Loading />}
 

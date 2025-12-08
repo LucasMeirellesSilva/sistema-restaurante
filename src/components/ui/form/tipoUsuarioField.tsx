@@ -10,7 +10,7 @@ type TipoUsuarioFieldProps = {
 function TipoUsuarioField({ tipo, setTipo }: TipoUsuarioFieldProps) {
   return (
     <Label>
-      Tipo de Usuário
+      Nível de Acesso
       <SelectTipoUsuario tipo={tipo} setTipo={setTipo} />
     </Label>
   );

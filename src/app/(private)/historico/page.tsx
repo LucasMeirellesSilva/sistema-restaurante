@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import usePedidosPaginado, { FilteredHistoricoType } from "@/lib/hooks/usePedidosPaginado";
+import { useEffect, useMemo, useState } from "react";
+import usePedidosPaginado, {
+  fetchPedidos,
+  FilteredHistoricoType,
+} from "@/lib/hooks/usePedidosPaginado";
 
 // Components
 import {
@@ -24,16 +27,20 @@ import DetalhesPedido from "@/components/modal/detalhesPedido";
 import { PedidoModelType } from "@/schemas/pedidoSchema";
 import { Label } from "@/components/ui/label";
 import useDebounce from "@/lib/hooks/useDebounce";
+import { queryClient } from "@/lib/queryClient";
 
 export default function Historico() {
   const [autor, setAutor] = useState("");
   const debouncedAutor = useDebounce(autor);
   const [cliente, setCliente] = useState("");
   const debouncedCliente = useDebounce(cliente);
-  const filter: FilteredHistoricoType = {
+  const filter = useMemo<FilteredHistoricoType>(() => {
+  return {
     autor: debouncedAutor,
     cliente: debouncedCliente,
   };
+}, [debouncedAutor, debouncedCliente]);
+
 
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<"criadoEmData" | "valorTotal" | null>(
@@ -42,8 +49,24 @@ export default function Historico() {
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [modalPedido, setModalPedido] = useState<PedidoModelType | null>(null);
 
-  const { data: pedidos, isPending: isPedidosPending } =
-    usePedidosPaginado(page, filter);
+  const {
+    data: pedidos,
+    isPending: isPedidosPending,
+    isSuccess,
+  } = usePedidosPaginado(page, filter);
+
+  useEffect(() => {
+    if (isSuccess && pedidos) {
+      const nextPage = pedidos.page + 1;
+      if (nextPage <= pedidos.totalPages) {
+        queryClient.prefetchQuery({
+          queryKey: ["pedidos", nextPage, filter],
+          queryFn: () => fetchPedidos(nextPage, filter),
+          staleTime: 1000 * 60,
+        });
+      }
+    }
+  }, [isSuccess, pedidos, filter]);
 
   const sorted = pedidos
     ? [...pedidos.items].sort((a, b) => {
@@ -77,7 +100,7 @@ export default function Historico() {
       </h1>
       <div className="flex w-2/3 lg:w-2/5 gap-2">
         <Label className="flex flex-col gap-1 w-64">
-          Nome
+          Autor
           <Input
             className="w-64"
             placeholder="Filtrar por autor"
@@ -85,7 +108,7 @@ export default function Historico() {
           />
         </Label>
         <Label className="flex flex-col gap-1 w-64">
-          Categoria
+          Cliente
           <Input
             className="w-64"
             placeholder="Filtrar por cliente"
@@ -94,6 +117,13 @@ export default function Historico() {
         </Label>
       </div>
       <div className="flex-1 flex-col justify-center gap-12 rounded-lg border py-4">
+        {pedidos && pedidos.items.length > 0 && (
+          <Paginacao
+            page={page}
+            setPage={setPage}
+            totalPages={pedidos.totalPages}
+          />
+        )}
         {isPedidosPending ? (
           <div className="w-fit mx-auto">
             <Loading />
@@ -175,7 +205,7 @@ export default function Historico() {
             </TableBody>
           </Table>
         )}
-        {pedidos && (
+        {pedidos && pedidos.items.length > 0 && (
           <Paginacao
             page={page}
             setPage={setPage}

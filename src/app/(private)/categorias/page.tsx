@@ -71,6 +71,7 @@ export default function Categorias() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categorias"] });
+      setModalCategoria(null);
     },
   });
 
@@ -124,6 +125,14 @@ export default function Categorias() {
         </Button>
       </div>
       <div className="flex-1 flex-col justify-center gap-12 rounded-lg border py-4">
+        {categorias && categorias?.items.length > 0 && (
+          <Paginacao
+            page={page}
+            setPage={setPage}
+            totalPages={categorias.totalPages}
+          />
+        )}
+        <hr className="mt-4" />
         {isCategoriasPending ? (
           <div className="w-fit mx-auto">
             <Loading />
@@ -177,7 +186,7 @@ export default function Categorias() {
             </TableBody>
           </Table>
         )}
-        {categorias && (
+        {categorias && categorias?.items.length > 0 && (
           <Paginacao
             page={page}
             setPage={setPage}

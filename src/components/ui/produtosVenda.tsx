@@ -28,6 +28,7 @@ type ProdutosVendaProps = {
   setItems: Dispatch<SetStateAction<ItemModelType[]>>;
 };
 
+
 function ProdutosVenda({ produtos, setItems }: ProdutosVendaProps) {
   const [openId, setOpenId] = useState<number | null>(null);
   const [sort, setSort] = useState<"asc" | "desc" | null>(null);
@@ -57,7 +58,7 @@ function ProdutosVenda({ produtos, setItems }: ProdutosVendaProps) {
   const lista = sort ? sortedList : produtos.normais;
 
   return (
-    <div className="flex flex-col h-full py-2 text-sm sm:text-base">
+    <div className="flex flex-col py-2 text-sm sm:text-base">
       <div className="flex justify-between border-b font-medium py-1 pl-2 pr-10 select-none">
         <p>Nome</p>
         <p
@@ -79,7 +80,6 @@ function ProdutosVenda({ produtos, setItems }: ProdutosVendaProps) {
             produto={produto}
             adicionais={produtos.adicionais}
             isOpen={openId === produto.id}
-            setIsOpen={setOpenId}
             setItems={setItems}
             onToggle={handleToggle}
           ></MemoProdutoItem>
@@ -95,7 +95,6 @@ type ProdutoItemProps = {
   produto: ProdutoType;
   adicionais: ProdutoType[];
   isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<number | null>>;
   setItems: Dispatch<SetStateAction<ItemModelType[]>>;
   onToggle: (id: number) => void;
 };
@@ -108,7 +107,6 @@ function ProdutoItem({
   produto,
   adicionais,
   isOpen,
-  setIsOpen,
   setItems,
   onToggle,
 }: ProdutoItemProps) {
@@ -225,7 +223,7 @@ function ProdutoItem({
           <p className="font-thin">Descrição: {produto.descricao}</p>
         )}
 
-        {adicionais && <>
+        {adicionais.length > 0 && <>
           <h2 className="font-medium">Adicionais</h2>
           <div className="grid max-h-80 overflow-y-auto xl:grid-cols-2 gap-2 items-stretch">
             {adicionais.map((adicional) => (
@@ -281,7 +279,7 @@ function AdicionalItem({
       valorTotalFormatado: formatCurrency(Number(adicional.valor) * (quantidade ?? 0)),
       produto: adicional.nome,
     });
-  }, [quantidade]);
+  }, [quantidade, adicional, handleQuantidadeChange]);
 
   return (
     <div

@@ -20,6 +20,7 @@ export default async function getCategoriasPaginado({
       skip,
       take: limit,
       where: {
+        deletado_em: null,
         ...(filter.nome && {
           nome: {
             contains: filter.nome,
@@ -32,13 +33,18 @@ export default async function getCategoriasPaginado({
       include: {
         _count: {
           select: {
-            produtos: true,
+            produtos: {
+              where: {
+                deletado_em: null,
+              },
+            },
           },
         },
       },
     }),
     prisma.categoria.count({
       where: {
+        deletado_em: null,
         ...(filter.nome && {
           nome: {
             contains: filter.nome,

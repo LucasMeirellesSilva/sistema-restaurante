@@ -33,6 +33,7 @@ model Usuario {
   id            Int           @id @default(autoincrement())
   nome          String        @unique
   senha         String
+  deletado_em   DateTime?
   
   tipo_id       Int
 
@@ -51,17 +52,19 @@ model Mesa {
 }
 
 model Cliente {
-  id       Int      @id @default(autoincrement())
-  nome     String
-  telefone String?
+  id            Int      @id @default(autoincrement())
+  nome          String
+  telefone      String?
+  deletado_em   DateTime?
   
   // Relacionamento: Um cliente pode ter vários pedidos.
   pedidos  Pedido[]
 }
 
 model Categoria {
-  id       Int       @id @default(autoincrement())
-  nome     String    @unique
+  id            Int       @id @default(autoincrement())
+  nome          String    @unique
+  deletado_em   DateTime?
   
   // Relacionamento: Uma categoria pode ter vários produtos.
   produtos Produto[]
@@ -74,6 +77,7 @@ model Produto {
   descricao   String?
   disponivel  Boolean   @default(true)
   adicional   Boolean   @default(false) // Indica se o produto é um adicional.
+  deletado_em DateTime?
   
   categoria_id Int
   

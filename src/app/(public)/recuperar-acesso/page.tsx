@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { motion } from "framer-motion";
-import useEstabelecimentoData from "@/lib/hooks/useEstabelecimentoData";
+import useEstabelecimento from "@/lib/hooks/useEstabelecimento";
 import { useMutation } from "@tanstack/react-query";
 import { RecuperarAcessoForm } from "@/app/api/recuperar-acesso/route";
 import { useRouter } from "next/navigation";
@@ -19,7 +19,7 @@ export default function RecuperarAcesso() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const { data: estabelecimento, isLoading: isEstabelecimentoLoading } =
-    useEstabelecimentoData();
+    useEstabelecimento();
   const router = useRouter();
   const answerRef = useRef<HTMLInputElement>(null);
 

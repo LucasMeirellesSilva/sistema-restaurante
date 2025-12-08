@@ -102,6 +102,7 @@ export async function PATCH(req: NextRequest) {
 
 import deleteUsuario from "@/repository/usuario/deleteUsuario";
 import { FilteredUsuariosType } from "@/lib/hooks/useUsuarios";
+import getUsuarioPorId from "@/repository/usuario/getUsuarioPorId";
 
 export async function DELETE(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);
@@ -112,7 +113,7 @@ export async function DELETE(req: NextRequest) {
   // Bloqueio de rotas baseado nos roles.
   const { allowed, res: notAllowedRes } = checkPermission(
     decoded!.role,
-    "editarUsuario"
+    "deletarUsuario"
   );
 
   if (!allowed) return notAllowedRes;
@@ -120,7 +121,23 @@ export async function DELETE(req: NextRequest) {
   const { id }: { id: number } = await req.json();
 
   try {
-    const result = await deleteUsuario(id);
+    const usuario = await getUsuarioPorId(id);
+
+    if (!usuario) {
+      return NextResponse.json(
+        { error: "Usuário não encontrado" },
+        { status: 404 }
+      );
+    }
+
+    if (usuario.id === 1) {
+      return NextResponse.json(
+        { error: "Não é possível deletar o administrador padrão" },
+        { status: 400 }
+      );
+    }
+
+    const result = await deleteUsuario(usuario.id);
 
     return NextResponse.json(result.nome, { status: 200 });
   } catch (err) {

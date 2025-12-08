@@ -3,7 +3,7 @@ import { produtoModelSchema } from "./produtoSchema";
 
 export const categoriaFormSchema = z.object({
   id: z.number().optional(),
-  nome: z.string().max(40),
+  nome: z.string().max(30, "O nome deve possuir no máximo 30 caracteres.").min(3, "O nome deve possuir ao menos 3 caracteres."),
 });
 
 export type CategoriaFormType = z.infer<typeof categoriaFormSchema>;

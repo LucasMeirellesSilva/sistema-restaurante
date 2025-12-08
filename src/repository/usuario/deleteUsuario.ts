@@ -4,8 +4,11 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export default async function deleteUsuario(id: number) {
   try {
-    const usuario = await prisma.usuario.delete({
-      where: { id: id }
+    const usuario = await prisma.usuario.update({
+      where: { id: id },
+      data: {
+        deletado_em: new Date(),
+      },
     });
 
     return usuario;

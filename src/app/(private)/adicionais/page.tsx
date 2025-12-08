@@ -172,6 +172,14 @@ export default function Adicionais() {
         <ErrorMessage error={patchAddonsAvailability.error} />
       )}
       <div className="relative flex-1 flex-col justify-center gap-12 rounded-lg border py-4">
+        {adicionais && adicionais.items.length > 0 && (
+          <Paginacao
+            page={page}
+            setPage={setPage}
+            totalPages={adicionais.totalPages}
+          />
+        )}
+        <hr className="mt-4" />
         {isAdicionaisPending ? (
           <div className="w-fit mx-auto">
             <Loading />
@@ -260,7 +268,7 @@ export default function Adicionais() {
             </TableBody>
           </Table>
         )}
-        {adicionais && (
+        {adicionais && adicionais.items.length > 0 && (
           <Paginacao
             page={page}
             setPage={setPage}

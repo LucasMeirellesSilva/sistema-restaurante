@@ -8,17 +8,17 @@ import Image from "next/image";
 import Link from "next/link";
 
 // React Query
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
-import { User } from "lucide-react";
-import { LogIn } from "lucide-react";
+import { User, LogIn } from "lucide-react";
 import RotatingText from "@/components/ui/RotatingText";
 import { AnimatePresence, motion } from "framer-motion";
-import useEstabelecimentoData from "@/lib/hooks/useEstabelecimentoData";
+import useEstabelecimento from "@/lib/hooks/useEstabelecimento";
+import { queryClient } from "@/lib/queryClient";
 
 const images = [
   "/images/gerenciar.svg",
@@ -27,7 +27,6 @@ const images = [
 ];
 
 export default function SignIn() {
-  const queryClient = useQueryClient();
   const router = useRouter();
 
   const [username, setUsername] = useState("");
@@ -35,9 +34,10 @@ export default function SignIn() {
   const [imageIdx, setImageIdx] = useState(0);
   const userRef = useRef<HTMLInputElement>(null);
   const passRef = useRef<HTMLInputElement>(null);
-  const { data: estabelecimento } = useEstabelecimentoData();
+  const { data: estabelecimento } = useEstabelecimento();
 
   useEffect(() => {
+    queryClient.invalidateQueries();
     const interval = setInterval(() => {
       setImageIdx((prev) => (prev + 1) % images.length);
     }, 4000);
@@ -58,7 +58,10 @@ export default function SignIn() {
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message || "Ocorreu um erro ao conectar com o servidor");
+      if (!res.ok)
+        throw new Error(
+          data.message || "Ocorreu um erro ao conectar com o servidor"
+        );
 
       return { role: data.role };
     },
@@ -68,8 +71,9 @@ export default function SignIn() {
     },
     onError: (error) => {
       if (error instanceof Error) {
-        if (error.message === "Usuário não encontrado") userRef.current?.focus();
-        
+        if (error.message === "Usuário não encontrado")
+          userRef.current?.focus();
+
         if (error.message === "Senha incorreta") passRef.current?.focus();
       }
     },
@@ -82,8 +86,8 @@ export default function SignIn() {
 
   return (
     <div className="flex justify-center">
-      <div className="flex h-screen w-2/3 justify-evenly items-center">
-        <div className="flex-1 relative flex items-center justify-center border-r h-2/3">
+      <div className="flex h-screen md:w-2/3 justify-evenly items-center">
+        <div className="hidden flex-1 relative md:flex items-center justify-center border-r h-2/3">
           <AnimatePresence>
             <motion.div
               key={imageIdx}
@@ -107,10 +111,19 @@ export default function SignIn() {
         </div>
 
         <form
-          className="flex-1 flex flex-col gap-4 items-center"
+          className="relative flex-1 flex flex-col gap-4 items-center"
           onSubmit={(e) => handleLogin(e)}
         >
-          <div className="flex gap-2 items-center">
+          <Image
+            src={"/images/garcons.svg"}
+            alt="Imagem de ilustração do login"
+            width={800}
+            height={600}
+            className="md:hidden absolute -top-32 select-none"
+            draggable="false"
+            priority
+          />
+          <div className="hidden md:flex gap-2 items-center">
             <h2 className="text-3xl font-bold">Comece a</h2>
             <RotatingText
               texts={["Gerenciar", "Otimizar", "Prosperar"]}
@@ -126,7 +139,7 @@ export default function SignIn() {
             />
           </div>
 
-          <div>
+          <div className="bg-white z-10">
             <Label htmlFor="username" className="text-md">
               {" "}
               Usuário{" "}
@@ -155,7 +168,7 @@ export default function SignIn() {
             {estabelecimento && (
               <Link
                 href="/recuperar-acesso"
-                className="font-medium text-orange-500"
+                className="hidden md:block font-medium text-orange-500"
               >
                 Esqueci minha senha.
               </Link>
@@ -170,8 +183,8 @@ export default function SignIn() {
           >
             {loginMutation.error && (
               <p className="text-red-600 font-medium">
-                {loginMutation.error instanceof Error
-                  && loginMutation.error.message}
+                {loginMutation.error instanceof Error &&
+                  loginMutation.error.message}
               </p>
             )}
           </motion.div>

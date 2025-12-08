@@ -7,6 +7,10 @@ export default async function getProdutosDisponiveisPorCategoria(
 ) {
   const produtos = await prisma.produto.findMany({
     where: {
+      deletado_em: null,
+      categoria: {
+          deletado_em: null,
+        },
       categoria_id: categoriaId,
       disponivel: true,
       // categoria: { desabilitado: false },

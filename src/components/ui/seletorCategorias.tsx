@@ -15,7 +15,7 @@ function SeletorCategorias({
   categorias,
 }: SeletorCategoriasProps) {
   return (
-    <div className="flex flex-wrap max-h-[15vh] md:max-h-[20vh] overflow-y-auto gap-1 space-y-1 border-b text-sm sm:text-base">
+    <div className="flex flex-wrap max-h-[15vh] md:max-h-[20vh] py-2 overflow-y-auto gap-1 space-y-1 border-b text-sm sm:text-base">
       {categorias.map((cat, index) => (
         <div className="flex justify-evenly" key={cat.id}>
           <div className="flex items-center gap-2 font-medium">

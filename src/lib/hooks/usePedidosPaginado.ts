@@ -4,7 +4,7 @@ import { PedidoModelType } from "@/schemas/pedidoSchema";
 export type FilteredHistoricoType = {
   autor?: string;
   cliente?: string;
-};
+} & Record<string, unknown>;
 
 type FetchPedidosReturn = {
   items: PedidoModelType[];
@@ -13,7 +13,7 @@ type FetchPedidosReturn = {
   total: number;
 };
 
-async function fetchPedidos(
+export async function fetchPedidos(
   page: number,
   filter: FilteredHistoricoType
 ): Promise<FetchPedidosReturn> {

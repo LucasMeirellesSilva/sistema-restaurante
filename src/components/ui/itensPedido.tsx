@@ -4,9 +4,6 @@ import { Dispatch, SetStateAction } from "react";
 
 import { ItemModelType } from "@/schemas/itemSchema";
 
-import formatCurrency from "@/lib/formatCurrency";
-import { cn } from "@/lib/utils";
-
 type ItensPedidoProps = {
   items: ItemModelType[];
   setItems: Dispatch<SetStateAction<ItemModelType[]>>;

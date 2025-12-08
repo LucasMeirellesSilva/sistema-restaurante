@@ -5,11 +5,14 @@ import getEstabelecimento from "@/repository/estabelecimento/getEstabelecimento"
 export async function GET() {
   // Interação com o banco
   const result = await getEstabelecimento();
-   
+
   return NextResponse.json(result, { status: 200 });
 }
 
-import { validateEstabelecimentoForm } from "@/schemas/estabelecimentoSchema";
+import {
+  validateEstabelecimentoForm,
+  validateEstabelecimentoUpdate,
+} from "@/schemas/estabelecimentoSchema";
 import createEstabelecimento from "@/repository/estabelecimento/createEstabelecimento";
 
 export async function POST(req: NextRequest) {
@@ -18,24 +21,23 @@ export async function POST(req: NextRequest) {
   // Token inválido, retorna e reseta token.
   if (!isValid) return res;
 
-  if (decoded!.role !== "Admin") return NextResponse.json({error: "Acesso negado."}, { status: 400 });
+  if (decoded!.role !== "Admin")
+    return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
 
   try {
-    const estabelecimento = await validateEstabelecimentoForm(await req.json())
+    const estabelecimento = await validateEstabelecimentoForm(await req.json());
 
-    const result = await createEstabelecimento(estabelecimento)
+    const result = await createEstabelecimento(estabelecimento);
 
     return NextResponse.json(result, { status: 201 });
-
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : String(err) },
       { status: 500 }
     );
-  }  
+  }
 }
 
-import { EstabelecimentoUpdateType } from "@/repository/estabelecimento/updateEstabelecimento"; 
 import updateEstabelecimento from "@/repository/estabelecimento/updateEstabelecimento";
 
 export async function PATCH(req: NextRequest) {
@@ -45,14 +47,15 @@ export async function PATCH(req: NextRequest) {
   if (!isValid) return res;
 
   // Apenas administradores podem alterar informações do estabelecimento.
-  if (decoded!.role !== "Admin") return NextResponse.json({error: "Acesso negado."}, { status: 400 });
-
-  const estabelecimento: EstabelecimentoUpdateType = await req.json();
+  if (decoded!.role !== "Admin")
+    return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
 
   try {
+    const estabelecimento = validateEstabelecimentoUpdate(await req.json());
+
     const result = await updateEstabelecimento(estabelecimento);
 
-    if(result) return NextResponse.json(result, { status: 200 });
+    if (result) return NextResponse.json(result, { status: 200 });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : String(err) },

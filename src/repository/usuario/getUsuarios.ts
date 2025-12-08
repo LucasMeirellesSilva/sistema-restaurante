@@ -7,6 +7,7 @@ export default async function getUsuarios(
 ): Promise<UsuarioModelType[]> {
   const result = await prisma.usuario.findMany({
     where: {
+      deletado_em: null,
       ...(filter.nome && {
         nome: {
           contains: filter.nome,

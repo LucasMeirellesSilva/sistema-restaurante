@@ -21,11 +21,11 @@ async function fetchProdutosPorCategoria(id: number): Promise<ProdutosPorCategor
 
 export default function useProdutosPorCategoria(id: number | null) {
   return useQuery({
-    queryKey: ["produtos", "categoria", id],
+    queryKey: ["produtos", "categorias", id],
     queryFn: () => fetchProdutosPorCategoria(id!),
     enabled: !!id,
     refetchInterval: 50000,
     staleTime: 1000 * 60,
-    gcTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60,
   }); 
 }

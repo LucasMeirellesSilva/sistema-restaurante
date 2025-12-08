@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "dev:server": "node src/server/server.js",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -H 0.0.0.0",
     "lint": "next lint"
   },
   "dependencies": {
@@ -37,7 +37,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "lucide-react": "^0.523.0",
-    "motion": "^12.19.1",
+    "motion": "^12.23.25",
     "next": "^15.5.6",
     "node-thermal-printer": "^4.5.0",
     "react": "^18.3.1",

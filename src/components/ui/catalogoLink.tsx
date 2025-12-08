@@ -2,7 +2,7 @@
 
 import { useSidebar } from "./Sidebar";
 
-import { Package, PackagePlus } from "lucide-react";
+import { Package } from "lucide-react";
 
 import { SidebarLink } from "./Sidebar";
 import { motion } from "framer-motion";
@@ -13,29 +13,12 @@ type SidebarLink = {
   icon: React.ElementType;
 };
 
-const links: SidebarLink[] = [
-  {
-    label: "Categorias",
-    href: "/categorias",
-    icon: PackagePlus
-  },
-  {
-    label: "Produtos",
-    href: "/produtos",
-    icon: PackagePlus
-  },
-  {
-    label: "Adicionais",
-    href: "/adicionais",
-    icon: PackagePlus
-  },
-];
-
 type CatalogoSidebarProps = {
+  links: SidebarLink[];
   pathname: string;
 };
 
-function CatalogoSidebar({ pathname }: CatalogoSidebarProps) {
+function CatalogoSidebar({ links, pathname }: CatalogoSidebarProps) {
   const { open, animate } = useSidebar();
 
   return (

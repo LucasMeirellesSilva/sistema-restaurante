@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { ZodError } from "zod";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 type ErrorMessageProps = {
   error: unknown;
 };
@@ -39,6 +41,7 @@ function ErrorMessage({ error }: ErrorMessageProps) {
       initial={{ x: -40 }}
       animate={{ x: [0, -2, 2, -2, 2, 0] }}
       transition={{ duration: 0.5 }}
+      className="mx-auto w-fit"
     >
       <ul className="list-disc list-inside text-red-600 font-medium marker:text-xs space-y-1">
         {messages.map((msg, i) => (

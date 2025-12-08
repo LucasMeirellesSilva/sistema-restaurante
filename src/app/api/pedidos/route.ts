@@ -197,7 +197,7 @@ export async function PATCH(req: NextRequest) {
         {
           error: "Não é possível atualizar um pedido feito por outro usuário.",
         },
-        { status: 400 }
+        { status: 403 }
       );
 
     // Verifica se o status do pedido é pendente

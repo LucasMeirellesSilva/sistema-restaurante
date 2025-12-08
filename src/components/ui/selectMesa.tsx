@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import Loading from "./loading";
 
-import useEstabelecimentoData from "@/lib/hooks/useEstabelecimentoData";
+import useEstabelecimento from "@/lib/hooks/useEstabelecimento";
 
 type SelectMesaProps = {
   mesa: string | undefined;
@@ -22,7 +22,7 @@ type SelectMesaProps = {
 
 function SelectMesa({ mesa, setMesa }: SelectMesaProps) {
   const { data: estabelecimento, isPending: isEstabelecimentoPending } =
-    useEstabelecimentoData();
+    useEstabelecimento();
   const [mesas, setMesas] = useState<JSX.Element[]>([]);
   const [open, setOpen] = useState(false);
 
@@ -68,7 +68,9 @@ function SelectMesa({ mesa, setMesa }: SelectMesaProps) {
               Sem mesa
             </div>
           )}
-          {mesas?.map((mesa) => mesa)}
+          {mesas.length > 0 ? mesas?.map((mesa) => mesa) : <div className="px-2 py-1 text-sm text-gray-400">
+              Nenhuma mesa registrada
+            </div>}
         </SelectGroup>
       </SelectContent>
     </Select>

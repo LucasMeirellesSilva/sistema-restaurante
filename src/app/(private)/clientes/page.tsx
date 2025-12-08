@@ -31,10 +31,16 @@ import Confirmacao from "@/components/modal/confirmacao";
 import { ClienteModelType } from "@/schemas/clienteSchema";
 import useDebounce from "@/lib/hooks/useDebounce";
 import { Label } from "@/components/ui/label";
+import DetalhesCliente from "@/components/modal/detalhesCliente";
+import ErrorMessage from "@/components/ui/errorMessage";
 
 type ModalCliente =
   | {
       tipo: "criar";
+    }
+  | {
+      tipo: "visualizar";
+      cliente: ClienteModelType;
     }
   | {
       tipo: "editar";
@@ -85,7 +91,7 @@ export default function Clientes() {
     }
   }
 
-  const deletarClienteMutation = useMutation({
+  const deletarCliente = useMutation({
     mutationFn: async (id: number) => {
       const res = await fetch("/api/clientes", {
         method: "DELETE",
@@ -103,12 +109,12 @@ export default function Clientes() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clientes"] });
-      setModalCliente(null);
     },
   });
 
   function handleClienteDelete(id: number) {
-    deletarClienteMutation.mutate(id);
+    deletarCliente.mutate(id);
+    setModalCliente(null);
   }
 
   const iconColor = "text-neutral-600";
@@ -116,6 +122,9 @@ export default function Clientes() {
   return (
     <div className="flex flex-col gap-2 w-2/3 mx-auto pb-4">
       <Modal isOpen={!!modalCliente} onClose={() => setModalCliente(null)}>
+        {modalCliente?.tipo === "visualizar" && (
+          <DetalhesCliente cliente={modalCliente.cliente} />
+        )}
         {modalCliente?.tipo === "criar" && (
           <FormCliente onClose={() => setModalCliente(null)} />
         )}
@@ -157,6 +166,15 @@ export default function Clientes() {
         </Button>
       </div>
       <div className="flex-1 flex-col justify-center gap-12 rounded-lg border py-4">
+        {deletarCliente.error && <ErrorMessage error={deletarCliente.error}/>}
+        {clientes && (
+          <Paginacao
+            page={page}
+            setPage={setPage}
+            totalPages={clientes.totalPages}
+          />
+        )}
+        <hr className="mt-4" />
         {isClientesPending ? (
           <div className="w-fit mx-auto">
             <Loading />
@@ -183,7 +201,13 @@ export default function Clientes() {
             <TableBody>
               {sorted &&
                 sorted.map((c) => (
-                  <TableRow key={c.id} className="cursor-pointer">
+                  <TableRow
+                    key={c.id}
+                    className="cursor-pointer"
+                    onClick={() =>
+                      setModalCliente({ tipo: "visualizar", cliente: c })
+                    }
+                  >
                     <TableCell className="min-w-32">{c.id}</TableCell>
                     <TableCell className="min-w-40">{c.nome}</TableCell>
                     <TableCell className="min-w-40 px-8">

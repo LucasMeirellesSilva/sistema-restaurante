@@ -17,6 +17,7 @@ export default async function getClientesPaginado({
       skip,
       take: limit,
       where: {
+        
         ...(filter.nome && {
           nome: {
             contains: filter.nome,
@@ -36,6 +37,7 @@ export default async function getClientesPaginado({
     }),
     prisma.cliente.count({
       where: {
+        deletado_em: null,
         ...(filter.nome && {
           nome: {
             contains: filter.nome,

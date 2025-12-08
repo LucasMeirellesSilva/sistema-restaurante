@@ -37,7 +37,7 @@ function FormCliente({ cliente, onClose }: FormClienteProps) {
         method: cliente ? "PATCH" : "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(validatedData),
       });
 
       if (!res.ok) {
@@ -57,7 +57,7 @@ function FormCliente({ cliente, onClose }: FormClienteProps) {
     const formData = {
       ...(cliente && { clienteId: cliente.id }),
       nome: nome,
-      telefone: telefone,
+      ...(telefone && { telefone: telefone }),
     };
 
     createOrPatchCliente.mutate(formData);

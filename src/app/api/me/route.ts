@@ -3,7 +3,7 @@ import getUsuarioPorId from "@/repository/usuario/getUsuarioPorId";
 import verifyToken from "@/lib/verifyToken";
 
 export async function GET(req: NextRequest) {
-  const { isValid, decoded, res} = await verifyToken(req);
+  const { isValid, decoded, res } = await verifyToken(req);
 
   if (!isValid) return res;
 

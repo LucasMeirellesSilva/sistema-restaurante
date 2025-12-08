@@ -24,7 +24,11 @@ export default async function getProdutos({
       skip,
       take: limit,
       where: {
-        adicional: adicional,
+        deletado_em: null,
+        categoria: {
+          deletado_em: null,
+        },
+        adicional,
         ...(filter.categoriaId && { categoria_id: filter.categoriaId }),
         ...(filter.nome && {
           nome: {
@@ -38,6 +42,10 @@ export default async function getProdutos({
     }),
     prisma.produto.count({
       where: {
+        deletado_em: null,
+        categoria: {
+          deletado_em: null,
+        },
         adicional,
       ...(filter.categoriaId && { categoria_id: filter.categoriaId }),
       ...(filter.nome && {

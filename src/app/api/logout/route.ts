@@ -8,8 +8,8 @@ export async function GET(req: NextRequest) {
     httpOnly: true,
     path: "/",
     maxAge: 0,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: false,
+    sameSite: "lax",
   });
 
   return response;

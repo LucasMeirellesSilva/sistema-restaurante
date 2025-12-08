@@ -84,6 +84,7 @@ export default function Produtos() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["produtos"] });
+      setModalProduto(null);
     },
   });
 
@@ -174,7 +175,7 @@ export default function Produtos() {
         <ErrorMessage error={patchProductsAvailability.error} />
       )}
       <div className="relative flex-1 flex-col justify-center gap-12 rounded-lg border py-4">
-        {produtos && (
+        {produtos && produtos.items.length > 0 && (
           <Paginacao
             page={page}
             setPage={setPage}
@@ -268,7 +269,7 @@ export default function Produtos() {
           </Table>
         )}
 
-        {produtos && (
+        {produtos && produtos.items.length > 0 && (
           <Paginacao
             page={page}
             setPage={setPage}

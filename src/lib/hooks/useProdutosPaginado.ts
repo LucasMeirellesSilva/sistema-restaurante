@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ProdutoModelType } from "@/schemas/produtoSchema";
-import { FilteredProdutos } from "@/repository/produto/getProdutos";
+import { FilteredProdutosType } from "@/repository/produto/getProdutos";
 
 type FetchProdutosReturn = {
   items: ProdutoModelType[];
@@ -11,7 +11,7 @@ type FetchProdutosReturn = {
 
 async function fetchProdutos(
   page: number,
-  filter: FilteredProdutos
+  filter: FilteredProdutosType
 ): Promise<FetchProdutosReturn> {
   const params = new URLSearchParams({
     page: String(page),
@@ -37,7 +37,7 @@ async function fetchProdutos(
 
 export default function useProdutosPaginado(
   page: number,
-  filter: FilteredProdutos
+  filter: FilteredProdutosType
 ) {
   return useQuery({
     queryKey: ["produtos", page, filter],

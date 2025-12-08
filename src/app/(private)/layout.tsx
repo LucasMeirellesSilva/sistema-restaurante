@@ -69,6 +69,24 @@ const links: SidebarLink[] = [
   },
 ];
 
+const catalogoLinks: SidebarLink[] = [
+  {
+    label: "Categorias",
+    href: "/categorias",
+    icon: PackagePlus,
+  },
+  {
+    label: "Produtos",
+    href: "/produtos",
+    icon: PackagePlus,
+  },
+  {
+    label: "Adicionais",
+    href: "/adicionais",
+    icon: PackagePlus,
+  },
+];
+
 const logoutLink = {
   label: "Sair",
   href: "/api/logout",
@@ -90,11 +108,6 @@ export default function PrivateLayout({
 
   useEffect(() => {
     fetch("/api/socket", { method: "POST", credentials: "include" });
-
-    // Quando conectar
-    socket.on("connect", () => {
-      console.log("🟢 Conectado:", socket.id);
-    });
 
     socket.on("invalidatePedidos", () => {
       queryClient.invalidateQueries({ queryKey: ["pedidosPendentes"] });
@@ -122,8 +135,21 @@ export default function PrivateLayout({
                 )
                   return;
 
-                if (link.label === "Catálogo")
-                  return <CatalogoSidebar key={idx} pathname={pathname!} />;
+                if (link.label === "Catálogo") {
+                  if (
+                    forbiddenRoutes[user.role].some((route) =>
+                      catalogoLinks.some((link) => link.href === route)
+                    )
+                  )
+                    return;
+                  return (
+                    <CatalogoSidebar
+                      links={catalogoLinks}
+                      key={idx}
+                      pathname={pathname!}
+                    />
+                  );
+                }
 
                 return (
                   <SidebarLink key={idx} link={link} pathname={pathname!} />

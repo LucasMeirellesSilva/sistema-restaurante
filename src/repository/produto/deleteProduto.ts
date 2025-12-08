@@ -4,8 +4,11 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export default async function deleteProduto(id: number) {
   try {
-    const produto = await prisma.produto.delete({
-      where: { id: id }
+    const produto = await prisma.produto.update({
+      where: { id: id },
+      data: {
+        deletado_em: new Date(),
+      },
     });
 
     return produto;

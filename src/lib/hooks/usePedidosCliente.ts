@@ -2,9 +2,12 @@ import { PedidoModelType } from "@/schemas/pedidoSchema";
 import { useQuery } from "@tanstack/react-query";
 
 async function fetchPedidosCliente(clienteId: number): Promise<PedidoModelType[]> {
-  const res = await fetch(`/api/clientes/pedidos`, {
+  const params = new URLSearchParams({
+    clienteId: String(clienteId),
+  });
+
+  const res = await fetch(`/api/clientes/pedidos?${params.toString()}`, {
     credentials: "include",
-    body: JSON.stringify({ id: clienteId }),
   });
 
   if (!res.ok) {
@@ -15,7 +18,7 @@ async function fetchPedidosCliente(clienteId: number): Promise<PedidoModelType[]
 
 export default function usePedidosCliente(clienteId: number) {
   return useQuery({
-    queryKey: ["pedidosCliente", clienteId],
+    queryKey: ["pedidos", "cliente", clienteId],
     queryFn: () => fetchPedidosCliente(clienteId),
     refetchInterval: 50000,
     staleTime: 1000 * 60,

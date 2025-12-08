@@ -1,18 +1,29 @@
+import { FilteredClientesType } from "@/lib/hooks/useClientesPaginado";
 import { prisma } from "@/lib/prisma";
 
 export type PedidosProps = {
   limit: number;
   skip: number;
+  filter: FilteredClientesType;
 };
 
 export default async function getClientesPaginado({
   limit,
   skip,
+  filter,
 }: PedidosProps) {
   const [clientes, total] = await Promise.all([
     prisma.cliente.findMany({
       skip,
       take: limit,
+      where: {
+        
+        ...(filter.nome && {
+          nome: {
+            contains: filter.nome,
+          },
+        }),
+      },
       orderBy: {
         id: "desc",
       },
@@ -24,7 +35,16 @@ export default async function getClientesPaginado({
         },
       },
     }),
-    prisma.cliente.count(),
+    prisma.cliente.count({
+      where: {
+        deletado_em: null,
+        ...(filter.nome && {
+          nome: {
+            contains: filter.nome,
+          },
+        }),
+      },
+    }),
   ]);
 
   const totalPages = Math.ceil(total / limit);

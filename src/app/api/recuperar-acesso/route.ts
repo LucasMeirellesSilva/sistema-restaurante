@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     
     const estabelecimento = await getEstabelecimentoRespostaSeguranca();
 
-    if (!estabelecimento) throw new Error("O estabelecimento não existe.")
+    if (!estabelecimento) throw new Error("Estabelecimento não encontrado.")
 
     if (!estabelecimento.respostaSeguranca) throw new Error("Resposta ausente."); 
 

@@ -157,7 +157,7 @@ function Pagamento({ selected, setSelected }: PagamentoProps) {
           <p>
             Total selecionado:{" "}
             <span className="font-medium">
-              {formatCurrency(selected.pedido.valorTotal)}
+              {selected.pedido.valorTotalFormatado}
             </span>
           </p>
         )}

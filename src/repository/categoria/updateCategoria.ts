@@ -3,12 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { CategoriaFormType } from "@/schemas/categoriaSchema";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export type CategoriaUpdateType = Partial<CategoriaFormType> & { categoriaId: number}
+export type CategoriaUpdateType = Partial<CategoriaFormType>
 
-export default async function updateCategoria({ categoriaId, nome }: CategoriaUpdateType) {
+export default async function updateCategoria({ id, nome }: CategoriaUpdateType) {
   try {
     const result = await prisma.categoria.update({
-      where: { id: categoriaId },
+      where: { id: id },
       data: {
         nome: nome,
       }

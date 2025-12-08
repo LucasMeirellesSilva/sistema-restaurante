@@ -17,6 +17,8 @@ export function validatePedidoForm(pedido: unknown): PedidoFormType {
     return result;
 };
 
+export type PedidoUpdateType = Partial<PedidoFormType> & { pedidoId: number }
+
 export const pedidoModelSchema = z.object({
     id: z.number(),
     autor: z.string(),

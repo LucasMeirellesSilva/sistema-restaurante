@@ -2,7 +2,7 @@
 
 import { useState, useEffect, JSX } from "react";
 
-import useEstabelecimentoData from "@/lib/hooks/useEstabelecimentoData";
+import useEstabelecimento from "@/lib/hooks/useEstabelecimento";
 import usePedidosPendentes from "@/lib/hooks/usePedidosPendentes";
 import useUser from "@/lib/hooks/useUser";
 
@@ -26,33 +26,50 @@ import { PedidoModelType } from "@/schemas/pedidoSchema";
 import { cn } from "@/lib/utils";
 import { queryClient } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
+import PrimeiroAcesso from "@/components/modal/primeiroAcesso";
 
 export type ModalAberto =
+  | { tipo: "primeiroAcesso" }
   | { tipo: "criarPedido" }
   | { tipo: "criarPedidoComMesa"; mesa: string }
   | { tipo: "editarPedido"; pedido: PedidoModelType }
   | { tipo: "detalhesPedido"; pedido: PedidoModelType }
   | { tipo: "cancelarPedido"; pedido: PedidoModelType }
-  | { tipo: "detalhesMesa"; mesa: string, pedidos: PedidoModelType[] }
+  | { tipo: "detalhesMesa"; mesa: string; pedidos: PedidoModelType[] }
   | { tipo: "cliente" }
   | null;
 
 export default function CentralPedidos() {
   const [mesasLivres, setMesasLivres] = useState<JSX.Element[]>([]);
-  const [pesquisa, setPesquisa] = useState("");
+  const [research, setResearch] = useState("");
   const [mesaContainerOpen, setMesaContainerOpen] = useState(true);
   const [modalAberto, setModalAberto] = useState<ModalAberto>(null);
 
   const { data: pedidos, isPending: isPedidosPendentesPending } =
     usePedidosPendentes();
-  const { data: estabelecimento } = useEstabelecimentoData();
+  const {
+    data: estabelecimento,
+    isLoading: isEstabelecimentoLoading,
+    error: estabelecimentoError,
+  } = useEstabelecimento();
   const { data: user } = useUser();
 
+  useEffect(() => {
+    if (
+      !isEstabelecimentoLoading &&
+      !estabelecimento &&
+      !estabelecimentoError &&
+      modalAberto === null
+    ) {
+      setModalAberto({ tipo: "primeiroAcesso" });
+    }
+  }, [estabelecimento, isEstabelecimentoLoading, estabelecimentoError, modalAberto]);
+
   const pedidosPorCliente =
-    pesquisa && pedidos
+    research && pedidos
       ? pedidos.filter((p) =>
-        p.cliente?.toLowerCase().includes(pesquisa.toLowerCase())
-      )
+          p.cliente?.toLowerCase().includes(research.toLowerCase())
+        )
       : [];
 
   const cancelarPedido = useMutation({
@@ -179,6 +196,9 @@ export default function CentralPedidos() {
     <div className="flex flex-col gap-4 md:gap-0 min-h-screen items-center sm:w-4/5 mx-auto lg:w-3/4">
       {/* Modal dinâmico */}
       <Modal isOpen={!!modalAberto} onClose={() => setModalAberto(null)}>
+        {modalAberto?.tipo === "primeiroAcesso" && (
+          <PrimeiroAcesso onClose={() => setModalAberto(null)} />
+        )}
         {modalAberto?.tipo === "criarPedido" && (
           <FormPedido onClose={() => setModalAberto(null)} />
         )}
@@ -223,7 +243,7 @@ export default function CentralPedidos() {
             className="bg-white indent-8 w-48 md:w-64"
             type="text"
             placeholder="Filtrar por cliente"
-            onChange={(e) => setPesquisa(e.target.value)}
+            onChange={(e) => setResearch(e.target.value)}
           />
         </div>
         <div className="relative w-fit">
@@ -248,15 +268,19 @@ export default function CentralPedidos() {
       <h2 className="mb-2 text-start font-semibold text-lg tracking-tight text-neutral-800 w-full">
         Pedidos em Aberto
       </h2>
-      <motion.div layout className="flex flex-wrap items-center gap-2 sm:gap-3 xl:gap-4 md:m-4">
+      <motion.div
+        layout
+        className="flex flex-wrap items-center gap-2 sm:gap-3 xl:gap-4 md:m-4"
+      >
         <AnimatePresence>
-          {isPedidosPendentesPending && <Loading />}
-
-          {!isPedidosPendentesPending &&
+          {isPedidosPendentesPending ? (
+            <Loading />
+          ) : (
             pedidos &&
-            (pesquisa
+            (research
               ? renderPedidos(pedidosPorCliente)
-              : renderPedidos(pedidos))}
+              : renderPedidos(pedidos))
+          )}
 
           {!isPedidosPendentesPending && !pedidos?.length && (
             <p className="text-sm">Nenhum pedido no momento.</p>
@@ -283,12 +307,13 @@ export default function CentralPedidos() {
             exit={{ opacity: 0, transition: { duration: 0.2 } }}
             className="flex flex-wrap gap-4 m-4"
           >
-            {mesasLivres.length > 0 
-            ? mesasLivres 
-            : <p className="text-sm">Nenhuma mesa livre ou registrada.</p>}
-          </motion.div>)
-
-        }
+            {mesasLivres.length > 0 ? (
+              mesasLivres
+            ) : (
+              <p className="text-sm">Nenhuma mesa livre ou registrada.</p>
+            )}
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );

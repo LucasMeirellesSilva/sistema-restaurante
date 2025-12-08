@@ -74,8 +74,8 @@ function Pedido({ pedido }: PedidoProps) {
               <p>
                 {item.quantidade}x {item.produto ?? "Produto removido"}
               </p>
-              <p className="font-medium">
-                {formatCurrency(item.quantidade * item.valorUnitario)}
+              <p className="font-medium"> 
+                {item.valorTotalFormatado}
               </p>
             </div>
             {item.adicionais.map((adicional) => (
@@ -86,9 +86,7 @@ function Pedido({ pedido }: PedidoProps) {
                     {adicional.produto ?? "Produto removido"}
                   </li>
                   <p>
-                    {formatCurrency(
-                      adicional.quantidade * adicional.valorUnitario
-                    )}
+                    {adicional.valorTotalFormatado}
                   </p>
                 </div>
               </div>

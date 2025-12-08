@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { EstabelecimentoModelType } from "@/schemas/estabelecimentoSchema";
 
-async function fetchEstabelecimentoData(): Promise<EstabelecimentoModelType | null> {
+async function fetchEstabelecimento(): Promise<EstabelecimentoModelType | null> {
   const res = await fetch("/api/estabelecimento");
 
   if (!res.ok) {
@@ -11,10 +11,10 @@ async function fetchEstabelecimentoData(): Promise<EstabelecimentoModelType | nu
   return res.json();
 }
 
-export default function useEstabelecimentoData() {
+export default function useEstabelecimento() {
   return useQuery({
-    queryKey: ["estabelecimentoData"],
-    queryFn: fetchEstabelecimentoData,
+    queryKey: ["estabelecimento"],
+    queryFn: fetchEstabelecimento,
     refetchInterval: 50000,
     staleTime: 1000 * 60,
     gcTime: 1000 * 60 * 10,

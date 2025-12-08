@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 import {
   Select,
@@ -17,7 +17,7 @@ import useTiposUsuario from "@/lib/hooks/useTiposUsuario";
 
 type SelectTipoUsuarioProps = {
   tipo: number,
-  setTipo: Dispatch<React.SetStateAction<number>>;
+  setTipo: Dispatch<SetStateAction<number>>;
 };
 
 function SelectTipoUsuario({ tipo, setTipo }: SelectTipoUsuarioProps) {

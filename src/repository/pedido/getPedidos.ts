@@ -1,20 +1,42 @@
 import { prisma } from "@/lib/prisma";
-import formatPedidoService from "./formatPedido";
+import formatPedidoService from "../../lib/formatPedido";
 
 import { performance } from "perf_hooks";
+import { FilteredHistoricoType } from "@/lib/hooks/usePedidosPaginado";
 
 export type PedidosProps = {
   limit: number;
   skip: number;
+  filter: FilteredHistoricoType;
 };
 
-export default async function getPedidos({ limit, skip }: PedidosProps) {
+export default async function getPedidos({
+  limit,
+  skip,
+  filter,
+}: PedidosProps) {
   const start = performance.now();
 
   const [pedidos, total] = await Promise.all([
     prisma.pedido.findMany({
       skip,
       take: limit,
+      where: {
+        ...(filter.autor && {
+          usuario: {
+            nome: {
+              contains: filter.autor,
+            },
+          },
+        }),
+        ...(filter.cliente && {
+          cliente: {
+            nome: {
+              contains: filter.cliente,
+            },
+          },
+        }),
+      },
       orderBy: { criado_em: "desc" },
       include: {
         itens: {
@@ -32,10 +54,10 @@ export default async function getPedidos({ limit, skip }: PedidosProps) {
                   select: {
                     nome: true,
                     id: true,
-                  }
-                }
-              }
-            }
+                  },
+                },
+              },
+            },
           },
         },
         usuario: {
@@ -60,14 +82,33 @@ export default async function getPedidos({ limit, skip }: PedidosProps) {
         },
       },
     }),
-    prisma.pedido.count(),
+    prisma.pedido.count({
+      where: {
+        ...(filter.autor && {
+          usuario: {
+            nome: {
+              contains: filter.autor,
+            },
+          },
+        }),
+        ...(filter.cliente && {
+          cliente: {
+            nome: {
+              contains: filter.cliente,
+            },
+          },
+        }),
+      },
+    }),
   ]);
 
   const pedidosFormatados = formatPedidoService(pedidos);
 
   const end = performance.now();
 
-  console.log(`⏱️ Tempo total da rota pedidos pendentes: ${(end - start).toFixed(2)}ms`);
+  console.log(
+    `⏱️ Tempo total da rota pedidos pendentes: ${(end - start).toFixed(2)}ms`
+  );
 
   const totalPages = Math.ceil(total / limit);
 

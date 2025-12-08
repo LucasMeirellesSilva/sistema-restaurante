@@ -4,9 +4,6 @@ import { Dispatch, SetStateAction } from "react";
 
 import { ItemModelType } from "@/schemas/itemSchema";
 
-import formatCurrency from "@/lib/formatCurrency";
-import { cn } from "@/lib/utils";
-
 type ItensPedidoProps = {
   items: ItemModelType[];
   setItems: Dispatch<SetStateAction<ItemModelType[]>>;
@@ -35,9 +32,7 @@ function ItensPedido({ items, setItems }: ItensPedidoProps) {
                     {adicional.quantidade}x {adicional.produto}
                   </li>
                   <p className="tracking-tight">
-                    {formatCurrency(
-                      adicional.quantidade * adicional.valorUnitario
-                    )}
+                    {adicional.valorTotalFormatado}
                   </p>
                 </div>
               ))}
@@ -48,9 +43,9 @@ function ItensPedido({ items, setItems }: ItensPedidoProps) {
               >
                 Remover
               </button>
-              <p className={cn("border-t", item.adicionais.length < 1 && "hidden")}>
+              {(item.adicionais.length > 0 || item.quantidade > 1) && <p className="border-t">
                 {item.valorTotalFormatado}
-              </p>
+              </p>}
             </div>
           </div>
         ))}

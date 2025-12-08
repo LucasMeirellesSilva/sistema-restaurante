@@ -8,7 +8,7 @@ import Link from "next/link";
 interface Links {
   label: string;
   href: string;
-  icon: React.ElementType;
+  icon?: React.ElementType;
 }
 
 interface SidebarContextProps {
@@ -115,7 +115,7 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "h-10 px-4 py-4 flex flex-row hidden items-center justify-between dark:bg-neutral-800 w-12"
+          "h-10 px-4 py-4 flex-row hidden items-center justify-between dark:bg-neutral-800 w-12"
         )}
         {...props}
       >
@@ -170,13 +170,14 @@ export const SidebarLink = ({
   return (
     <Link
       href={link.href}
+      prefetch={link.href !== "/api/logout"}
       className={cn(
         "flex items-center justify-start gap-2 group/sidebar py-2",
         className
       )}
       {...props}
     >
-      <Icon strokeWidth={1.5} width={32} height={32} className={cn(pathname === link.href ? "bg-neutral-300" : "", "rounded-full p-1 inline-flex")}/>
+      {Icon && <Icon strokeWidth={1.5} width={32} height={32} className={cn(pathname === link.href && "bg-neutral-300", "rounded-full p-1 inline-flex")}/>}
 
       <motion.span
         animate={{

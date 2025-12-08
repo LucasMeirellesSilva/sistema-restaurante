@@ -19,5 +19,6 @@ export default function useUser () {
     queryKey: ['user'],
     queryFn: fetchUser,
     staleTime: 1000 * 60 * 10,
+    
   });
 };

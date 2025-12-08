@@ -1,11 +1,21 @@
 export const forbiddenRoutes: Record<string, string[]> = {
   Garçom: [
-    "/configuracao",
-    "/usuarios",
-    "/catalogo",
     "/ponto-venda",
+    "/categorias",
+    "/produtos",
+    "/adicionais",
+    "/historico",
     "/clientes",
+    "/usuarios",
+    "/configuracao",
   ],
-  Caixa: ["/configuracao", "/usuarios", "/catalogo", "/clientes"],
+  Caixa: [
+    "/categorias",
+    "/produtos",
+    "/adicionais",
+    "/clientes",
+    "/usuarios",
+    "/configuracao",
+  ],
   Admin: [],
 };

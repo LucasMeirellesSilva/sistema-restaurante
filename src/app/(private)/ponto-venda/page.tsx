@@ -27,8 +27,14 @@ export default function PontoVenda() {
   const { data: pedidos, isPending: isPedidosPendentesPending } =
     usePedidosPendentes();
   const [selected, setSelected] = useState<SelectedType>(null);
-  /* eslint-disable @typescript-eslint/no-unused-vars */
   const [research, setResearch] = useState("");
+
+  const pedidosPorCliente =
+    research && pedidos
+      ? pedidos.filter((p) =>
+        p.cliente?.toLowerCase().includes(research.toLowerCase())
+      )
+      : [];
 
   if (isPedidosPendentesPending)
     return (
@@ -58,14 +64,14 @@ export default function PontoVenda() {
           {pedidos?.length ? (
             <div className="overflow-y-auto scrollbar">
               <SeletorPedidos
-                pedidos={pedidos}
+                pedidos={research ? pedidosPorCliente : pedidos}
                 selected={selected}
                 setSelected={setSelected}
               />
             </div>
           ) : (
             <div>
-              <p className="text-center">Nenhum pedido em aberto.</p>
+              <p className="text-center text-sm">Nenhum pedido em aberto.</p>
             </div>
           )}
         </div>

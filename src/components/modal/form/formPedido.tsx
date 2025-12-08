@@ -7,10 +7,13 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
 
-import { PedidoModelType } from "@/schemas/pedidoSchema";
-import { ItemAdicionalFormType, ItemFormType, ItemModelType } from "@/schemas/itemSchema";
+import { PedidoModelType, PedidoUpdateType } from "@/schemas/pedidoSchema";
+import {
+  ItemAdicionalFormType,
+  ItemFormType,
+  ItemModelType,
+} from "@/schemas/itemSchema";
 import { PedidoFormType } from "@/schemas/pedidoSchema";
-import { PedidoUpdateType } from "@/repository/pedido/updatePedido";
 
 import Modal from "@/components/ui/modal";
 import FormCliente from "./formCliente";
@@ -28,6 +31,8 @@ import Image from "next/image";
 import { User, XCircle, createLucideIcon } from "lucide-react";
 import { chairsTablePlatter } from "@lucide/lab";
 import { useRouter } from "next/navigation";
+import ErrorMessage from "@/components/ui/errorMessage";
+import useUser from "@/lib/hooks/useUser";
 
 const ChairsTablePlatter = createLucideIcon(
   "chairs-table-platter",
@@ -41,14 +46,18 @@ type FormPedidoProps = {
 };
 
 function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
-  const [cliente, setCliente] = useState<number | null>(pedido?.clienteId ?? null);
-  const [mesa, setMesa] = useState<string | undefined>(mesaSelecionada ?? (pedido?.mesa ?? undefined));
+  const [cliente, setCliente] = useState<number | null>(
+    pedido?.clienteId ?? null
+  );
+  const [mesa, setMesa] = useState<string | undefined>(
+    mesaSelecionada ?? pedido?.mesa ?? undefined
+  );
   const [observacao, setObservacao] = useState(pedido?.observacao ?? "");
   const [modalCliente, setModalCliente] = useState(false);
   const [items, setItems] = useState<ItemModelType[]>(pedido?.itens ?? []);
   const [modalProdutos, setModalProdutos] = useState(false);
 
-  const mutation = useMutation({
+  const createOrPatchPedido = useMutation({
     mutationFn: async (data: PedidoFormType | PedidoUpdateType) => {
       const res = await fetch("/api/pedidos", {
         method: pedido ? "PATCH" : "POST",
@@ -72,13 +81,15 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
     const itemsForm: ItemFormType[] = items.flatMap((item) => {
       const itemBase: ItemFormType = {
         produtoId: item.produtoId!,
-        quantidade: 1,
+        quantidade: item.quantidade,
       };
 
-      const adicionais: ItemAdicionalFormType[] = item.adicionais.map((adicional) => ({
-        produtoId: adicional.produtoId!,
-        quantidade: adicional.quantidade,
-      }));
+      const adicionais: ItemAdicionalFormType[] = item.adicionais.map(
+        (adicional) => ({
+          produtoId: adicional.produtoId!,
+          quantidade: adicional.quantidade,
+        })
+      );
 
       return {
         ...itemBase,
@@ -86,7 +97,7 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
       };
     });
 
-    const formData: PedidoFormType = {
+    const formData = {
       ...(pedido && { pedidoId: pedido.id }),
       ...(items && { itens: itemsForm }),
       ...(cliente && { clienteId: cliente }),
@@ -94,7 +105,7 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
       ...(observacao && { observacao: observacao }),
     };
 
-    mutation.mutate(formData);
+    createOrPatchPedido.mutate(formData);
   }
 
   return (
@@ -103,7 +114,13 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
         {modalCliente && <FormCliente onClose={() => setModalCliente(false)} />}
       </Modal>
       <Modal isOpen={modalProdutos} onClose={() => setModalProdutos(false)}>
-        {modalProdutos && <ModalProdutos setItems={setItems} onClose={() => setModalProdutos(false)} />}
+        {modalProdutos && (
+          <ModalProdutos
+            items={items}
+            setItems={setItems}
+            onClose={() => setModalProdutos(false)}
+          />
+        )}
       </Modal>
       <div className=" h-full flex gap-4">
         <div className="lg:flex-1 mx-auto flex flex-col gap-4 w-fit">
@@ -142,27 +159,36 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
           <div className="h-full overflow-hidden flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <h2 className="font-medium">Itens do Pedido</h2>
-              <Button className="lg:hidden w-fit ml-auto px-2 bg-orange-600" onClick={() => setModalProdutos(true)}>Adicionar Item</Button>
+              <Button
+                className="lg:hidden w-fit ml-auto px-2 bg-orange-600"
+                onClick={() => setModalProdutos(true)}
+              >
+                Adicionar Item
+              </Button>
             </div>
-            {items.length < 1 && <p className="font-light text-sm md:text-base">Adicione itens para criar o pedido.</p>}
+            {items.length < 1 && (
+              <p className="font-light text-sm md:text-base">
+                Adicione itens para criar o pedido.
+              </p>
+            )}
             <ItensPedido items={items} setItems={setItems} />
           </div>
         </div>
-        <div className="hidden lg:block h-full basis-auto border border-neutral-200 rounded-lg py-2 overflow-hidden">
-          <ModalProdutos setItems={setItems} />
+        <div className="hidden lg:block border border-neutral-200 rounded-lg py-2 overflow-hidden">
+          <ModalProdutos items={items} setItems={setItems} />
         </div>
       </div>
       <div className="flex justify-end items-center gap-2 mt-auto">
-        <p className="text-red-500 text-end">
-          {mutation.error instanceof Error ? mutation.error.message : null}
-        </p>
+        {createOrPatchPedido.error && (
+          <ErrorMessage error={createOrPatchPedido.error} />
+        )}
         <Button className="cursor-pointer" onClick={() => onClose()}>
           Cancelar
         </Button>
         <Button
           className="cursor-pointer bg-emerald-600 hover:bg-emerald-700"
           onClick={() => handleSubmit()}
-          disabled={items.length < 1 || mutation.isPending}
+          disabled={items.length < 1 || createOrPatchPedido.isPending}
         >
           {pedido ? "Editar pedido" : "Criar pedido"}
         </Button>
@@ -174,19 +200,27 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
 export default FormPedido;
 
 type ModalProdutosProps = {
-  setItems: Dispatch<SetStateAction<ItemModelType[]>>,
-  onClose?: () => void
-}
+  items: ItemModelType[];
+  setItems: Dispatch<SetStateAction<ItemModelType[]>>;
+  onClose?: () => void;
+};
 
-function ModalProdutos({ setItems, onClose }: ModalProdutosProps) {
+function ModalProdutos({ items, setItems, onClose }: ModalProdutosProps) {
+  const { data: user } = useUser();
   const router = useRouter();
   const [categoria, setCategoria] = useState<number | null>(null);
 
   const { data: categorias = [], isPending: isCategoriasPending } =
     useCategorias();
 
-  const { data: produtos, isPending: isProdutosPending } =
-    useProdutosPorCategoria(categoria);
+  const {
+    data: produtos,
+    isLoading: isProdutosLoading,
+    isEnabled: isProdutosEnabled,
+  } = useProdutosPorCategoria(categoria);
+
+  const containerSize =
+    "h-[90vh] md:h-[70vh] w-[90vw] md:w-[30vw] xl:w-[40vw] 2xl:w-[50vw] transition-all";
 
   useEffect(() => {
     if (categorias && categorias.length > 0 && !categoria) {
@@ -194,21 +228,40 @@ function ModalProdutos({ setItems, onClose }: ModalProdutosProps) {
     }
   }, [categorias, categoria]);
 
-  return (isCategoriasPending ? (
-    <Loading className="m-auto" />
+  return isCategoriasPending ? (
+    <div className={cn(containerSize, "")}>
+      <Loading className="m-auto" />
+    </div>
   ) : (
-    <div className="flex-1 flex-col items-center justify-center">
-      <XCircle size={32} strokeWidth={1} className="md:hidden text-neutral-700 ml-auto mr-2" onClick={() => onClose && onClose()} />
+    <div className="h-[70vh] flex-col items-center justify-center">
+      <XCircle
+        size={32}
+        strokeWidth={1}
+        className="md:hidden text-neutral-700 ml-auto mr-2"
+        onClick={() => onClose && onClose()}
+      />
+      {items.length > 0 && (
+        <p className="text-sm text-center sm:hidden text-emerald-600">
+          {items.at(-1)?.produto} adicionado com sucesso.
+        </p>
+      )}
       <h2 className="md:hidden font-medium my-2">Categorias</h2>
-      {(categorias && categorias?.length > 0) ? (
+      {categorias && categorias?.length > 0 ? (
         <SeletorCategorias
           categoria={categoria}
           setCategoria={setCategoria}
           categorias={categorias}
         />
-      ) :
-        <div className="flex flex-col items-center space-y-4 h-fit my-auto">
-          <p className="text-center text-neutral-700">Nenhuma categoria registrada.</p>
+      ) : (
+        <div
+          className={cn(
+            containerSize,
+            "flex flex-col items-center justify-center space-y-4"
+          )}
+        >
+          <p className="text-center text-neutral-700">
+            Nenhuma categoria registrada.
+          </p>
           <Image
             src="/images/noData.svg"
             alt=""
@@ -217,16 +270,41 @@ function ModalProdutos({ setItems, onClose }: ModalProdutosProps) {
             className="select-none"
             draggable={false}
           />
-          <Button className="cursor-pointer bg-orange-600 hover:bg-orange-500" onClick={() => router.push("/catalogo")}>Ir para Catálogo</Button>
-        </div>}
-      {!isProdutosPending ? (
-        produtos ?
-          <div className="h-[90vh] md:h-[70vh] overflow-hidden">
+          {user && user.role === "Admin" && (
+            <Button
+              className="cursor-pointer bg-orange-600 hover:bg-orange-500"
+              onClick={() => router.push("/categorias")}
+            >
+              Ir para Categorias
+            </Button>
+          )}
+        </div>
+      )}
+      {isProdutosLoading ? (
+        <div
+          className={cn(
+            containerSize,
+            "flex items-center justify-center h-[90vh]"
+          )}
+        >
+          <Loading />
+        </div>
+      ) : (
+        isProdutosEnabled &&
+        (produtos && produtos.normais.length > 0 ? (
+          <div className={cn(containerSize, "overflow-hidden")}>
             <ProdutosVenda produtos={produtos} setItems={setItems} />
           </div>
-          :
-          <div className="flex flex-col items-center space-y-4 h-fit my-auto">
-            <p className="text-center text-neutral-700">Nenhum produto registrado.</p>
+        ) : (
+          <div
+            className={cn(
+              containerSize,
+              "flex flex-col items-center justify-center space-y-4"
+            )}
+          >
+            <p className="text-center text-neutral-700">
+              Nenhum produto registrado nesta categoria.
+            </p>
             <Image
               src="/images/noData.svg"
               alt=""
@@ -235,12 +313,17 @@ function ModalProdutos({ setItems, onClose }: ModalProdutosProps) {
               className="select-none"
               draggable={false}
             />
-            <Button className="cursor-pointer bg-orange-600 hover:bg-orange-500" onClick={() => router.push("/catalogo")}>Ir para Catálogo</Button>
+            {user && user.role === "Admin" && (
+              <Button
+                className="cursor-pointer bg-orange-600 hover:bg-orange-500"
+                onClick={() => router.push("/produtos")}
+              >
+                Ir para Produtos
+              </Button>
+            )}
           </div>
-      ) : <div className="flex items-center justify-center h-[90vh]">
-        <Loading />
-      </div>
-      }
+        ))
+      )}
     </div>
-  ))
+  );
 }

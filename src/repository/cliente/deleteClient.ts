@@ -4,8 +4,11 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export default async function deleteCliente(id: number) {
   try {
-    const result = await prisma.cliente.delete({
-      where: { id: id }
+    const result = await prisma.cliente.update({
+      where: { id: id },
+      data: {
+        deletado_em: new Date(),
+      },
     });
 
     return result;

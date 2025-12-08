@@ -1,4 +1,10 @@
 "use client";
+
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { io } from "socket.io-client";
+
 import {
   NotepadText,
   Store,
@@ -12,11 +18,7 @@ import {
   CircleUser,
 } from "lucide-react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/Sidebar";
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-
-import { usePathname } from "next/navigation";
-import { io } from "socket.io-client";
+import CatalogoSidebar from "@/components/ui/catalogoLink";
 
 // Lib
 import useUser from "@/lib/hooks/useUser";
@@ -42,7 +44,7 @@ const links: SidebarLink[] = [
   },
   {
     label: "Catálogo",
-    href: "/catalogo",
+    href: "",
     icon: PackagePlus,
   },
   {
@@ -64,6 +66,24 @@ const links: SidebarLink[] = [
     label: "Configuração",
     href: "/configuracao",
     icon: Settings,
+  },
+];
+
+const catalogoLinks: SidebarLink[] = [
+  {
+    label: "Categorias",
+    href: "/categorias",
+    icon: PackagePlus,
+  },
+  {
+    label: "Produtos",
+    href: "/produtos",
+    icon: PackagePlus,
+  },
+  {
+    label: "Adicionais",
+    href: "/adicionais",
+    icon: PackagePlus,
   },
 ];
 
@@ -89,13 +109,7 @@ export default function PrivateLayout({
   useEffect(() => {
     fetch("/api/socket", { method: "POST", credentials: "include" });
 
-    // Quando conectar
-    socket.on("connect", () => {
-      console.log("🟢 Conectado:", socket.id);
-    });
-
     socket.on("invalidatePedidos", () => {
-      console.log("ouviu")
       queryClient.invalidateQueries({ queryKey: ["pedidosPendentes"] });
     });
 
@@ -108,7 +122,7 @@ export default function PrivateLayout({
 
   return (
     <motion.div className="flex">
-      <Sidebar open={open} setOpen={setOpen} >
+      <Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className="h-screen justify-between gap-10 items-baseline font-medium overflow-hidden sticky top-0">
           <div>
             {!isUserPending &&
@@ -120,6 +134,23 @@ export default function PrivateLayout({
                   )
                 )
                   return;
+
+                if (link.label === "Catálogo") {
+                  if (
+                    forbiddenRoutes[user.role].some((route) =>
+                      catalogoLinks.some((link) => link.href === route)
+                    )
+                  )
+                    return;
+                  return (
+                    <CatalogoSidebar
+                      links={catalogoLinks}
+                      key={idx}
+                      pathname={pathname!}
+                    />
+                  );
+                }
+
                 return (
                   <SidebarLink key={idx} link={link} pathname={pathname!} />
                 );

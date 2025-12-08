@@ -9,11 +9,13 @@ export async function GET(req: NextRequest) {
   if (!isValid) return res;
 
   try {
-    const { id } =  await req.json()
+    const { searchParams } = new URL(req.url);
 
-    if (!id) throw new Error ("O id é obrigatório.")
+    const clienteIdParam = Number(searchParams.get("clienteId"));
 
-    const pedidos = await getPedidosPorCliente(Number(id));
+    if (!clienteIdParam) throw new Error("Id não está em um formato válido.");
+
+    const pedidos = await getPedidosPorCliente(Number(clienteIdParam));
 
     return NextResponse.json(pedidos);
   } catch (err) {

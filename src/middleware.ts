@@ -10,7 +10,7 @@ const publicRoutes = [
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE = "/";
 
-const REDIRECT_WHEN_FORBIDDEN_ROUTE = "/central-pedidos"
+const REDIRECT_WHEN_FORBIDDEN_ROUTE = "/central-pedidos";
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
@@ -20,11 +20,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const authToken = request.headers.get("cookie")?.match(/auth=([^;]+)/)?.[1];
+  const authToken = request.cookies.get("auth")?.value;
+
+  if (request.nextUrl.pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
 
   if (!authToken && publicRoute) return NextResponse.next();
 
   if (!authToken && !publicRoute) {
+    console.log("[MW] Token não encontrado → redirect");
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE;
     return NextResponse.redirect(redirectUrl);

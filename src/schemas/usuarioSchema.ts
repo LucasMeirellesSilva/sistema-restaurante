@@ -1,9 +1,10 @@
 import { z } from 'zod';
 
 export const usuarioFormSchema = z.object({
-    tipoId: z.number(),
-    nome: z.string(),
-    senha: z.string().min(6)
+    id: z.number().optional(),
+    tipoId: z.number().nonoptional("O nível de acesso é obrigatório."),
+    nome: z.string().min(3, "O nome deve possuir ao menos 3 caracteres."),
+    senha: z.string().min(6, "A senha deve possuir ao menos 6 caracteres.")
 })
 
 export type UsuarioFormType = z.infer<typeof usuarioFormSchema>

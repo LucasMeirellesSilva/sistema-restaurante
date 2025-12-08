@@ -16,9 +16,9 @@ function Paginacao({ page, setPage, totalPages }: PaginacaoProps) {
     const next = page + 1;
 
   return (
-    <div className="flex gap-2 items-center w-fit mx-auto">
+    <div className="flex gap-2 items-center w-fit mx-auto select-none">
       <button
-        className={cn("flex gap-1 cursor-pointer", previous < 1 && "text-neutral-500")}
+        className={cn("flex gap-1 cursor-pointer", previous < 1 && "text-neutral-500 cursor-not-allowed")}
         onClick={() => {
           if (previous < 1) return
           setPage(previous)}
@@ -29,23 +29,23 @@ function Paginacao({ page, setPage, totalPages }: PaginacaoProps) {
       </button>
       {previous > 0 && (
         <button
-          className="rounded-md py-2 px-3"
+          className="rounded-md py-2 px-3 cursor-pointer"
           onClick={() => setPage(previous)}
         >
           {previous}
         </button>
       )}
       <button className="border rounded-md py-2 px-3">{page}</button>
-      {next < totalPages && (
+      {next <= totalPages && (
         <button
-          className="rounded-md py-2 px-3"
+          className="rounded-md py-2 px-3 cursor-pointer"
           onClick={() => setPage(next)}
         >
           {next}
         </button>
       )}
       <button
-        className={cn("flex gap-1 cursor-pointer", next > totalPages && "text-neutral-500")}
+        className={cn("flex gap-1 cursor-pointer", next > totalPages && "text-neutral-500 cursor-not-allowed")}
         onClick={() => {
           if (next > totalPages) return
           setPage(next)}

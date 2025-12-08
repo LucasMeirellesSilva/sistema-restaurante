@@ -1,14 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import verifyToken from "@/lib/verifyToken";
+
 import getPedidoPorId from "@/repository/pedido/getPedidoPorId";
 import imprimirPedido from "@/lib/printOrder";
 
 export async function POST(req: NextRequest) {
-  const { isValid, res } = await verifyToken(req);
-
-  // Token inválido, retorna e reseta token.
-  if (!isValid) return res;
-
   const { id }: { id: number } = await req.json();
 
   try {

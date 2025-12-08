@@ -121,7 +121,7 @@ function PagamentoValores({
       {error && <p className="text-red-500">{error}</p>}
 
       {isFormasPagamentoPending && <Loading />}
-      {formasFiltradas[0].length && (
+      {formasFiltradas[0].length > 0 && (
         <div className="flex gap-2">
           <SelectFormaPagamento
             index={0}
@@ -139,7 +139,7 @@ function PagamentoValores({
         </div>
       )}
 
-      {multiPayment && formasFiltradas[1].length && (
+      {multiPayment && formasFiltradas[1].length > 0 && (
         <div className="flex gap-2">
           <SelectFormaPagamento
             index={1}

@@ -25,22 +25,24 @@ const adicionalModelSchema = z.object({
     id: z.number().optional(),
     valorUnitario: z.number(),
     valorUnitarioFormatado: z.string(),
+    valorTotal: z.number(),
+    valorTotalFormatado: z.string(),
     quantidade: z.number(),
-    produto: z.string().optional(),
-    produtoId: z.number().optional()
+    produto: z.string(),
+    produtoId: z.number()
 })
 
 export type AdicionalModelType = z.infer<typeof adicionalModelSchema>
 
 export const itemModelSchema = z.object({
     id: z.number().optional(),
-    valorUnitarioFormatado: z.string(),
     valorUnitario: z.number(),
-    valorTotalFormatado: z.string(),
+    valorUnitarioFormatado: z.string(),
     valorTotal: z.number(),
+    valorTotalFormatado: z.string(),
     quantidade: z.number(),
-    produto: z.string().optional(),
-    produtoId: z.number().optional(),
+    produto: z.string(),
+    produtoId: z.number(),
     adicionais: z.array(adicionalModelSchema)
 });
 

@@ -16,12 +16,21 @@ export async function GET(req: NextRequest) {
   const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "50");
   const skip = (page - 1) * limit;
+  
+  const nomeParam = searchParams.get("nome");
 
   if (temParams) {
+    const filter: FilteredClientesType = {
+      ...(nomeParam !== null && {
+        nome: nomeParam,
+      }),
+    };
+
     const { clientesFormatados, totalPages, total } = await getClientesPaginado(
       {
         limit,
         skip,
+        filter
       }
     );
 
@@ -91,6 +100,7 @@ export async function PATCH(req: NextRequest) {
 }
 
 import deleteCliente from "@/repository/cliente/deleteClient";
+import { FilteredClientesType } from "@/lib/hooks/useClientesPaginado";
 
 export async function DELETE(req: NextRequest) {
   const { isValid, res } = await verifyToken(req);

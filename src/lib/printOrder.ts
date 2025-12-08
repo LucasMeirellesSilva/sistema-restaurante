@@ -65,6 +65,11 @@ export default async function printOrder(pedido: PedidoModelType) {
     printer.bold(false);
   }
 
+  if (pedido.observacao) {
+    printer.drawLine();
+    printer.println("Observação: " + pedido.observacao)
+  }
+
   printer.drawLine();
   pedido.itens.forEach((item) => {
     const itemPrint = `${item.quantidade}x ${

@@ -4,6 +4,8 @@ import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 interface Links {
   label: string;
@@ -167,9 +169,24 @@ export const SidebarLink = ({
 }) => {
   const { open, animate } = useSidebar();
   const Icon = link.icon;
+  const router = useRouter();
+
+  const logout = useMutation({
+    mutationFn: async () => { 
+      const res = await fetch("/api/logout")
+      return res.json()},
+    onSuccess: () => router.push("/")
+  })
+
   return (
     <Link
-      href={link.href}
+      href={link.href === "/api/logout" ? "#" : link.href}
+      onClick={(e) => {
+      if (link.href === "/api/logout") {
+        e.preventDefault();
+        logout.mutate();
+      }
+    }}
       prefetch={link.href !== "/api/logout"}
       className={cn(
         "flex items-center justify-start gap-2 group/sidebar py-2",

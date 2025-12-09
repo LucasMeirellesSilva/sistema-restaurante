@@ -103,7 +103,7 @@ export default function Usuarios() {
   }
 
   return (
-    <div className="flex flex-col gap-2 w-2/3 mx-auto pb-4">
+    <div className="flex flex-col gap-2 w-[75vw] 2xl:w-2/3 mx-auto pb-4">
       <Modal isOpen={!!modalUsuario} onClose={() => setModalUsuario(null)}>
         {modalUsuario?.tipo === "criar" && (
           <FormUsuario onClose={() => setModalUsuario(null)} />

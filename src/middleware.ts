@@ -22,14 +22,9 @@ export async function middleware(request: NextRequest) {
 
   const authToken = request.cookies.get("auth")?.value;
 
-  if (request.nextUrl.pathname.startsWith("/api")) {
-    return NextResponse.next();
-  }
-
   if (!authToken && publicRoute) return NextResponse.next();
 
   if (!authToken && !publicRoute) {
-    console.log("[MW] Token não encontrado → redirect");
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE;
     return NextResponse.redirect(redirectUrl);
@@ -90,6 +85,6 @@ export const config: MiddlewareConfig = {
         - /api/recuperar-acesso
         - /api/invalidate-pedidos
     */
-    "/((?!_next|favicon.ico|api/login|api/estabelecimento/*|api/recuperar-acesso|api/invalidate-pedidos|api/imprimir).*)",
+    "/((?!_next|favicon.ico|api/login|api/logout|api/estabelecimento/*|api/recuperar-acesso|api/invalidate-pedidos|api/imprimir).*)",
   ],
 };

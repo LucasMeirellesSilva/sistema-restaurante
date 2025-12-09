@@ -1,10 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
+  const res = NextResponse.json({ ok: true });
 
-  const response = NextResponse.redirect(new URL("/", req.url));
-
-  response.cookies.set("auth", "", {
+  res.cookies.set("auth", "", {
     httpOnly: true,
     path: "/",
     maxAge: 0,
@@ -12,5 +11,5 @@ export async function GET(req: NextRequest) {
     sameSite: "lax",
   });
 
-  return response;
+  return res;
 }

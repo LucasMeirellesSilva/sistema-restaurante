@@ -44,7 +44,7 @@ export default function PontoVenda() {
     );
 
   return (
-    <div className="w-full mx-auto lg:w-3/4 h-screen">
+    <div className="flex flex-col gap-2 w-[75vw] h-screen 2xl:w-2/3 mx-auto pb-4">
       <h1 className="text-center font-semibold text-xl tracking-tight">
         Ponto de Venda
       </h1>

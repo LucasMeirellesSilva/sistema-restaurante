@@ -64,7 +64,7 @@ function FormProduto({ produto, onClose }: FormProdutoProps) {
       nome: nome,
       valor: valor,
       categoriaId: categoria!,
-      descricao: "",
+      descricao: descricao,
       adicional: false,
     });
   }

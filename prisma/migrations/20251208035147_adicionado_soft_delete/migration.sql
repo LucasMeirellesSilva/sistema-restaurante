@@ -5,25 +5,25 @@
 
 */
 -- DropForeignKey
-ALTER TABLE `item` DROP FOREIGN KEY `Item_produto_id_fkey`;
+ALTER TABLE `Item` DROP FOREIGN KEY `Item_produto_id_fkey`;
 
 -- DropIndex
-DROP INDEX `Item_produto_id_fkey` ON `item`;
+DROP INDEX `Item_produto_id_fkey` ON `Item`;
 
 -- AlterTable
-ALTER TABLE `categoria` ADD COLUMN `deletado_em` DATETIME(3) NULL;
+ALTER TABLE `Categoria` ADD COLUMN `deletado_em` DATETIME(3) NULL;
 
 -- AlterTable
-ALTER TABLE `cliente` ADD COLUMN `deletado_em` DATETIME(3) NULL;
+ALTER TABLE `Cliente` ADD COLUMN `deletado_em` DATETIME(3) NULL;
 
 -- AlterTable
-ALTER TABLE `item` MODIFY `produto_id` INTEGER NOT NULL;
+ALTER TABLE `Item` MODIFY `produto_id` INTEGER NOT NULL;
 
 -- AlterTable
-ALTER TABLE `produto` ADD COLUMN `deletado_em` DATETIME(3) NULL;
+ALTER TABLE `Produto` ADD COLUMN `deletado_em` DATETIME(3) NULL;
 
 -- AlterTable
-ALTER TABLE `usuario` ADD COLUMN `deletado_em` DATETIME(3) NULL;
+ALTER TABLE `Usuario` ADD COLUMN `deletado_em` DATETIME(3) NULL;
 
 -- AddForeignKey
 ALTER TABLE `Item` ADD CONSTRAINT `Item_produto_id_fkey` FOREIGN KEY (`produto_id`) REFERENCES `Produto`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

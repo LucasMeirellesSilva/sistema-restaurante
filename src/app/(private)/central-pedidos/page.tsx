@@ -193,7 +193,7 @@ export default function CentralPedidos() {
   }
 
   return (
-    <div className="flex flex-col gap-4 md:gap-0 min-h-screen items-center sm:w-4/5 mx-auto lg:w-3/4">
+    <div className="flex flex-col items-center gap-4 md:gap-0 min-h-screen max-w-screen md:w-[75vw] 2xl:w-2/3 mx-auto pb-4">
       {/* Modal dinâmico */}
       <Modal isOpen={!!modalAberto} onClose={() => setModalAberto(null)}>
         {modalAberto?.tipo === "primeiroAcesso" && (

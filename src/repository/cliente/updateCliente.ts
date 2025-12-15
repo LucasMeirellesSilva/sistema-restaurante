@@ -3,12 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { ClienteFormType } from "@/schemas/clienteSchema";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export type ClienteUpdateType = Partial<ClienteFormType> & { clienteId: number }
 
-export default async function updateCliente({ clienteId, nome, telefone }: ClienteUpdateType) {
+export default async function updateCliente({ id, nome, telefone }: ClienteFormType) {
   try {
     const result = await prisma.cliente.update({
-      where: { id: clienteId },
+      where: { id: id },
       data: {
         nome: nome,
         telefone: telefone

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 
 import Image from "next/image";
 import { Stepper, Step, StepperRef } from "../ui/Stepper";
@@ -19,10 +19,11 @@ import CnpjField from "../ui/form/cnpjField";
 import NomeEstabelecimentoField from "../ui/form/nomeEstabelecimentoField";
 
 type PrimeiroAcessoProps = {
+  setConfigDone: Dispatch<SetStateAction<boolean>>;
   onClose: () => void;
 };
 
-function PrimeiroAcesso({ onClose }: PrimeiroAcessoProps) {
+function PrimeiroAcesso({ setConfigDone, onClose }: PrimeiroAcessoProps) {
   const stepperRef = useRef<StepperRef>(null);
 
   const [nome, setNome] = useState("");
@@ -51,6 +52,7 @@ function PrimeiroAcesso({ onClose }: PrimeiroAcessoProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["estabelecimento"] });
+      setConfigDone(true);
       onClose();
     },
     onError: (error) => {

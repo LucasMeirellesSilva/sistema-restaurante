@@ -1,9 +1,16 @@
 import { PedidoModelType } from "@/schemas/pedidoSchema";
 import { useQuery } from "@tanstack/react-query";
 
-async function fetchPedidosCliente(clienteId: number): Promise<PedidoModelType[]> {
+type FetchPedidosClienteReturn = {
+  items: PedidoModelType[];
+  page: number;
+  totalPages: number;
+  total: number;
+};
+
+async function fetchPedidosCliente(cliente: string): Promise<FetchPedidosClienteReturn> {
   const params = new URLSearchParams({
-    clienteId: String(clienteId),
+    cliente: String(cliente),
   });
 
   const res = await fetch(`/api/clientes/pedidos?${params.toString()}`, {
@@ -16,10 +23,10 @@ async function fetchPedidosCliente(clienteId: number): Promise<PedidoModelType[]
   return res.json();
 }
 
-export default function usePedidosCliente(clienteId: number) {
+export default function usePedidosCliente(cliente: string) {
   return useQuery({
-    queryKey: ["pedidos", "cliente", clienteId],
-    queryFn: () => fetchPedidosCliente(clienteId),
+    queryKey: ["pedidos", "cliente", cliente],
+    queryFn: () => fetchPedidosCliente(cliente),
     refetchInterval: 50000,
     staleTime: 1000 * 60,
     gcTime: 1000 * 60 * 10,

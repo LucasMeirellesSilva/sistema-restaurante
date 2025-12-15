@@ -75,19 +75,15 @@ export async function POST(req: NextRequest) {
   }
 }
 
-import updateCliente, {
-  ClienteUpdateType,
-} from "@/repository/cliente/updateCliente";
-
 export async function PATCH(req: NextRequest) {
   const { isValid, res } = await verifyToken(req);
 
   // Token inválido, retorna e reseta token.
   if (!isValid) return res;
 
-  const cliente: ClienteUpdateType = await req.json();
-
   try {
+    const cliente = validateClienteForm(await req.json())
+
     const result = await updateCliente(cliente);
 
     return NextResponse.json(result, { status: 200 });
@@ -101,6 +97,7 @@ export async function PATCH(req: NextRequest) {
 
 import deleteCliente from "@/repository/cliente/deleteClient";
 import { FilteredClientesType } from "@/lib/hooks/useClientesPaginado";
+import updateCliente from "@/repository/cliente/updateCliente";
 
 export async function DELETE(req: NextRequest) {
   const { isValid, res } = await verifyToken(req);

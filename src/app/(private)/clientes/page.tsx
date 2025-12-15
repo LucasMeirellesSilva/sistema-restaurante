@@ -211,7 +211,7 @@ export default function Clientes() {
                     <TableCell className="min-w-32">{c.id}</TableCell>
                     <TableCell className="min-w-40">{c.nome}</TableCell>
                     <TableCell className="min-w-40 px-8">
-                      {c.telefone ?? (
+                      {c.telefone ? c.telefone : (
                         <X
                           className={cn(iconColor, "mx-auto")}
                           strokeWidth={1.5}

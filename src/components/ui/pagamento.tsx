@@ -49,7 +49,7 @@ function Pagamento({ selected, setSelected }: PagamentoProps) {
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pedidosPendentes"] });
+      queryClient.invalidateQueries({ queryKey: ["pedidosPendentes", "pagamentos"] });
       setSelected(null);
     },
   });

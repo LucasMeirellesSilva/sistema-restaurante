@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `pagamento` ADD COLUMN `data_hora` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3);

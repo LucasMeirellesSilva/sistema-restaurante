@@ -55,9 +55,9 @@ function FormCliente({ cliente, onClose }: FormClienteProps) {
 
   function handleSubmit() {
     const formData = {
-      ...(cliente && { clienteId: cliente.id }),
+      ...(cliente && { id: cliente.id }),
       nome: nome,
-      ...(telefone && { telefone: telefone }),
+      telefone: telefone,
     };
 
     createOrPatchCliente.mutate(formData);

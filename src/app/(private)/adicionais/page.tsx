@@ -81,6 +81,7 @@ export default function Adicionais() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adicionais"] });
+      setModalAdicional(null);
     },
   });
 

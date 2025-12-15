@@ -27,7 +27,7 @@ function SelectCliente({
   setCliente,
   setModalCliente,
 }: SelectClienteProps) {
-  const { data: clientes, isPending: isClientesPending } = useClientes();
+  const { data: clientes, isLoading: isClientesLoading } = useClientes();
   const [research, setResearch] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -86,12 +86,12 @@ function SelectCliente({
         <SelectSeparator />
         <SelectGroup>
           <SelectLabel>Clientes</SelectLabel>
-          {isClientesPending ? (
+          {isClientesLoading ? (
             <Loading />
           ) : clientesFiltrados && clientesFiltrados?.length > 0 ? (
             clientesFiltrados.map((c) => (
               <SelectItem key={c.id} value={String(c.id)}>
-                {c.nome}
+                {c.id} - {c.nome}
               </SelectItem>
             ))
           ) : (

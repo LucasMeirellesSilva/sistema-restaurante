@@ -19,6 +19,7 @@ import { useState } from "react";
 import { PedidoModelType } from "@/schemas/pedidoSchema";
 import Modal from "../ui/modal";
 import DetalhesPedido from "./detalhesPedido";
+import Paginacao from "../ui/paginacao";
 
 type DetalhesClienteProps = {
   cliente: ClienteModelType;
@@ -26,9 +27,10 @@ type DetalhesClienteProps = {
 
 function DetalhesCliente({ cliente }: DetalhesClienteProps) {
   const { data: pedidos, isLoading: isPedidosLoading } = usePedidosCliente(
-    cliente.id
+    cliente.nome
   );
 
+  const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<"criadoEmData" | "valorTotal" | null>(
     null
   );
@@ -36,7 +38,7 @@ function DetalhesCliente({ cliente }: DetalhesClienteProps) {
   const [modalPedido, setModalPedido] = useState<PedidoModelType | null>(null);
 
   const sorted = pedidos
-    ? [...pedidos].sort((a, b) => {
+    ? [...pedidos.items].sort((a, b) => {
         if (!sortBy) return 0;
         const valA = a[sortBy];
         const valB = b[sortBy];
@@ -72,86 +74,103 @@ function DetalhesCliente({ cliente }: DetalhesClienteProps) {
         </div>
         <div className="flex gap-1">
           <span className="flex items-center gap-1 font-medium">Telefone:</span>
-          <p className="truncate">{cliente.telefone}</p>
+          <p className="truncate">
+            {cliente.telefone ? cliente.telefone : "Não informado"}
+          </p>
         </div>
       </div>
-      <h3 className="font-medium">Pedidos Realizados</h3>
-      <div className="flex-1 flex-col justify-center gap-12 rounded-lg border py-4 max-h-[50vh] overflow-y-auto">
-        {isPedidosLoading ? (
-          <div className="w-fit mx-auto">
-            <Loading />
-          </div>
-        ) : (
-          <Table className="table-center">
-            <TableCaption className="text-start indent-4">
-              Exibindo {pedidos?.length} dos {pedidos?.length} pedidos
-              realizados por este usuário.
-            </TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Autor</TableHead>
-                <TableHead>Mesa</TableHead>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => handleSort("valorTotal")}
-                >
-                  Total (R$)
-                </TableHead>
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => handleSort("criadoEmData")}
-                >
-                  Data - Hora
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sorted &&
-                sorted.length > 0 &&
-                sorted.map((p) => (
-                  <TableRow
-                    key={p.id}
-                    className="cursor-pointer"
-                    onClick={() => setModalPedido(p)}
-                  >
-                    <TableCell className="min-w-32">{p.id}</TableCell>
-                    <TableCell className="min-w-40 px-8">{p.autor}</TableCell>
-                    <TableCell className="min-w-32 px-8">
-                      {p.mesa ?? (
-                        <X
-                          className={cn(iconColor, "mx-auto")}
-                          strokeWidth={1.5}
-                        />
-                      )}
-                    </TableCell>
-                    <TableCell className="min-w-40 px-8">{p.cliente}</TableCell>
-                    <TableCell
-                      className={cn(
-                        "min-w-40 px-8",
-                        p.status === "Finalizado"
-                          ? "text-emerald-600"
-                          : p.status === "Pendente"
-                          ? "text-orange-500"
-                          : "text-red-600"
-                      )}
+      {!isPedidosLoading && pedidos && pedidos.items.length > 0 && (
+        <>
+          <h3 className="font-medium">Pedidos Realizados</h3>
+          <div className="flex-1 flex-col justify-center gap-12 rounded-lg border py-4 max-h-[50vh] overflow-y-auto">
+            {isPedidosLoading ? (
+              <div className="w-fit mx-auto">
+                <Loading />
+              </div>
+            ) : (
+              <Table className="table-center">
+                <TableCaption className="text-start indent-4">
+                  Exibindo {pedidos?.items.length} dos {pedidos?.items.length}{" "}
+                  pedidos realizados por este usuário.
+                </TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Autor</TableHead>
+                    <TableHead>Mesa</TableHead>
+                    <TableHead>Cliente</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("valorTotal")}
                     >
-                      {p.status}
-                    </TableCell>
-                    <TableCell className="min-w-40 px-8">
-                      {p.valorTotalFormatado}
-                    </TableCell>
-                    <TableCell className="min-w-40 px-8">
-                      {p.criadoEmData} {p.criadoEmHora}
-                    </TableCell>
+                      Total (R$)
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("criadoEmData")}
+                    >
+                      Data - Hora
+                    </TableHead>
                   </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        )}
-      </div>
+                </TableHeader>
+                <TableBody>
+                  {sorted &&
+                    sorted.length > 0 &&
+                    sorted.map((p) => (
+                      <TableRow
+                        key={p.id}
+                        className="cursor-pointer"
+                        onClick={() => setModalPedido(p)}
+                      >
+                        <TableCell className="min-w-24">{p.id}</TableCell>
+                        <TableCell className="min-w-40 px-8">
+                          {p.autor}
+                        </TableCell>
+                        <TableCell className="min-w-24 px-8">
+                          {p.mesa ?? (
+                            <X
+                              className={cn(iconColor, "mx-auto")}
+                              strokeWidth={1.5}
+                            />
+                          )}
+                        </TableCell>
+                        <TableCell className="min-w-40 px-8">
+                          {p.cliente}
+                        </TableCell>
+                        <TableCell
+                          className={cn(
+                            "min-w-24 px-8",
+                            p.status === "Finalizado"
+                              ? "text-emerald-600"
+                              : p.status === "Pendente"
+                              ? "text-orange-500"
+                              : "text-red-600"
+                          )}
+                        >
+                          {p.status}
+                        </TableCell>
+                        <TableCell className="min-w-40 px-8">
+                          {p.valorTotalFormatado}
+                        </TableCell>
+                        <TableCell className="min-w-40 px-8">
+                          {p.criadoEmData} {p.criadoEmHora}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            )}
+            {pedidos && pedidos.items.length > 0 && (
+              <Paginacao
+                page={page}
+                setPage={setPage}
+                totalPages={pedidos.totalPages}
+              />
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }

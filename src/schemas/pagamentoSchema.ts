@@ -28,6 +28,7 @@ export function validatePagamentosForm(pagamentos: unknown): PagamentosFormType 
 const pagamentoModelSchema = z.object({
     id: z.number(),
     pedidoId: z.number(),
+    dataHora: z.string(),
     formas: z.array(formaPagamentoModelSchema)
 });
 

@@ -99,10 +99,10 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
 
     const formData = {
       ...(pedido && { pedidoId: pedido.id }),
-      ...(items && { itens: itemsForm }),
-      ...(cliente && { clienteId: cliente }),
-      ...(mesa && { mesaId: Number(mesa) }),
-      ...(observacao && { observacao: observacao }),
+      itens: itemsForm,
+      clienteId: cliente,
+      mesaId: Number(mesa),
+      observacao: observacao,
     };
 
     createOrPatchPedido.mutate(formData);

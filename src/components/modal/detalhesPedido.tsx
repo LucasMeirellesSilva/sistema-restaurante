@@ -14,7 +14,7 @@ function DetalhesPedido({ pedido }: DetalhesPedidoProps) {
   );
 
   return (
-    <div className="min-w-[50vw] lg:min-w-[30vw] mx-4">
+    <div className="min-w-[50vw] lg:min-w-[40vw] mx-4">
       <h2 className="w-fit px-6 pb-3 border-b font-medium mx-auto">
         Pedido {pedido.id}
       </h2>
@@ -34,6 +34,8 @@ import {
   NotebookPen,
   CalendarClock,
   ListChecks,
+  Printer,
+  PrinterCheck,
   createLucideIcon,
 } from "lucide-react";
 import { chairsTablePlatter } from "@lucide/lab";
@@ -48,10 +50,21 @@ type InformacoesPedidoProps = {
 };
 
 export function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
+  const print = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`/api/imprimir`, {
+        method: "POST",
+        body: JSON.stringify({ id: pedido.id }),
+      });
+
+      return res;
+    },
+  });
+
   return (
     <div className="my-4 space-y-2">
       <div className="flex flex-col md:flex-row w-full justify-between gap-2 md:gap-4">
-        <div className="md:w-1/2 space-y-2">
+        <div className="lg:w-1/2 space-y-2">
           <div className="flex gap-1">
             <span className="flex items-center gap-1 font-medium">
               <User className={cn(iconColor)} />
@@ -74,7 +87,7 @@ export function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
             <p>{pedido.mesa ?? "Não identificado"}</p>
           </div>
         </div>
-        <div className="md:w-1/2 space-y-2">
+        <div className="lg:w-1/2 space-y-2">
           <div className="flex items-start gap-1">
             <span className="flex items-center gap-1 font-medium whitespace-nowrap">
               <CalendarClock className={cn(iconColor)} />
@@ -91,11 +104,24 @@ export function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
             </span>
             <p
               className={cn(
-                pedido.status === "Pendente" ? "text-orange-600" : ""
+                pedido.status === "Pendente"
+                  ? "text-orange-600"
+                  : pedido.status === "Cancelado"
+                  ? "text-red-600"
+                  : "text-emerald-600"
               )}
             >
               {pedido.status}
             </p>
+          </div>
+          <div className="flex justify-end gap-1">
+            <Button
+              className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer"
+              onClick={() => print.mutate()}
+            >
+              {print.isSuccess ? <PrinterCheck /> : <Printer />}
+              Imprimir
+            </Button>
           </div>
         </div>
       </div>
@@ -145,6 +171,8 @@ export function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
 
 import { PagamentoModelType } from "@/schemas/pagamentoSchema";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Button } from "../ui/button";
+import { useMutation } from "@tanstack/react-query";
 
 type DetalhesComPagamentoProps = {
   pagamento: PagamentoModelType;
@@ -169,7 +197,10 @@ function DetalhesComPagamento({
         <InformacoesPedido pedido={pedido} />
       </TabsContent>
       <TabsContent value="pagamento">
-        <h3 className="font-medium">Detalhes do Pagamento</h3>
+        <div className="flex justify-between">
+          <h3 className="font-medium w-fit">Detalhes do Pagamento</h3>
+          <p>{pagamento.dataHora}</p>
+        </div>
         {pagamento.formas.map((forma, index) => (
           <div key={index} className="flex justify-between">
             <span>{forma.formaPagamento.descricao}</span>

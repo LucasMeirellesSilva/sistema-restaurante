@@ -2,12 +2,14 @@ import { z } from "zod";
 import { pedidoModelSchema } from "./pedidoSchema";
 
 export const clienteFormSchema = z.object({
+  id: z.number().optional(),
   nome: z.string().min(2, "O nome do cliente deve possuir ao menos 2 caracteres."),
   telefone: z
     .string()
-    .max(15)
-    .regex(/^\(\d{2}\)\s?\d{4,5}-\d{4}$/, "Formato de telefone inválido")
-    .optional()
+    .transform(v => v.trim())
+    .refine(v => v === "" || /^\(\d{2}\)\s?\d{4,5}-\d{4}$/.test(v), {
+      message: "Formato de telefone inválido",
+    }),
 });
 
 export type ClienteFormType = z.infer<typeof clienteFormSchema>;

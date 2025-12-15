@@ -164,7 +164,7 @@ export default function Historico() {
                     className="cursor-pointer"
                     onClick={() => setModalPedido(p)}
                   >
-                    <TableCell className="min-w-32">{p.id}</TableCell>
+                    <TableCell className="min-w-24">{p.id}</TableCell>
                     <TableCell className="min-w-40 px-8">{p.autor}</TableCell>
                     <TableCell className="min-w-32 px-8">
                       {p.mesa ?? (
@@ -184,7 +184,7 @@ export default function Historico() {
                     </TableCell>
                     <TableCell
                       className={cn(
-                        "min-w-40 px-8",
+                        "min-w-28 px-8",
                         p.status === "Finalizado"
                           ? "text-emerald-600"
                           : p.status === "Pendente"

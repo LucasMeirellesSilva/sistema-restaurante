@@ -44,6 +44,7 @@ export default function CentralPedidos() {
   const [research, setResearch] = useState("");
   const [mesaContainerOpen, setMesaContainerOpen] = useState(true);
   const [modalAberto, setModalAberto] = useState<ModalAberto>(null);
+  const [configDone, setConfigDone] = useState(false);
 
   const { data: pedidos, isPending: isPedidosPendentesPending } =
     usePedidosPendentes();
@@ -59,6 +60,7 @@ export default function CentralPedidos() {
       !isEstabelecimentoLoading &&
       !estabelecimento &&
       !estabelecimentoError &&
+      !configDone &&
       modalAberto === null
     ) {
       setModalAberto({ tipo: "primeiroAcesso" });
@@ -197,7 +199,7 @@ export default function CentralPedidos() {
       {/* Modal dinâmico */}
       <Modal isOpen={!!modalAberto} onClose={() => setModalAberto(null)}>
         {modalAberto?.tipo === "primeiroAcesso" && (
-          <PrimeiroAcesso onClose={() => setModalAberto(null)} />
+          <PrimeiroAcesso setConfigDone={setConfigDone} onClose={() => setModalAberto(null)} />
         )}
         {modalAberto?.tipo === "criarPedido" && (
           <FormPedido onClose={() => setModalAberto(null)} />

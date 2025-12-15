@@ -3,6 +3,7 @@
 import { Dispatch, SetStateAction } from "react";
 
 import { ItemModelType } from "@/schemas/itemSchema";
+import formatCurrency from "@/lib/formatCurrency";
 
 type ItensPedidoProps = {
   items: ItemModelType[];
@@ -15,7 +16,7 @@ function ItensPedido({ items, setItems }: ItensPedidoProps) {
   }
 
   return (
-    <div className="flex-1 flex flex-col gap-2 overflow-y-auto scrollbar-none">
+    <div className="relative max-h-[45vh] flex-1 flex flex-col gap-2 overflow-y-auto scrollbar-none">
       {items &&
         items.map((item, index) => (
           <div key={index} className="flex flex-col gap-0.5 border-b">
@@ -49,6 +50,9 @@ function ItensPedido({ items, setItems }: ItensPedidoProps) {
             </div>
           </div>
         ))}
+        <div className="flex font-medium justify-end bg-white absolute sticky bottom-0 py-1">
+          Total: {formatCurrency(items.reduce((acc, item) => acc + item.valorTotal, 0))}
+        </div>
     </div>
   );
 }

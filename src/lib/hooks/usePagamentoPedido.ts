@@ -15,7 +15,7 @@ async function fetchPagamentoPedido(id: number): Promise<PagamentoModelType> {
 
 export default function usePagamentoPedido(id: number) {
   return useQuery({
-    queryKey: ["pagamentoPedido", id],
+    queryKey: ["pagamentos", "pedido", id],
     queryFn: () => fetchPagamentoPedido(id),
     staleTime: Infinity,
   });

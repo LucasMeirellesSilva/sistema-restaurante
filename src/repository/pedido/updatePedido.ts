@@ -5,13 +5,19 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export default async function updatePedido(tx: Prisma.TransactionClient, { pedidoId, clienteId, mesaId, observacao }: PedidoUpdateType) {
   try {
+    const data: Prisma.PedidoUpdateInput = {
+      mesa: mesaId
+        ? { connect: { id: mesaId } }
+        : { disconnect: true },
+      cliente: clienteId 
+        ? { connect: { id: clienteId } }
+        : { disconnect: true },
+      observacao,
+    };
+
     const pedido = await tx.pedido.update({
       where: { id: pedidoId },
-      data: {
-        cliente_id: clienteId,
-        mesa_id: mesaId,
-        observacao: observacao
-      }
+      data,
     });
 
     return pedido;

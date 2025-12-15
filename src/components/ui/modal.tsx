@@ -31,7 +31,7 @@ function Modal({ isOpen, className, children, onClose }: ModalProps) {
   return createPortal(
     <div
       className={cn(
-        "fixed inset-0 flex justify-center items-center z-50 bg-black/40 transition-all",
+        "fixed inset-0 flex justify-center items-center z-50 bg-black/40 transition-all overscroll-contain",
         isOpen ? "opacity-100 scale-100" : "opacity-0 bg-transparent scale-75",
       )}
       onClick={onClose}

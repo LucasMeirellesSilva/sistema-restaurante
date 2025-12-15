@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Dispatch, SetStateAction } from "react";
 
@@ -16,11 +16,11 @@ function ItensPedido({ items, setItems }: ItensPedidoProps) {
   }
 
   return (
-    <div className="relative max-h-[45vh] flex-1 flex flex-col gap-2 overflow-y-auto scrollbar-none">
+    <div className="relative max-h-[45vh] flex-1 flex flex-col gap-2 overflow-y-auto scrollbar-none py-2">
       {items &&
         items.map((item, index) => (
           <div key={index} className="flex flex-col gap-0.5 border-b">
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-2">
               <p>
                 {item.quantidade}x {item.produto}
               </p>
@@ -44,15 +44,16 @@ function ItensPedido({ items, setItems }: ItensPedidoProps) {
               >
                 Remover
               </button>
-              {(item.adicionais.length > 0 || item.quantidade > 1) && <p className="border-t">
-                {item.valorTotalFormatado}
-              </p>}
+              {(item.adicionais.length > 0 || item.quantidade > 1) && (
+                <p className="border-t">{item.valorTotalFormatado}</p>
+              )}
             </div>
           </div>
         ))}
-        <div className="flex font-medium justify-end bg-white absolute sticky bottom-0 py-1">
-          Total: {formatCurrency(items.reduce((acc, item) => acc + item.valorTotal, 0))}
-        </div>
+      <div className="flex font-medium justify-end bg-white absolute sticky bottom-0 py-1">
+        Total:{" "}
+        {formatCurrency(items.reduce((acc, item) => acc + item.valorTotal, 0))}
+      </div>
     </div>
   );
 }

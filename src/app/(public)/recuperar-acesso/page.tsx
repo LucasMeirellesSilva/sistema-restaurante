@@ -131,7 +131,7 @@ export default function RecuperarAcesso() {
             transition={{ duration: 0.6 }}
           >
             {error === "passwordShort" && (
-              <p className="text-red-600">
+              <p className="text-red-600 text-sm">
                 A senha deve ter pelo menos 6 caracteres.
               </p>
             )}
@@ -154,7 +154,7 @@ export default function RecuperarAcesso() {
             transition={{ duration: 0.6 }}
           >
             {error === "passwordMismatch" && (
-              <p className="text-red-600">As senhas não são iguais.</p>
+              <p className="text-red-600 text-sm">As senhas não são iguais.</p>
             )}
           </motion.div>
         </Label>
@@ -169,6 +169,7 @@ export default function RecuperarAcesso() {
           </Button>
           <Button className="w-32 cursor-pointer">Confirmar</Button>
         </div>
+        <p className="text-sm">A resposta de segurança alterará apenas o acesso do usuário padrão.</p>
       </form>
     </div>
   );

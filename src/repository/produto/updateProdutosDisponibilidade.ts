@@ -1,9 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-
-export default async function updateProdutoDisponibilidade(produtosId: number[]) {
+export default async function updateProdutoDisponibilidade(
+  produtosId: number[]
+) {
   try {
     const rowsAffected = await prisma.$executeRaw`
     UPDATE produto
@@ -12,15 +12,13 @@ export default async function updateProdutoDisponibilidade(produtosId: number[])
     `;
 
     return !!rowsAffected;
-  } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError) {
-      if (err.code === "P2025") {
-        throw new Error("Nenhum produto encontrado.");
-      }
+  } catch (err: any) {
+    if (err.code === "P2025") {
+      throw new Error("Nenhum produto encontrado.");
+    }
 
-      if (err.code === "P2010") {
-        throw new Error("Erro ao atualizar disponibilidade.");
-      }
+    if (err.code === "P2010") {
+      throw new Error("Erro ao atualizar disponibilidade.");
     }
     throw err;
   }

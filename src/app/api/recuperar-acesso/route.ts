@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     const senhaHash = await bcrypt.hash(senha, 10);
 
-    const result = await updateUsuario({ usuarioId: 1, senha: senhaHash });
+    const result = await updateUsuario({ id: 1, senha: senhaHash });
 
     return NextResponse.json(result, { status: 200 });
   } catch (err) {

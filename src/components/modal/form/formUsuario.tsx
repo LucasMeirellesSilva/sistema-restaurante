@@ -61,7 +61,7 @@ function FormUsuario({ usuario, onClose }: FormUsuarioProps) {
 
   function handleSubmit() {
     createOrPatchUsuario.mutate({
-      ...(usuario && { usuarioId: usuario.id }),
+      ...(usuario && { id: usuario.id }),
       nome: nome,
       tipoId: tipo,
       senha: senha.senha,

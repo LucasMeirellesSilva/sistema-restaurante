@@ -1,8 +1,10 @@
 import { Prisma } from "@prisma/client";
 import { PagamentoFormType } from "@/schemas/pagamentoSchema";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export default async function createPagamento(tx: Prisma.TransactionClient,{ pedidoId, formas }: PagamentoFormType) {
+export default async function createPagamento(
+  tx: Prisma.TransactionClient,
+  { pedidoId, formas }: PagamentoFormType
+) {
   try {
     const result = await tx.pagamento.create({
       data: {
@@ -20,14 +22,14 @@ export default async function createPagamento(tx: Prisma.TransactionClient,{ ped
         },
       },
     });
-    
+
     return result;
-  } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError) {
-      if (err.code === "P2003") {
-        const campos = Array.isArray(err.meta?.target) ? err.meta.target : [err.meta?.target].filter(Boolean);
-        throw new Error(`Erro: Relacionamento inválido em ${campos?.join(", ")}`);
-      }
+  } catch (err: any) {
+    if (err.code === "P2003") {
+      const campos = Array.isArray(err.meta?.target)
+        ? err.meta.target
+        : [err.meta?.target].filter(Boolean);
+      throw new Error(`Ocorreu um erro em ${campos?.join(", ")}`);
     }
     throw err;
   }

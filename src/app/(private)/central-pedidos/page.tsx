@@ -146,7 +146,7 @@ export default function CentralPedidos() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          className="flex justify-center mx-auto sm:mx-0 w-[120px] sm:w-[150px] aspect-5/4"
+          className="flex justify-center w-[120px] sm:w-[150px] aspect-5/4"
         >
           {p.mesa ? (
             <Mesa
@@ -270,7 +270,7 @@ export default function CentralPedidos() {
       </h2>
       <motion.div
         layout
-        className="flex flex-wrap items-center gap-2 sm:gap-3 xl:gap-4 md:m-4"
+        className="w-[67vw] flex flex-wrap items-center gap-2 sm:gap-3 xl:gap-4 md:m-4"
       >
         <AnimatePresence>
           {isPedidosPendentesPending ? (
@@ -305,7 +305,7 @@ export default function CentralPedidos() {
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.2 } }}
-            className="flex flex-wrap gap-4 m-4"
+            className="flex flex-wrap gap-4 m-4 w-[56vw]"
           >
             {mesasLivres.length > 0 ? (
               mesasLivres

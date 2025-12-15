@@ -14,7 +14,7 @@ function DescricaoField({ descricao, setDescricao }: DescricaoFieldProps) {
       <Textarea
         id="descricao"
         value={descricao}
-        maxLength={50}
+        maxLength={255}
         onChange={(e) => setDescricao(e.target.value)}
         required
       />

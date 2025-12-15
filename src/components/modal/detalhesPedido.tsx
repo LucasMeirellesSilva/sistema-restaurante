@@ -108,7 +108,7 @@ export function InformacoesPedido({ pedido }: InformacoesPedidoProps) {
       <div className="overflow-y-auto max-h-80 space-y-2">
         {pedido.itens.map((item) => (
           <div key={item.id}>
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-2">
               <span>
                 {item.quantidade}x {item.produto ?? "Produto excluído"}
               </span>

@@ -5,7 +5,7 @@ export const produtoFormSchema = z.object({
     categoriaId: z.number("A categoria é obrigatória."),
     nome: z.string().max(40, "O nome deve possuir no máximo 40 caracteres.").min(3, "O nome deve possuir ao menos 3 caracteres."),
     valor: z.number().nonnegative("O valor não pode ser negativo"),
-    descricao: z.string().max(100, "A descrição deve possuir no máximo 100 caracteres.").nullable(),
+    descricao: z.string().max(255, "A descrição deve possuir no máximo 255 caracteres.").nullable(),
     adicional: z.boolean()
 });
 

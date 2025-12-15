@@ -67,9 +67,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-import updateUsuario, {
-  UsuarioUpdateType,
-} from "@/repository/usuario/updateUsuario";
+import updateUsuario from "@/repository/usuario/updateUsuario";
 
 export async function PATCH(req: NextRequest) {
   const { isValid, decoded, res } = await verifyToken(req);
@@ -85,11 +83,10 @@ export async function PATCH(req: NextRequest) {
 
   if (!allowed) return notAllowedRes;
 
-  const { usuarioId, nome, senha, tipoId }: UsuarioUpdateType =
-    await req.json();
-
   try {
-    const result = await updateUsuario({ usuarioId, nome, senha, tipoId });
+    const usuario = validateUsuarioForm(await req.json());
+
+    const result = await updateUsuario(usuario);
 
     return NextResponse.json(result, { status: 200 });
   } catch (err) {

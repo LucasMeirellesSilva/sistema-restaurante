@@ -99,7 +99,7 @@ function FormPedido({ pedido, mesaSelecionada, onClose }: FormPedidoProps) {
 
     const formData = {
       ...(pedido && { pedidoId: pedido.id }),
-      ...(items && { itens: itemsForm }),
+      itens: itemsForm,
       ...(cliente && { clienteId: cliente }),
       ...(mesa && { mesaId: Number(mesa) }),
       ...(observacao && { observacao: observacao }),

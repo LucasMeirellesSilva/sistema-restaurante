@@ -1,7 +1,5 @@
 import { prisma } from "@/lib/prisma";
 
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-
 export default async function deleteCategoria(id: number) {
   try {
     const result = await prisma.categoria.update({
@@ -12,11 +10,9 @@ export default async function deleteCategoria(id: number) {
     });
 
     return result;
-  } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError) {
-      if (err.code === "P2025") {
-        throw new Error("Erro: Categoria não encontrada.");
-      }
+  } catch (err: any) {
+    if (err.code === "P2025") {
+      throw new Error("Categoria não encontrada.");
     }
   }
 }

@@ -15,11 +15,11 @@ function ItensPedido({ items, setItems }: ItensPedidoProps) {
   }
 
   return (
-    <div className="flex-1 flex flex-col gap-2 overflow-y-auto scrollbar-none">
+    <div className="flex-1 flex flex-col gap-2 overflow-y-auto scrollbar-none py-2">
       {items &&
         items.map((item, index) => (
           <div key={index} className="flex flex-col gap-0.5 border-b">
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-2">
               <p>
                 {item.quantidade}x {item.produto}
               </p>

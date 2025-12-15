@@ -1,7 +1,5 @@
 import { Prisma } from "@prisma/client";
 
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-
 type DeleteItemsType = {
   tx: Prisma.TransactionClient;
   pedidoId: number;
@@ -14,11 +12,9 @@ export default async function deleteItems({ tx, pedidoId }: DeleteItemsType) {
     });
 
     return result;
-  } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError) {
-      if (err.code === "P2025") {
-        throw new Error("Erro: Item não encontrado");
-      }
+  } catch (err: any) {
+    if (err.code === "P2025") {
+      throw new Error("Erro: Item não encontrado");
     }
     throw err;
   }

@@ -1,7 +1,5 @@
 import { prisma } from "@/lib/prisma";
 
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-
 export default async function deleteUsuario(id: number) {
   try {
     const usuario = await prisma.usuario.update({
@@ -12,11 +10,9 @@ export default async function deleteUsuario(id: number) {
     });
 
     return usuario;
-  } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError) {
-      if (err.code === "P2025") {
-        throw new Error("Erro: Usuário não encontrado.");
-      }
+  } catch (err: any) {
+    if (err.code === "P2025") {
+      throw new Error("Usuário não encontrado.");
     }
     throw err;
   }

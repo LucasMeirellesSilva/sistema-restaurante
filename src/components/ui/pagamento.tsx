@@ -13,6 +13,7 @@ import { Button } from "./button";
 import PagamentoValores from "./pagamentoValores";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
+import ErrorMessage from "./errorMessage";
 
 type PagamentoProps = {
   selected: SelectedType;
@@ -22,7 +23,6 @@ type PagamentoProps = {
 export type PagamentoPedidoType = Partial<FormaPagamentoFormType>;
 
 function Pagamento({ selected, setSelected }: PagamentoProps) {
-  
   const [formasPagamento, setFormasPagamento] = useState<PagamentoPedidoType[]>(
     [
       {
@@ -32,7 +32,7 @@ function Pagamento({ selected, setSelected }: PagamentoProps) {
     ]
   );
   const [error, setError] = useState("");
-  
+
   const finalizarPedido = useMutation({
     mutationFn: async (pagamento: PagamentoFormType[]) => {
       const res = await fetch("/api/pedidos/pagamento", {
@@ -40,12 +40,12 @@ function Pagamento({ selected, setSelected }: PagamentoProps) {
         credentials: "include",
         body: JSON.stringify(pagamento),
       });
-      
+
       if (!res.ok) {
         const json = await res.json();
         throw new Error(json.error);
       }
-      
+
       return await res.json();
     },
     onSuccess: () => {
@@ -53,9 +53,9 @@ function Pagamento({ selected, setSelected }: PagamentoProps) {
       setSelected(null);
     },
   });
-  
+
   if (!selected) return;
-  
+
   function handleRemoverPedido(pedido: PedidoModelType) {
     // Se já for o selecionado remove
     if (selected?.tipo === "pedido" && selected.pedido.id === pedido.id) {
@@ -63,49 +63,58 @@ function Pagamento({ selected, setSelected }: PagamentoProps) {
       return;
     }
   }
-  
+
   function handleSubmit() {
-    setError("")
-    
+    setError("");
+
     const valorPagamentos = formasPagamento.reduce(
       (acc, forma) => (forma.valor ?? 0) + acc,
       0
     );
-    
+
     const totalPedidos =
-    selected!.tipo === "mesa"
-    ? selected!.pedidosSelecionados.reduce(
-      (acc, p) => acc + p.valorTotal,
-      0
-    )
-    : selected!.pedido.valorTotal;
-    
+      selected!.tipo === "mesa"
+        ? selected!.pedidosSelecionados.reduce(
+            (acc, p) => acc + p.valorTotal,
+            0
+          )
+        : selected!.pedido.valorTotal;
+
     const pagamentosInvalidos = formasPagamento.some(
       (f) => !f.formaPagamentoId || !f.valor
     );
-    
+
     if (pagamentosInvalidos) {
       setError("Preencha todas as formas de pagamento.");
       return;
     }
-    
+
     if (valorPagamentos !== totalPedidos) {
       setError(
         "O valor total do pagamento não confere com o valor dos pedidos."
       );
       return;
     }
-    
+
     let pagamentos: PagamentoFormType[];
-    
+
     if (selected?.tipo === "mesa") {
-      pagamentos = selected.pedidosSelecionados.map((pedido) => ({
-        pedidoId: pedido.id,
-        formas: formasPagamento.map((forma) => ({
-          formaPagamentoId: forma.formaPagamentoId!,
-          valor: forma.valor! / selected.pedidosSelecionados.length,
-        })),
-      }));
+      const totalMesa = selected.pedidosSelecionados.reduce(
+        (acc, p) => acc + p.valorTotal,
+        0
+      );
+
+      pagamentos = selected.pedidosSelecionados.map((pedido) => {
+        const proporcao = pedido.valorTotal / totalMesa;
+
+        return {
+          pedidoId: pedido.id,
+          formas: formasPagamento.map((forma) => ({
+            formaPagamentoId: forma.formaPagamentoId!,
+            valor: Number((forma.valor! * proporcao).toFixed(2)),
+          })),
+        };
+      });
     } else {
       pagamentos = [
         {
@@ -161,7 +170,12 @@ function Pagamento({ selected, setSelected }: PagamentoProps) {
             </span>
           </p>
         )}
-        {error && <p className="text-red-500 tracking-tight text-sm">{error}</p>}
+        {error && (
+          <p className="text-red-500 tracking-tight text-sm">{error}</p>
+        )}
+        {finalizarPedido.error && (
+          <ErrorMessage error={finalizarPedido.error} />
+        )}
         <Button
           className="bg-emerald-600 hover:bg-emerald-700 cursor-pointer"
           onClick={() => handleSubmit()}

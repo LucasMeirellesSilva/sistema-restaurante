@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 
 import { PedidoFormType } from "@/schemas/pedidoSchema";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 type PedidoCreate = Omit<PedidoFormType, "itens"> & { autorId: number };
 
@@ -17,13 +16,11 @@ export default async function createPedido(tx: Prisma.TransactionClient ,{ autor
     });
     
     return result;
-  } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError) {
+  } catch (err: any) {
       if (err.code === "P2025") {
         const campos = Array.isArray(err.meta?.target) ? err.meta.target : [err.meta?.target].filter(Boolean);
-        throw new Error(`Erro: Relacionamento inválido em ${campos?.join(", ")}`);
+        throw new Error(`Ocorreu um erro em ${campos?.join(", ")}`);
       }
-    }
     throw err;
   }
 }
